@@ -7,8 +7,12 @@ public enum Token {
     ELSE("else"),
     PARENTHESIS_OPEN("("),
     PARENTHESIS_CLOSE(")"),
-    VARIABLE(Pattern.compile("^\\d*\\w+\\d*$")),
-    NONE(Pattern.compile("."));
+    VARIABLE(Pattern.compile("^(\\d*\\w+[\\w\\d]*)$")),
+    STRING(Pattern.compile("^\"((?:[^\"]|(?<=\\\\)\")*)\"$")),
+
+    // reserved characters
+    NONE(Pattern.compile("^(.*)$")),
+    EOF("");
 
     private String match;
     private Pattern reg_match;
@@ -22,7 +26,7 @@ public enum Token {
     }
 
     private boolean matches(String str) {
-        if (this.match != null) return this.match.matches(str);
+        if (this.match != null) return this.match.equals(str);
         else return this.reg_match.matcher(str).matches();
     }
 

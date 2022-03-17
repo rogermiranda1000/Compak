@@ -1,5 +1,7 @@
 package preprocesser;
 
+import java.util.NoSuchElementException;
+
 public interface LineRequest {
-    public String getNextLine();
+    public String getNextLine() throws NoSuchElementException;
 }
