@@ -39,6 +39,7 @@ public enum Token {
     CLS_PARENTH(")"),
     COMMA(","),
     ID(Pattern.compile("^(\\d*\\w+[\\w\\d]*)$")),
+    NUMBER(Pattern.compile("^(\\d+)$")),
     STRING_VALUE(Pattern.compile("^\"((?:[^\"]|(?<=\\\\)\")*)\"$")),
 
     // reserved characters
