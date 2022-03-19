@@ -1,7 +1,7 @@
 package lexic;
 
-import entities.Token;
+import entities.TokenDataPair;
 
 public interface TokenRequest {
-    public Token requestNextToken();
+    public TokenDataPair requestNextToken();
 }

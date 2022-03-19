@@ -1,5 +1,8 @@
 package entities;
 
+import org.jetbrains.annotations.Nullable;
+
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public enum Token {
@@ -57,15 +60,22 @@ public enum Token {
         this.reg_match = match;
     }
 
-    private boolean matches(String str) {
-        if (this.match != null) return this.match.equals(str);
-        else return this.reg_match.matcher(str).matches();
+    @Nullable
+    private String matches(String str) {
+        if (this.match != null) return this.match.equals(str) ? str : null;
+        else {
+            Matcher m = this.reg_match.matcher(str);
+            return m.matches() ? m.group(1) : null;
+        }
     }
 
-    public static Token getMatch(String str) {
+    public static TokenDataPair getMatch(String str) {
+        String match;
         for(Token t : Token.values()) {
-            if (t.matches(str)) return t;
+            if ((match = t.matches(str)) != null) {
+                return new TokenDataPair(t, match);
+            }
         }
-        return Token.NONE;
+        return new TokenDataPair(Token.NONE);
     }
 }

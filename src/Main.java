@@ -1,4 +1,5 @@
 import entities.Token;
+import entities.TokenDataPair;
 import lexic.TokenBuffer;
 import lexic.TokenRequest;
 import preprocesser.CodeProcessor;
@@ -13,7 +14,7 @@ public class Main {
         LineRequest lr = new CodeProcessor(Main.PATH);
         TokenRequest tr = new TokenBuffer(lr);
 
-        Token token;
-        while ((token = tr.requestNextToken()) != Token.EOF) System.out.println(token);
+        TokenDataPair token;
+        while ((token = tr.requestNextToken()).getToken() != Token.EOF) System.out.println(token);
     }
 }
