@@ -31,7 +31,7 @@ public class GrammarAnalizer implements GrammarRequest {
         );
         opcions = new Production(
                 new Object[]{possiblesOpcions, opcions},
-                new Object[]{Production.EPSILON}
+                new Object[]{}
         );
         start = new Production(
                 new Object[]{opcions, Token.MAIN, Token.OPN_PARENTH, Token.CLS_PARENTH, Token.OPN_CONTEXT, sentencies, Token.CLS_CONTEXT}
