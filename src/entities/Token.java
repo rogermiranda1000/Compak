@@ -41,6 +41,7 @@ public enum Token {
     OPN_PARENTH("("),
     CLS_PARENTH(")"),
     COMMA(","),
+    RETURN("return"),
     ID(Pattern.compile("^(\\d*\\w+[\\w\\d]*)$")),
     NUMBER(Pattern.compile("^(\\d+)$")),
     STRING_VALUE(Pattern.compile("^\"((?:[^\"]|(?<=\\\\)\")*)\"$")),
