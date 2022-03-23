@@ -49,12 +49,7 @@ public class GrammarAnalizer implements GrammarRequest {
                 new Object[]{}
         );
         nomVariable = new Production(
-                new Object[]{letter, possibleStr}
-        );
-        possibleStr = new Production(
-                new Object[]{letter, possibleStr},
-                new Object[]{digit, possibleStr},
-                new Object[]{}
+                new Object[]{Token.ID}
         );
         nomFuncio = new Production(
                 new Object[]{letter, possibleChar}
