@@ -16,6 +16,8 @@ public class GrammarAnalizer implements GrammarRequest {
     private static Production declaracioVariable;
     private static Production condicional;
     private static Production elseConditional;
+    private static Production declaracioBucle;
+    private static Production declaracioBucleSub;
 
     private static final Production value_bit = new Production(
             new Object[]{Token.TRUE},
@@ -73,9 +75,19 @@ public class GrammarAnalizer implements GrammarRequest {
         condicional = new Production(
                 new Object[]{Token.IF, Token.OPN_PARENTH, n0, Token.CLS_PARENTH, elseConditional}
         );
+
         elseConditional = new Production(
                 new Object[]{Token.ELSE, Token.OPN_CONTEXT, sentencies, Token.CLS_CONTEXT},
                 new Object[]{}
+        );
+
+        declaracioBucle = new Production(
+                new Object[]{Token.BUCLE, Token.OPN_PARENTH, declaracioBucleSub, Token.CLS_PARENTH, Token.OPN_CONTEXT, sentencies, Token.CLS_CONTEXT}
+        );
+
+        declaracioBucleSub = new Production(
+                new Object[]{n0},
+                new Object[]{Token.FOR, nomVariable, Token.IN, Token.RANGE, Token.OPN_PARENTH, valueNumber, Token.CLS_PARENTH}
         );
     }
 
