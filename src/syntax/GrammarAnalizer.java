@@ -13,6 +13,7 @@ public class GrammarAnalizer implements GrammarRequest {
     private static Production opcions;
     private static Production start;
     private static Production possiblesOpcions;
+    private static Production declaracioVariable;
 
     private static final Production value_bit = new Production(
             new Object[]{Token.TRUE},
@@ -57,6 +58,14 @@ public class GrammarAnalizer implements GrammarRequest {
 
         start = new Production(
                 new Object[]{opcions, Token.MAIN, Token.OPN_PARENTH, Token.CLS_PARENTH, Token.OPN_CONTEXT, sentencies, Token.CLS_CONTEXT}
+        );
+
+        declaracioVariable = new Production(
+                new Object[]{Token.STR, nomVariable},
+                new Object[]{Token.BIG, nomVariable},
+                new Object[]{Token.INT, nomVariable},
+                new Object[]{Token.BIT, nomVariable},
+                new Object[]{Token.FLO, nomVariable}
         );
     }
 
