@@ -1,7 +1,8 @@
 package syntax;
 
 import entities.Token;
-import java.util.Map;
+
+import java.util.List;
 
 public class FirstFollowTest extends GrammarRequest {
     protected static final Production E = new Production(),
@@ -11,7 +12,7 @@ public class FirstFollowTest extends GrammarRequest {
             F = new Production();
 
     static {
-        E.addProduction(T, Ep);
+        E.addProduction(T, Ep, Token.EOF);
         Ep.addProduction(Token.SUM, T, Ep)
                 .addProduction();
         T.addProduction(F, Tp);
@@ -28,7 +29,7 @@ public class FirstFollowTest extends GrammarRequest {
 
     public static void main(String[] args) {
         GrammarRequest gr = new FirstFollowTest();
-        Map<String, Production> p = gr.getProductions();
+        List<FirstFollowData> ff = gr.getFirstFollow();
 
         System.out.println();
     }
