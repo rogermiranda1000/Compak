@@ -67,43 +67,48 @@ public abstract class GrammarRequest {
         Map<Production, Set<Token>> r = new HashMap<>();
         for (Map.Entry<String, Production> p : this.getProductions().entrySet()) r.put(p.getValue(), new HashSet<>());
 
-        for (Map.Entry<String, Production> _p : this.getProductions().entrySet()) {
-            Production production = _p.getValue();
+        boolean changes = true;
+        while (changes) {
+            changes = false;
 
-            /**
-             * The starting production contains the EOF: FOLLOW(S) = { $ }
-             * If A -> pBq is a production (where p and q can be a whole string), then FOLLOW(B) = {FIRST(q) - ε}
-             * If A -> pB is a production, then FOLLOW(B) = FOLLOW(A)
-             * If A -> pBq is a production and FIRST(q) contains ε, then FOLLOW(B) = { FIRST(q) – ε } U FOLLOW(A)
-             *
-             * @author https://www.geeksforgeeks.org/follow-set-in-syntax-analysis/
-             */
+            for (Production production : r.keySet()) {
+                /**
+                 * The starting production contains the EOF: FOLLOW(S) = { $ }
+                 * If A -> pBq is a production (where p and q can be a whole string), then FOLLOW(B) = {FIRST(q) - ε}
+                 * If A -> pB is a production, then FOLLOW(B) = FOLLOW(A)
+                 * If A -> pBq is a production and FIRST(q) contains ε, then FOLLOW(B) = { FIRST(q) – ε } U FOLLOW(A)
+                 *
+                 * @author https://www.geeksforgeeks.org/follow-set-in-syntax-analysis/
+                 */
 
-            if (production.equals(this.getEntryPoint())) r.get(production).add(Token.EOF); // the starting production contains the EOF
-            for (Object[] p : production.getProduccions()) {
-                if (p.length == 0) continue;
+                if (production.equals(this.getEntryPoint())) r.get(production).add(Token.EOF); // the starting production contains the EOF
+                for (Object[] p : production.getProduccions()) {
+                    if (p.length == 0) continue;
 
-                Set<Token> first;
-                for (int x = 0; x < p.length - 1 /* tiene que tener algo delante */; x++) {
-                    if (p[x] instanceof Production) {
-                        first = this.getFirst(p[x+1]);
-                        first.remove(Token.EPSILON);
-                        r.get((Production) p[x]).addAll(first); // if A -> pBq is a production, then FOLLOW(B) = {FIRST(q) - ε}
-                    }
-                }
-
-                if (p[p.length-1] instanceof Production) r.get((Production) p[p.length-1]).addAll(r.get(production)); // if A -> pB is a production, then FOLLOW(B) = FOLLOW(A)
-
-                first = this.getFirst(p[p.length - 1]); // first q
-                for (int x = p.length - 2; x >= 0 && first.contains(Token.EPSILON); x--) {
-                    if (p[x] instanceof Production) {
-                        // if A -> pBq is a production and FIRST(q) contains ε, then FOLLOW(B) = { FIRST(q) – ε } U FOLLOW(A)
-                        first.remove(Token.EPSILON);
-                        r.get((Production) p[x]).addAll(first);
-                        r.get((Production) p[x]).addAll(r.get(production));
+                    Set<Token> first;
+                    for (int x = 0; x < p.length - 1 /* tiene que tener algo delante */; x++) {
+                        if (p[x] instanceof Production) {
+                            first = this.getFirst(p[x + 1]);
+                            first.remove(Token.EPSILON);
+                            if (r.get((Production) p[x]).addAll(first) /* if A -> pBq is a production, then FOLLOW(B) = {FIRST(q) - ε} */) changes = true;
+                        }
                     }
 
-                    first = this.getFirst(p[x]); // q
+                    if (p[p.length - 1] instanceof Production) {
+                        if (r.get((Production) p[p.length - 1]).addAll(r.get(production)) /* if A -> pB is a production, then FOLLOW(B) = FOLLOW(A) */) changes = true;
+                    }
+
+                    first = this.getFirst(p[p.length - 1]); // first q
+                    for (int x = p.length - 2; x >= 0 && first.contains(Token.EPSILON); x--) {
+                        if (p[x] instanceof Production) {
+                            // if A -> pBq is a production and FIRST(q) contains ε, then FOLLOW(B) = { FIRST(q) – ε } U FOLLOW(A)
+                            first.remove(Token.EPSILON);
+                            if (r.get((Production) p[x]).addAll(first) |
+                                    r.get((Production) p[x]).addAll(r.get(production))) changes = true;
+                        }
+
+                        first = this.getFirst(p[x]); // q
+                    }
                 }
             }
         }
