@@ -28,12 +28,11 @@ public class GrammarAnalizer implements GrammarRequest {
     private static Production n3Sub;
     private static Production negat;
     private static Production n5;
-    private static Production ID;
     private static Production symbolSumaResta;
     private static Production symbolDivMult;
     private static Production symbolCond;
 
-    private final Production value_bit = new Production(
+    private static final Production value_bit = new Production(
             new Object[]{Token.TRUE},
             new Object[]{Token.FALSE}
     );
@@ -103,6 +102,7 @@ public class GrammarAnalizer implements GrammarRequest {
                 new Object[]{n0},
                 new Object[]{Token.FOR, nomVariable, Token.IN, Token.RANGE, Token.OPN_PARENTH, valueNumber, Token.CLS_PARENTH}
         );
+
         n0 = new Production(
                 new Object[]{n1, n0Sub}
         );
@@ -137,10 +137,7 @@ public class GrammarAnalizer implements GrammarRequest {
         );
         n5 = new Production(
                 new Object[]{negat, Token.OPN_PARENTH, n0, Token.CLS_PARENTH},
-                new Object[]{ID}
-        );
-        ID = new Production(
-                new Object[]{id}
+                new Object[]{Token.ID}
         );
         symbolSumaResta = new Production(
                 new Object[]{Token.SUM},
