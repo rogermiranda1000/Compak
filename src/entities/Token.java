@@ -48,7 +48,8 @@ public enum Token {
 
     // reserved characters
     NONE(Pattern.compile("^(.*)$")),
-    EOF("");
+    EOF(""),
+    EPSILON("");
 
     private String match;
     private Pattern reg_match;

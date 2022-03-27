@@ -6,11 +6,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Production {
-    /**
-     * Producció nul·la
-     */
-    public static final Production EPSILON = new Production();
-
     private final List<Object[]> produccions;
 
     private static void checkArgument(Object[] production) throws IllegalArgumentException {
@@ -37,5 +32,9 @@ public class Production {
         Production.checkArgument(production);
         this.produccions.add(production);
         return this;
+    }
+
+    public List<Object[]> getProduccions() {
+        return this.produccions;
     }
 }
