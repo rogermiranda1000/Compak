@@ -5,7 +5,7 @@ import entities.Token;
 /**
  * Aquesta classe contindrà totes les produccions de Gramàtica
  */
-public class GrammarAnalizer implements GrammarRequest {
+public class GrammarAnalizer extends GrammarRequest {
     private static Production declaracioFuncio;
     private static Production declaracioFuncioSub;
     private static Production arguments;
