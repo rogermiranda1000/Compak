@@ -2,6 +2,7 @@ package preprocesser;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.util.NoSuchElementException;
 import java.util.Scanner;
 
 public class FileManager {
@@ -11,7 +12,7 @@ public class FileManager {
         this.file = new Scanner(new File(path));
     }
 
-    public String readNextLine() {
+    public String readNextLine() throws NoSuchElementException {
         return this.file.nextLine();
     }
 }

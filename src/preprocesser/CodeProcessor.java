@@ -3,6 +3,7 @@ package preprocesser;
 import java.io.FileNotFoundException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.NoSuchElementException;
 
 public class CodeProcessor implements LineRequest {
     private static final Pattern comment = Pattern.compile("^([^\"/]|(?<=/)?/(?>/)?)*(?:\"(?:[^\"]|(?:(?<=\\\\)\"))*\"[^\"/]*)*//"); // detect comments outside text
@@ -12,17 +13,10 @@ public class CodeProcessor implements LineRequest {
         this.fm = new FileManager(path);
     }
 
-    public String getNextLine() {
+    public String getNextLine() throws NoSuchElementException {
         String next = this.fm.readNextLine();
         Matcher match = CodeProcessor.comment.matcher(next);
         if (match.find()) next = next.substring(0, match.end()-2);
         return next;
-    }
-
-    public static void main(String[] args) throws FileNotFoundException {
-        CodeProcessor cp = new CodeProcessor("test.sus");
-        System.out.println(cp.getNextLine());
-        System.out.println(cp.getNextLine());
-        System.out.println(cp.getNextLine());
     }
 }
