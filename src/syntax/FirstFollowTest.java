@@ -12,7 +12,7 @@ public class FirstFollowTest extends GrammarRequest {
             F = new Production();
 
     static {
-        E.addProduction(T, Ep, Token.EOF);
+        E.addProduction(T, Ep);
         Ep.addProduction(Token.SUM, T, Ep)
                 .addProduction();
         T.addProduction(F, Tp);
