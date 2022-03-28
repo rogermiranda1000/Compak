@@ -34,7 +34,7 @@ public class GrammarAnalizer implements GrammarRequest {
                 new Object[]{declaracioBucle}
         );
         possibleAssignacio = new Production(
-                new Object[]{n0},
+                new Object[]{Token.ASSIGN, n0},
                 new Object[]{}
         );
     }
