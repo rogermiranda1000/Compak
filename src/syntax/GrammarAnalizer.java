@@ -38,6 +38,9 @@ public class GrammarAnalizer implements GrammarRequest {
     private static Production digit;
     private static Production letter;
     private static Production anyCharacter;
+    private static Production sentencies;
+    private static Production possibleSentencies;
+    private static Production possibleAssignacio;
 
     private static final Production value_bit = new Production(
             new Object[]{Token.TRUE},
@@ -179,6 +182,21 @@ public class GrammarAnalizer implements GrammarRequest {
         idCond = new Production(
                 new Object[]{valueBit},
                 new Object[]{nomVariable}
+        );
+        sentencies = new Production(
+                new Object[]{possibleSentencies, sentencies},
+                new Object[]{Token.RETURN, id, Token.EOL},
+                new Object[]{}
+        );
+        possibleSentencies = new Production(
+                new Object[]{declaracioVariable, possibleAssignacio, Token.EOL},
+                new Object[]{nomVariable, Token.ASSIGN, n0, Token.EOL},
+                new Object[]{coondicional},
+                new Object[]{declaracioBucle}
+        );
+        possibleAssignacio = new Production(
+                new Object[]{Token.ASSIGN, n0},
+                new Object[]{}
         );
     }
 
