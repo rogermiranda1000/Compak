@@ -43,9 +43,6 @@ public class GrammarAnalizer implements GrammarRequest {
                 new Object[]{valueBit},
                 new Object[]{nomVariable}
         );
-        digit = new Production(
-                new Object[]{Token.NUMBER}
-        );
     }
 
     public GrammarAnalizer() {}
