@@ -5,6 +5,7 @@ import lexic.TokenRequest;
 import preprocesser.CodeProcessor;
 
 import java.io.FileNotFoundException;
+import java.util.List;
 
 public class Parser {
     private final TokenRequest tokenRequest;
@@ -17,5 +18,7 @@ public class Parser {
 
     public static void main(String[] args) throws FileNotFoundException {
         Parser p = new Parser(new TokenBuffer(new CodeProcessor("file.sus")), new GrammarAnalizer());
+        List<FirstFollowData> firstFollow = p.grammarRequest.getFirstFollow();
+        System.out.println();
     }
 }
