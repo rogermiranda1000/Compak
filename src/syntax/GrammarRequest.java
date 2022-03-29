@@ -41,7 +41,7 @@ public abstract class GrammarRequest {
             else {
                 boolean found_epsilon = true;
                 for (int x = 0; x < production.length && found_epsilon /* if FIRST(Y1) contains Є then FIRST(X) = { FIRST(Y1) – Є } U { FIRST(Y2) } */; x++) {
-                    Set<Token> next = this.getFirst((Production) production[x]);
+                    Set<Token> next = this.getFirst(production[x]);
                     if (!next.remove(Token.EPSILON)) {
                         found_epsilon = false; // no hay epsilon
                     }
