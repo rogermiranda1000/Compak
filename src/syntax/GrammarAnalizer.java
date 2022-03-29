@@ -35,39 +35,33 @@ public class GrammarAnalizer extends GrammarRequest {
     private static Production idStr;
     private static Production idNumOrFloat;
     private static Production idCond;
-    private static Production digit;
-    private static Production letter;
-    private static Production anyCharacter;
     private static Production sentencies;
     private static Production possibleSentencies;
     private static Production possibleAssignacio;
-    private static Production value;
-    private static Production valueNumber;
-    private static Production possibleDigit;
-    private static Production possibleFloat;
-    private static Production valueString;
-    private static Production contingutStr;
-    private static Production nomVariable;
-    private static Production possibleStr;
-    private static Production nomFuncio;
-    private static Production possibleChar;
-    private static Production valueBit;
 
-    private static final Production value_bit = new Production(
+    private static final Production valueBit = new Production(
             new Object[]{Token.TRUE},
             new Object[]{Token.FALSE}
     );
 
     private static final Production value = new Production(
             new Object[]{Token.NUMBER},
-            // TODO afegir floats
+            new Object[]{Token.FLOAT},
             new Object[]{Token.STRING_VALUE},
-            new Object[]{value_bit}
+            new Object[]{valueBit}
+    );
+
+    private static final Production tipus = new Production(
+        new Object[]{Token.STR},
+        new Object[]{Token.BIG},
+        new Object[]{Token.INT},
+        new Object[]{Token.BIT},
+        new Object[]{Token.FLO}
     );
 
     static {
         declaracioFuncio = new Production(
-                new Object[]{Token.FUNC, nomFuncio, Token.OPN_PARENTH, arguments, Token.CLS_PARENTH, declaracioFuncioSub, Token.OPN_CONTEXT, sentencies, Token.CLS_CONTEXT}
+                new Object[]{Token.FUNC, Token.ID, Token.OPN_PARENTH, arguments, Token.CLS_PARENTH, declaracioFuncioSub, Token.OPN_CONTEXT, sentencies, Token.CLS_CONTEXT}
         );
 
         declaracioFuncioSub = new Production(
@@ -76,7 +70,7 @@ public class GrammarAnalizer extends GrammarRequest {
         );
 
         arguments = new Production(
-                new Object[]{tipus, nomVariable, argumentsSub}
+                new Object[]{tipus, Token.ID, argumentsSub}
         );
 
         argumentsSub = new Production(
@@ -99,11 +93,7 @@ public class GrammarAnalizer extends GrammarRequest {
         );
 
         declaracioVariable = new Production(
-                new Object[]{Token.STR, nomVariable},
-                new Object[]{Token.BIG, nomVariable},
-                new Object[]{Token.INT, nomVariable},
-                new Object[]{Token.BIT, nomVariable},
-                new Object[]{Token.FLO, nomVariable}
+                new Object[]{tipus, Token.ID}
         );
 
         condicional = new Production(
@@ -121,7 +111,7 @@ public class GrammarAnalizer extends GrammarRequest {
 
         declaracioBucleSub = new Production(
                 new Object[]{n0},
-                new Object[]{Token.FOR, nomVariable, Token.IN, Token.RANGE, Token.OPN_PARENTH, valueNumber, Token.CLS_PARENTH}
+                new Object[]{Token.FOR, Token.ID, Token.IN, Token.RANGE, Token.OPN_PARENTH, Token.NUMBER, Token.CLS_PARENTH}
         );
 
         n0 = new Production(
@@ -179,20 +169,20 @@ public class GrammarAnalizer extends GrammarRequest {
 
         id = new Production(
                 new Object[]{value},
-                new Object[]{nomVariable}
+                new Object[]{Token.ID}
         );
         idStr = new Production(
-                new Object[]{valueString},
-                new Object[]{nomVariable}
+                new Object[]{Token.STRING_VALUE},
+                new Object[]{Token.ID}
         );
         idNumOrFloat = new Production(
-                //TODO: Fer el REGEX al enum
-                new Object[]{valueNumber, possibleFloat},
-                new Object[]{nomVariable}
+                new Object[]{Token.NUMBER},
+                new Object[]{Token.FLOAT},
+                new Object[]{Token.ID}
         );
         idCond = new Production(
                 new Object[]{valueBit},
-                new Object[]{nomVariable}
+                new Object[]{Token.ID}
         );
         sentencies = new Production(
                 new Object[]{possibleSentencies, sentencies},
@@ -201,54 +191,13 @@ public class GrammarAnalizer extends GrammarRequest {
         );
         possibleSentencies = new Production(
                 new Object[]{declaracioVariable, possibleAssignacio, Token.EOL},
-                new Object[]{nomVariable, Token.ASSIGN, n0, Token.EOL},
-                new Object[]{coondicional},
+                new Object[]{Token.ID, Token.ASSIGN, n0, Token.EOL},
+                new Object[]{condicional},
                 new Object[]{declaracioBucle}
         );
         possibleAssignacio = new Production(
                 new Object[]{Token.ASSIGN, n0},
                 new Object[]{}
-        );
-
-        value = new Production(
-                new Object[]{Token.NUMBER},
-                // TODO afegir floats
-                new Object[]{Token.STRING_VALUE},
-                new Object[]{valueBit}
-        );
-        valueNumber = new Production(
-                new Object[]{digit, possibleDigit}
-        );
-        possibleDigit = new Production(
-                new Object[]{digit, possibleDigit},
-                new Object[]{}
-        );
-        possibleFloat = new Production(
-                new Object[]{valueNumber},
-                new Object[]{}
-        );
-        valueString = new Production(
-                new Object[]{Token.STRING_VALUE}
-        );
-        contingutStr = new Production(
-                new Object[]{letter, contingutStr},
-                new Object[]{digit, contingutStr},
-                new Object[]{anyCharacter, contingutStr},
-                new Object[]{}
-        );
-        nomVariable = new Production(
-                new Object[]{Token.ID}
-        );
-        nomFuncio = new Production(
-                new Object[]{letter, possibleChar}
-        );
-        possibleChar = new Production(
-                new Object[]{letter, possibleChar},
-                new Object[]{}
-        );
-        valueBit = new Production(
-                new Object[]{Token.TRUE},
-                new Object[]{Token.FALSE}
         );
     }
 

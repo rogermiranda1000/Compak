@@ -44,6 +44,7 @@ public enum Token {
     FOR("for"),
     RETURN("return"),
     ID(Pattern.compile("^(\\d*\\w+[\\w\\d]*)$")),
+    FLOAT(Pattern.compile("^(\\d+\\.\\d+)$")),
     NUMBER(Pattern.compile("^(\\d+)$")),
     STRING_VALUE(Pattern.compile("^\"((?:[^\"]|(?<=\\\\)\")*)\"$")),
 
