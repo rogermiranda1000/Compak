@@ -41,13 +41,17 @@ public enum Token {
     OPN_PARENTH("("),
     CLS_PARENTH(")"),
     COMMA(","),
+    FOR("for"),
+    RETURN("return"),
     ID(Pattern.compile("^(\\d*\\w+[\\w\\d]*)$")),
+    FLOAT(Pattern.compile("^(\\d+\\.\\d+)$")),
     NUMBER(Pattern.compile("^(\\d+)$")),
     STRING_VALUE(Pattern.compile("^\"((?:[^\"]|(?<=\\\\)\")*)\"$")),
 
     // reserved characters
     NONE(Pattern.compile("^(.*)$")),
-    EOF("");
+    EOF(""),
+    EPSILON("");
 
     private String match;
     private Pattern reg_match;
