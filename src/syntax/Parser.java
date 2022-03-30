@@ -1,13 +1,15 @@
 package syntax;
 
+import entities.TokenDataPair;
 import lexic.TokenBuffer;
 import lexic.TokenRequest;
 import preprocesser.CodeProcessor;
 
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.List;
 
-public class Parser {
+public class Parser implements Compiler {
     private final TokenRequest tokenRequest;
     private final GrammarRequest grammarRequest;
 
@@ -16,9 +18,17 @@ public class Parser {
         this.grammarRequest = grammarRequest;
     }
 
+    private void generateAbstractTree() {
+        TokenDataPair token = this.tokenRequest.requestNextToken();
+    }
+
+    public void compile(File out) {
+        this.generateAbstractTree();
+    }
+
     public static void main(String[] args) throws FileNotFoundException {
         Parser p = new Parser(new TokenBuffer(new CodeProcessor("file.sus")), new GrammarAnalizer());
-        List<FirstFollowData> firstFollow = p.grammarRequest.getFirstFollow();
+        p.compile(null);
         System.out.println();
     }
 }
