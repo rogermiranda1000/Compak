@@ -87,22 +87,6 @@ public class GrammarAnalizer extends GrammarRequest {
         new Object[]{Token.ID}
     );
 
-    protected static final Production idStr = new Production(
-        new Object[]{Token.STRING_VALUE},
-        new Object[]{Token.ID}
-    );
-
-    protected static final Production idNumOrFloat = new Production(
-        new Object[]{Token.NUMBER},
-        new Object[]{Token.FLOAT},
-        new Object[]{Token.ID}
-    );
-
-    protected static final Production idCond = new Production(
-        new Object[]{valueBit},
-        new Object[]{Token.ID}
-    );
-
     static {
         declaracioFuncio.addProduction(Token.FUNC, Token.ID, Token.OPN_PARENTH, arguments, Token.CLS_PARENTH, declaracioFuncioSub, Token.OPN_CONTEXT, sentencies, Token.CLS_CONTEXT);
 
