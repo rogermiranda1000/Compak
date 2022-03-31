@@ -9,4 +9,5 @@ public interface TokenRequest {
     public int getCurrentLine();
     public int getCurrentColumn();
     public void returnTokens(List<TokenDataPair> tokens);
+    public void returnTokens(TokenDataPair token);
 }
