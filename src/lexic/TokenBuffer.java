@@ -58,4 +58,9 @@ public class TokenBuffer implements TokenRequest {
     public void returnTokens(List<TokenDataPair> tokens) {
         this.tokens.addAll(0, tokens);
     }
+
+    @Override
+    public void returnTokens(TokenDataPair token) {
+        this.tokens.add(0, token);
+    }
 }
