@@ -15,12 +15,4 @@ public class SymbolTable {
     public void addEntry(SymbolTableEntries entry) throws DuplicateVariableException {
         if (!this.entries.add(entry)) throw new DuplicateVariableException("The variable '" + entry.getName() + "' already exists in this scope!");
     }
-
-
-    public static void main(String[] args) {
-        SymbolTable st = new SymbolTable();
-        st.addEntry(new SymbolTableEntries(VariableTypes.INT, "a", 2));
-        st.addEntry(new SymbolTableEntries(VariableTypes.INT, "b", 2));
-        st.addEntry(new SymbolTableEntries(VariableTypes.INT, "a", 2));
-    }
 }
