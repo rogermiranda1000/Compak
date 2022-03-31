@@ -22,7 +22,7 @@ public class TokenBuffer implements TokenRequest {
         this.lineRequest = lineRequest;
         this.tokens = new ArrayList<>();
 
-        this.currentLine = -1; // once the first line is readed the current line will be 0
+        this.currentLine = 0; // once the first line is readed the current line will be 1
     }
 
     private void readTokensFromNextLine() {
@@ -56,11 +56,11 @@ public class TokenBuffer implements TokenRequest {
 
     @Override
     public void returnTokens(List<TokenDataPair> tokens) {
-        this.tokens.addAll(0, tokens);
+        this.tokens.addAll(0, tokens); // TODO compensate currentLine & currentColumn
     }
 
     @Override
     public void returnTokens(TokenDataPair token) {
-        this.tokens.add(0, token);
+        this.tokens.add(0, token); // TODO compensate currentLine & currentColumn
     }
 }

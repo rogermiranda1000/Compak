@@ -15,6 +15,10 @@ public class InvalidTreeException extends RuntimeException {
         this.expected = expected;
     }
 
+    public InvalidTreeException(Token token, int line, int column, Token expected) {
+        this(token, line, column, List.of(expected));
+    }
+
     public int getLine() {
         return line;
     }
