@@ -7,7 +7,7 @@ public class SymbolTableEntries {
     private final VariableTypes type;
     private final int size; // 1 for non-array
     private final int address;
-    private final int scope;
+    private final int scope; // TODO fer taula de taules
 
     public SymbolTableEntries(VariableTypes type, String name, int scope) {
         this.name = name;

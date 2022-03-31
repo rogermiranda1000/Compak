@@ -5,14 +5,12 @@ import entities.Token;
 import entities.TokenDataPair;
 import lexic.TokenBuffer;
 import lexic.TokenRequest;
+import org.jetbrains.annotations.Nullable;
 import preprocesser.CodeProcessor;
 
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 public class Parser implements Compiler {
     private final TokenRequest tokenRequest;
@@ -26,17 +24,48 @@ public class Parser implements Compiler {
         this.symbolTable = new SymbolTable();
     }
 
-    private void generateAbstractTree() throws InvalidTreeException {
-        TokenDataPair token = this.tokenRequest.requestNextToken();
-        Production candidate = this.grammarRequest.getEntryPoint();
-        HashMap<Production, FirstFollowData> firstFollow = this.grammarRequest.getFirstFollowHash();
-        Collection<Token> firsts = firstFollow.get(candidate).getFirst();
-        if (!firsts.contains(token.getToken())) throw new InvalidTreeException(token.getToken(), this.tokenRequest.getCurrentLine(),
-                this.tokenRequest.getCurrentColumn(), firsts);
+    @Nullable
+    private AbstractTreeNode generateAbstractTree(Production p) throws InvalidTreeException {
+        for (Object[] productions : p.getProduccions()) {
+            List<TokenDataPair> requestedTokens = new ArrayList<>();
+            boolean match = true;
+            AbstractTreeNode r = new AbstractTreeNode(p);
+            for (Object tokenOrProduction : productions) {
+                if (tokenOrProduction instanceof Production) {
+                    AbstractTreeNode node = this.generateAbstractTree((Production) tokenOrProduction);
+                    if (node == null) {
+                        // error; return the tokens and start with other production
+                        this.tokenRequest.returnTokens(requestedTokens);
+                        match = false;
+                        break;
+                    }
+                    r.addTree(node);
+                }
+                else {
+                    TokenDataPair token = this.tokenRequest.requestNextToken();
+                    requestedTokens.add(token);
+                    r.addTree(token);
+
+                    if (!token.getToken().equals((Token)tokenOrProduction)) {
+                        // error; return the tokens and start with other production
+                        this.tokenRequest.returnTokens(requestedTokens);
+                        match = false;
+                        break;
+                    }
+                }
+            }
+            if (match) return r;
+        }
+        return null;
+    }
+
+    private AbstractTreeNode generateAbstractTree() throws InvalidTreeException {
+        return this.generateAbstractTree(this.grammarRequest.getEntryPoint());
     }
 
     public void compile(File out) {
-        this.generateAbstractTree();
+        AbstractTreeNode tree = this.generateAbstractTree();
+        System.out.println();
     }
 
     public static void main(String[] args) throws FileNotFoundException {

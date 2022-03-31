@@ -5,6 +5,7 @@ import entities.TokenDataPair;
 import preprocesser.LineRequest;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -51,5 +52,10 @@ public class TokenBuffer implements TokenRequest {
     @Override
     public int getCurrentColumn() {
         return 0; // TODO
+    }
+
+    @Override
+    public void returnTokens(List<TokenDataPair> tokens) {
+        this.tokens.addAll(0, tokens);
     }
 }
