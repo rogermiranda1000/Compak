@@ -15,14 +15,19 @@ public class TokenBuffer implements TokenRequest {
     private final LineRequest lineRequest;
     private final ArrayList<TokenDataPair> tokens;
 
+    private int currentLine;
+
     public TokenBuffer(LineRequest lineRequest) {
         this.lineRequest = lineRequest;
         this.tokens = new ArrayList<>();
+
+        this.currentLine = -1; // once the first line is readed the current line will be 0
     }
 
     private void readTokensFromNextLine() {
         try {
             Matcher m = tokenSplitter.matcher(this.lineRequest.getNextLine());
+            this.currentLine++;
             while (m.find()) {
                 this.tokens.add(Token.getMatch(m.group(1)));
                 m = tokenSplitter.matcher(m.group(2));
@@ -36,5 +41,15 @@ public class TokenBuffer implements TokenRequest {
     public TokenDataPair requestNextToken() {
         while (this.tokens.size() == 0) this.readTokensFromNextLine();
         return tokens.remove(0);
+    }
+
+    @Override
+    public int getCurrentLine() {
+        return this.currentLine;
+    }
+
+    @Override
+    public int getCurrentColumn() {
+        return 0; // TODO
     }
 }
