@@ -27,7 +27,7 @@ public class TokenBuffer implements TokenRequest {
 
     private void readTokensFromNextLine() {
         try {
-            Matcher m = tokenSplitter.matcher(this.lineRequest.getNextLine());
+            Matcher m = tokenSplitter.matcher(this.lineRequest.getNextLine().trim());
             this.currentLine++;
             while (m.find()) {
                 this.tokens.add(Token.getMatch(m.group(1)));
