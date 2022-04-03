@@ -87,22 +87,37 @@ public class Parser implements Compiler {
             // function declaration: "func " <nom_funcio> "(" <arguments> ")" <declaracio_funcio_sub> "{" <sentencies> "}"
             String funcName = ((TokenDataPair) nodes.get(1)).getData();
 
-            AbstractTreeNode funcAttr = (AbstractTreeNode) nodes.get(5);
+            AbstractTreeNode funcRet = (AbstractTreeNode) nodes.get(5);
             VariableTypes returnType = VariableTypes.VOID;
-            if (funcAttr.getTreeExtend().size() > 0) { // it may be epsilon
+            if (funcRet.getTreeExtend().size() > 0) { // it may be epsilon
                 //  ":" <tipus>
-                AbstractTreeNode returnTypeNode = (AbstractTreeNode) funcAttr.getTreeExtend().get(1);
+                AbstractTreeNode returnTypeNode = (AbstractTreeNode) funcRet.getTreeExtend().get(1);
                 Token returnTypeToken = ((TokenDataPair) returnTypeNode.getTreeExtend().get(0)).getToken();
                 returnType = VariableTypes.tokenToVariableType(returnTypeToken);
             }
 
-            symbolTable.addEntry(new SymbolTableFunctionEntries(returnType, funcName, new VariableTypes[]{ /* TODO */ }, symbolTable));
+            AbstractTreeNode funcAttr = (AbstractTreeNode) nodes.get(3);
+            List<VariableTypes> arguments = new ArrayList<>();
+            while (funcAttr.getTreeExtend().size() > 0) { // it may be epsilon
+                // <tipus> <nom_variable> <arguments_sub>
+                AbstractTreeNode argumentTypeNode = (AbstractTreeNode) funcAttr.getTreeExtend().get(0);
+                Token argumentTypeToken = ((TokenDataPair) argumentTypeNode.getTreeExtend().get(0)).getToken();
+                VariableTypes argumentType = VariableTypes.tokenToVariableType(argumentTypeToken);
+
+                arguments.add(argumentType);
+                symbolTable.addEntry(new SymbolTableVariableEntries(argumentType, ((TokenDataPair) funcAttr.getTreeExtend().get(1)).getData(), symbolTable));
+
+                funcAttr = (AbstractTreeNode) funcAttr.getTreeExtend().get(2);
+                if (funcAttr.getTreeExtend().size() > 0) funcAttr = (AbstractTreeNode) funcAttr.getTreeExtend().get(1);
+                // add the next argument in the next iteration
+            }
+
+            symbolTable.addEntry(new SymbolTableFunctionEntries(returnType, funcName, arguments.toArray(new VariableTypes[0]), symbolTable));
         }
-        // TODO afegir variables enviades a les funcions
 
         for (Object node : nodes) {
             if (node instanceof AbstractTreeNode) symbolTable.addSubtable(this.generateSymbolTable((AbstractTreeNode) node, symbolTable));
-            // else TokenDataPair; already done in the first part
+            // else TokenDataPair; already done in the first part with Production
         }
 
         return symbolTable;
