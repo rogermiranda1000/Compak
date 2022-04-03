@@ -16,7 +16,7 @@ public class SymbolTable {
     });
 
     @Nullable
-    private final SymbolTable parent;
+    private SymbolTable parent;
 
     private final List<SymbolTable> subtables;
 
@@ -34,7 +34,23 @@ public class SymbolTable {
     }
 
     public void addSubtable(SymbolTable symbolTable) {
-        this.subtables.add(symbolTable);
+        if (symbolTable.isUsed()) this.subtables.add(symbolTable); // first-phase optimization
+    }
+
+    public SymbolTable optimize() {
+        for (SymbolTable table : this.subtables) table.optimize();
+        if (this.entries.size() == 0 && this.subtables.size() == 1) {
+            // you can remove this table
+            if (this.parent == null) {
+                SymbolTable r = this.subtables.get(0);
+                r.parent = null;
+                return r;
+            }
+
+            this.parent.subtables.remove(this);
+            this.parent.subtables.add(this.subtables.get(0));
+        }
+        return this;
     }
 
     public SymbolTable getParent() {
