@@ -7,7 +7,8 @@ public class SymbolTable {
     private final Set<SymbolTableEntries> entries = new TreeSet<>((SymbolTableEntries o1, SymbolTableEntries o2) -> {
         if (o1 == o2) return 0;
         if (!o1.getName().equals(o2.getName())) return o1.getName().compareTo(o2.getName());
-        return o2.getScope() - o1.getScope();
+        if (o1.getScope() != o2.getScope()) return o2.getScope() - o1.getScope();
+        return o1.getClass().equals(o2.getClass()) ? 0 : 1;
     });
 
     public SymbolTable() {}
