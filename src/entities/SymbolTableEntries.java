@@ -7,9 +7,9 @@ public abstract class SymbolTableEntries {
 
     private final int address;
 
-    private final int scope; // TODO fer taula de taules
+    private final SymbolTable scope;
 
-    public SymbolTableEntries(String name, int size, int scope) {
+    public SymbolTableEntries(String name, int size, SymbolTable scope) {
         this.name = name;
         this.scope = scope;
 
@@ -25,7 +25,7 @@ public abstract class SymbolTableEntries {
         return address;
     }
 
-    public int getScope() {
+    public SymbolTable getScope() {
         return scope;
     }
 }

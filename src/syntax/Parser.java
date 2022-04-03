@@ -1,8 +1,6 @@
 package syntax;
 
-import entities.SymbolTable;
-import entities.Token;
-import entities.TokenDataPair;
+import entities.*;
 import lexic.TokenBuffer;
 import lexic.TokenRequest;
 import org.jetbrains.annotations.Nullable;
@@ -15,13 +13,10 @@ import java.util.*;
 public class Parser implements Compiler {
     private final TokenRequest tokenRequest;
     private final GrammarRequest grammarRequest;
-    private final SymbolTable symbolTable;
 
     public Parser(TokenRequest tokenRequest, GrammarRequest grammarRequest) {
         this.tokenRequest = tokenRequest;
         this.grammarRequest = grammarRequest;
-
-        this.symbolTable = new SymbolTable();
     }
 
     @Nullable
@@ -74,8 +69,38 @@ public class Parser implements Compiler {
         return this.generateAbstractTree(this.grammarRequest.getFirstFollowHash(), this.grammarRequest.getEntryPoint());
     }
 
-    public void compile(File out) {
+    private SymbolTable generateSymbolTable(AbstractTreeNode abstractTree, SymbolTable parent) throws DuplicateVariableException {
+        SymbolTable symbolTable = new SymbolTable(parent);
+        List<Object> nodes = abstractTree.getTreeExtend();
+
+        if (abstractTree.getOriginalProduction() == GrammarAnalizer.declaracioVariable) {
+            AbstractTreeNode tipusNode = (AbstractTreeNode) nodes.get(0);
+            Token tipus = ((TokenDataPair) tipusNode.getTreeExtend().get(0)).getToken();
+            symbolTable.addEntry(new SymbolTableVariableEntries(VariableTypes.tokenToVariableType(tipus), ((TokenDataPair) nodes.get(1)).getData(), symbolTable)); // <tipus> <nom_variable>
+        }
+        else if (abstractTree.getOriginalProduction() == GrammarAnalizer.declaracioFuncio) {
+            // "func " <nom_funcio> "(" <arguments> ")" <declaracio_funcio_sub> "{" <sentencies> "}"
+        }
+
+        for (Object node : nodes) {
+            if (node instanceof AbstractTreeNode) {
+                SymbolTable subtable = this.generateSymbolTable((AbstractTreeNode) node, symbolTable);
+                if (subtable.isUsed()) symbolTable.addSubtable(subtable);
+            }
+            // else TokenDataPair; already done in the first part
+        }
+
+        return symbolTable;
+    }
+
+    private SymbolTable generateSymbolTable(AbstractTreeNode abstractTree) throws DuplicateVariableException {
+        return this.generateSymbolTable(abstractTree, null);
+    }
+
+    public void compile(File out) throws InvalidTreeException, DuplicateVariableException {
         AbstractTreeNode tree = this.generateAbstractTree();
+        if (tree == null) return;
+        SymbolTable symbolTable = this.generateSymbolTable(tree);
         System.out.println();
     }
 

@@ -1,5 +1,7 @@
 package entities;
 
+import java.security.InvalidParameterException;
+
 public class SymbolTableVariableEntries extends SymbolTableEntries {
     private final VariableTypes type;
 
@@ -8,13 +10,15 @@ public class SymbolTableVariableEntries extends SymbolTableEntries {
      */
     private final int size;
 
-    public SymbolTableVariableEntries(VariableTypes type, String name, int size, int scope) {
+    public SymbolTableVariableEntries(VariableTypes type, String name, int size, SymbolTable scope) {
         super(name, type.getSize()*size, scope);
         this.type = type;
         this.size = size;
+
+        if (type == VariableTypes.UNKNOWN || type == VariableTypes.VOID) throw new InvalidParameterException("Unexpected variable type");
     }
 
-    public SymbolTableVariableEntries(VariableTypes type, String name, int scope) {
+    public SymbolTableVariableEntries(VariableTypes type, String name, SymbolTable scope) {
         this(type, name, 1, scope);
     }
 
