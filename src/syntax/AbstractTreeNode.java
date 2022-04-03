@@ -1,12 +1,18 @@
 package syntax;
 
 import entities.TokenDataPair;
+import entities.VariableTypes;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class AbstractTreeNode {
     private final Production originalProduction;
+
+    /**
+     * The productions inside this production evaluates to this type (UNKNOWN if it's not computed yet)
+     */
+    private VariableTypes evaluates;
 
     /**
      * Array of AbstractTreeNode or TokenDataPair
@@ -28,6 +34,14 @@ public class AbstractTreeNode {
 
     public void addTree(Object o) {
         this.treeExtend.add(o);
+    }
+
+    public VariableTypes getEvaluates() {
+        return this.evaluates;
+    }
+
+    public void setEvaluates(VariableTypes evaluates) {
+        this.evaluates = evaluates;
     }
 
     @Override

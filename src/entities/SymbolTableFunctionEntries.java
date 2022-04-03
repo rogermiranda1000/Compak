@@ -4,7 +4,7 @@ public class SymbolTableFunctionEntries extends SymbolTableEntries {
     private final VariableTypes returnType;
     private final VariableTypes[] arguments;
 
-    public SymbolTableFunctionEntries(VariableTypes returnType, String name, VariableTypes[] arguments, int scope) {
+    public SymbolTableFunctionEntries(VariableTypes returnType, String name, VariableTypes[] arguments, SymbolTable scope) {
         super(name, 0, scope);
         this.returnType = returnType;
         this.arguments = arguments;

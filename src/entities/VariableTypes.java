@@ -18,4 +18,26 @@ public enum VariableTypes {
     public int getSize() {
         return this.size;
     }
+
+    public static VariableTypes tokenToVariableType(Token t) {
+        switch (t) {
+            case STR:
+                return VariableTypes.STR;
+
+            case BIG:
+                return VariableTypes.BIG;
+
+            case INT:
+                return VariableTypes.INT;
+
+            case BIT:
+                return VariableTypes.BIT;
+
+            case FLO:
+                return VariableTypes.FLO;
+
+            default:
+                return VariableTypes.UNKNOWN;
+        }
+    }
 }
