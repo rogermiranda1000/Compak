@@ -38,7 +38,8 @@ public class SymbolTable {
     }
 
     public SymbolTable optimize() {
-        for (SymbolTable table : this.subtables) table.optimize();
+        List<SymbolTable> subtableClone = new ArrayList<>(this.subtables);
+        for (SymbolTable table : subtableClone) table.optimize();
         if (this.entries.size() == 0 && this.subtables.size() == 1) {
             // you can remove this table
             if (this.parent == null) {

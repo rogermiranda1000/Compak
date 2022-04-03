@@ -1,1 +1,7 @@
-main () { int a; }
+func a (int a): int {
+    return a;
+}
+
+main () {
+    int a;
+}
