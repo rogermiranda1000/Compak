@@ -74,13 +74,31 @@ public class Parser implements Compiler {
         List<Object> nodes = abstractTree.getTreeExtend();
 
         if (abstractTree.getOriginalProduction() == GrammarAnalizer.declaracioVariable) {
+            // variable declaration
             AbstractTreeNode tipusNode = (AbstractTreeNode) nodes.get(0);
             Token tipus = ((TokenDataPair) tipusNode.getTreeExtend().get(0)).getToken();
             symbolTable.addEntry(new SymbolTableVariableEntries(VariableTypes.tokenToVariableType(tipus), ((TokenDataPair) nodes.get(1)).getData(), symbolTable)); // <tipus> <nom_variable>
         }
-        else if (abstractTree.getOriginalProduction() == GrammarAnalizer.declaracioFuncio) {
-            // "func " <nom_funcio> "(" <arguments> ")" <declaracio_funcio_sub> "{" <sentencies> "}"
+        else if (abstractTree.getOriginalProduction() == GrammarAnalizer.start) {
+            // main declaration
+            symbolTable.addEntry(new SymbolTableFunctionEntries(VariableTypes.VOID, (String) Token.MAIN.getMatch(), new VariableTypes[]{}, symbolTable));
         }
+        else if (abstractTree.getOriginalProduction() == GrammarAnalizer.declaracioFuncio) {
+            // function declaration: "func " <nom_funcio> "(" <arguments> ")" <declaracio_funcio_sub> "{" <sentencies> "}"
+            String funcName = ((TokenDataPair) nodes.get(1)).getData();
+
+            AbstractTreeNode funcAttr = (AbstractTreeNode) nodes.get(5);
+            VariableTypes returnType = VariableTypes.VOID;
+            if (funcAttr.getTreeExtend().size() > 0) { // it may be epsilon
+                //  ":" <tipus>
+                AbstractTreeNode returnTypeNode = (AbstractTreeNode) funcAttr.getTreeExtend().get(1);
+                Token returnTypeToken = ((TokenDataPair) returnTypeNode.getTreeExtend().get(0)).getToken();
+                returnType = VariableTypes.tokenToVariableType(returnTypeToken);
+            }
+
+            symbolTable.addEntry(new SymbolTableFunctionEntries(returnType, funcName, new VariableTypes[]{ /* TODO */ }, symbolTable));
+        }
+        // TODO afegir variables enviades a les funcions
 
         for (Object node : nodes) {
             if (node instanceof AbstractTreeNode) symbolTable.addSubtable(this.generateSymbolTable((AbstractTreeNode) node, symbolTable));

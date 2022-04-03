@@ -73,6 +73,10 @@ public enum Token {
         }
     }
 
+    public Object getMatch() {
+        return (this.match != null) ? this.match : this.reg_match;
+    }
+
     public static TokenDataPair getMatch(String str) {
         String match;
         for(Token t : Token.values()) {
