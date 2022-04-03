@@ -83,10 +83,7 @@ public class Parser implements Compiler {
         }
 
         for (Object node : nodes) {
-            if (node instanceof AbstractTreeNode) {
-                SymbolTable subtable = this.generateSymbolTable((AbstractTreeNode) node, symbolTable);
-                if (subtable.isUsed()) symbolTable.addSubtable(subtable);
-            }
+            if (node instanceof AbstractTreeNode) symbolTable.addSubtable(this.generateSymbolTable((AbstractTreeNode) node, symbolTable));
             // else TokenDataPair; already done in the first part
         }
 
@@ -94,7 +91,8 @@ public class Parser implements Compiler {
     }
 
     private SymbolTable generateSymbolTable(AbstractTreeNode abstractTree) throws DuplicateVariableException {
-        return this.generateSymbolTable(abstractTree, null);
+        return this.generateSymbolTable(abstractTree, null)
+                .optimize();
     }
 
     public void compile(File out) throws InvalidTreeException, DuplicateVariableException {
