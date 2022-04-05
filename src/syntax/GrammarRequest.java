@@ -125,4 +125,11 @@ public abstract class GrammarRequest {
         }
         return r;
     }
+
+    public HashMap<Production, FirstFollowData> getFirstFollowHash() {
+        HashMap<Production, FirstFollowData> r = new HashMap<>();
+        List<FirstFollowData> ff = this.getFirstFollow();
+        for (FirstFollowData data : ff) r.put(data.getProduction(), data);
+        return r;
+    }
 }
