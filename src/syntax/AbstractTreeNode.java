@@ -50,32 +50,8 @@ public class AbstractTreeNode {
         return sb.toString();
     }
 
-    public String toTreeString() {
-
-        Queue<AbstractTreeNode> queue = new LinkedList<AbstractTreeNode>();
-
-        queue.add(this);
-        do {
-            StringBuilder sb = new StringBuilder();
-            AbstractTreeNode tree = queue.poll();
-            for (Object o : tree.treeExtend) {
-                if (o instanceof AbstractTreeNode) {
-                    sb.append("PRODUCTION ");
-                    queue.add((AbstractTreeNode)o);
-                } else {
-                    sb.append(((TokenDataPair)o).getToken().name()).append(' ');
-                }
-            }
-            System.out.println(sb.toString());
-            sb.append(" ");
-        } while (!queue.isEmpty());
-
-        return " ";
-    }
-
     public void printTree(StringBuilder buffer, String prefix, String childrenPrefix) {
         buffer.append(prefix);
-        // print name ?
         if (this.treeExtend.size() == 0) {
             buffer.append("EPSILON");
         } else {
@@ -124,6 +100,23 @@ public class AbstractTreeNode {
                 ((AbstractTreeNode)o).removeRedundantProductions();
                 if (((AbstractTreeNode)o).treeExtend.size() == 1) {
                     this.treeExtend.set(i, ((AbstractTreeNode)o).treeExtend.get(0));
+                }
+            }
+        }
+    }
+
+
+
+    public void getIntermediateCode(Object arg2) {
+        for (int i = this.treeExtend.size()-1; i >= 0; i--) {
+            Object o = this.treeExtend.get(i);
+
+            if (o instanceof AbstractTreeNode) {
+                // todo index -1 out of bound per altres funcionalitats
+                ((AbstractTreeNode)o).getIntermediateCode(this.treeExtend.get(i-1));
+            } else {
+                if (((TokenDataPair) o).getToken() == Token.SUM) {
+                    System.out.println("t0: " + ((TokenDataPair) arg2) + " + " + ((TokenDataPair) this.treeExtend.get(i+1)));
                 }
             }
         }

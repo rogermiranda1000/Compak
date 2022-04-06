@@ -111,6 +111,9 @@ public class Parser implements Compiler {
         buffer = new StringBuilder();
         tree.printTree(buffer, "", "");
         System.out.println(buffer.toString());
+
+
+        tree.getIntermediateCode(null);
     }
 
     public static void main(String[] args) throws FileNotFoundException {
