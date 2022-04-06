@@ -30,61 +30,61 @@ public class GrammarAnalizer extends GrammarRequest {
     protected static final Production possibleAssignacio = new Production();
 
     protected static final Production valueBit = new Production(
-            new Object[]{Token.TRUE},
-            new Object[]{Token.FALSE}
+        new Object[]{Token.TRUE},
+        new Object[]{Token.FALSE}
     );
 
     protected static final Production value = new Production(
-            new Object[]{Token.NUMBER},
-            new Object[]{Token.FLOAT},
-            new Object[]{Token.STRING_VALUE},
-            new Object[]{valueBit}
+        new Object[]{Token.NUMBER},
+        new Object[]{Token.FLOAT},
+        new Object[]{Token.STRING_VALUE},
+        new Object[]{valueBit}
     );
 
     protected static final Production tipus = new Production(
-            new Object[]{Token.STR},
-            new Object[]{Token.BIG},
-            new Object[]{Token.INT},
-            new Object[]{Token.BIT},
-            new Object[]{Token.FLO}
+        new Object[]{Token.STR},
+        new Object[]{Token.BIG},
+        new Object[]{Token.INT},
+        new Object[]{Token.BIT},
+        new Object[]{Token.FLO}
     );
 
     protected static final Production declaracioFuncioSub = new Production(
-            new Object[]{Token.RET_TYPE, tipus},
-            new Object[]{}
+        new Object[]{Token.RET_TYPE, tipus},
+        new Object[]{}
     );
 
     protected static final Production declaracioVariable = new Production(
-            new Object[]{tipus, Token.ID}
+        new Object[]{tipus, Token.ID}
     );
 
     protected static final Production symbolSumaResta = new Production(
-            new Object[]{Token.SUM},
-            new Object[]{Token.SUBSTRACT}
+        new Object[]{Token.SUM},
+        new Object[]{Token.SUBSTRACT}
     );
 
     protected static final Production symbolDivMult = new Production(
-            new Object[]{Token.MULT},
-            new Object[]{Token.DIVIDE},
-            new Object[]{Token.MOD}
+        new Object[]{Token.MULT},
+        new Object[]{Token.DIVIDE},
+        new Object[]{Token.MOD}
     );
 
     protected static final Production symbolCond = new Production(
-            new Object[]{Token.OR},
-            new Object[]{Token.AND},
-            new Object[]{Token.COMP},
-            new Object[]{Token.LT},
-            new Object[]{Token.GT}
+        new Object[]{Token.OR},
+        new Object[]{Token.AND},
+        new Object[]{Token.COMP},
+        new Object[]{Token.LT},
+        new Object[]{Token.GT}
     );
 
     protected static final Production negat = new Production(
-            new Object[]{Token.NOT},
-            new Object[]{}
+        new Object[]{Token.NOT},
+        new Object[]{}
     );
 
     protected static final Production id = new Production(
-            new Object[]{value},
-            new Object[]{Token.ID}
+        new Object[]{value},
+        new Object[]{Token.ID}
     );
 
     static {
