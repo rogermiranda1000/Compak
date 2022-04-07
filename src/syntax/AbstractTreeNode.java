@@ -1,5 +1,6 @@
 package syntax;
 
+import entities.SymbolTable;
 import entities.TokenDataPair;
 import entities.VariableTypes;
 
@@ -8,6 +9,8 @@ import java.util.List;
 
 public class AbstractTreeNode {
     private final Production originalProduction;
+
+    private SymbolTable table;
 
     /**
      * The productions inside this production evaluates to this type (UNKNOWN if it's not computed yet)
@@ -42,6 +45,14 @@ public class AbstractTreeNode {
 
     public void setEvaluates(VariableTypes evaluates) {
         this.evaluates = evaluates;
+    }
+
+    public SymbolTable getTable() {
+        return table;
+    }
+
+    public void setTable(SymbolTable table) {
+        this.table = table;
     }
 
     @Override

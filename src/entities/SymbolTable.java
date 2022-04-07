@@ -1,6 +1,7 @@
 package entities;
 
 import org.jetbrains.annotations.Nullable;
+import syntax.AbstractTreeNode;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -20,13 +21,17 @@ public class SymbolTable {
 
     private final List<SymbolTable> subtables;
 
-    public SymbolTable(SymbolTable parent) {
+    private final List<AbstractTreeNode> nodes;
+
+    public SymbolTable(AbstractTreeNode node, SymbolTable parent) {
         this.parent = parent;
         this.subtables = new ArrayList<>();
+        this.nodes = new ArrayList<>();
+        if (node != null) this.nodes.add(node);
     }
 
     public SymbolTable() {
-        this(null);
+        this(null, null);
     }
 
     public void addEntry(SymbolTableEntries entry) throws DuplicateVariableException {
@@ -51,6 +56,7 @@ public class SymbolTable {
             this.parent.subtables.remove(this);
             this.parent.subtables.add(this.subtables.get(0));
             this.subtables.get(0).parent = this.parent;
+            this.parent.nodes.addAll(this.nodes);
         }
         return this;
     }
@@ -61,5 +67,10 @@ public class SymbolTable {
 
     public boolean isUsed() {
         return this.entries.size() > 0 || this.subtables.size() > 0;
+    }
+
+    public void apply() {
+        for (AbstractTreeNode node : this.nodes) node.setTable(this);
+        for (SymbolTable table : this.subtables) table.apply();
     }
 }
