@@ -40,6 +40,7 @@ public class SymbolTable {
 
     public void addSubtable(SymbolTable symbolTable) {
         if (symbolTable.isUsed()) this.subtables.add(symbolTable); // first-phase optimization
+        else this.nodes.addAll(symbolTable.nodes);
     }
 
     public SymbolTable optimize() {
