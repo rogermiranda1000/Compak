@@ -71,7 +71,7 @@ public class Parser implements Compiler {
 
     private void generateSymbolTable(AbstractTreeNode abstractTree, SymbolTable parent, SymbolTable top) throws DuplicateVariableException {
         boolean topTable = false;
-        SymbolTable symbolTable = new SymbolTable(parent);
+        SymbolTable symbolTable = new SymbolTable(abstractTree, parent);
         List<Object> nodes = abstractTree.getTreeExtend();
 
         if (abstractTree.getOriginalProduction() == GrammarAnalizer.declaracioVariable) {
@@ -87,7 +87,7 @@ public class Parser implements Compiler {
         }
         else if (abstractTree.getOriginalProduction() == GrammarAnalizer.declaracioFuncio) {
             // functions must be on top
-            symbolTable = new SymbolTable(top);
+            symbolTable = new SymbolTable(abstractTree, top);
             topTable = true;
 
             // function declaration: "func " <nom_funcio> "(" <arguments> ")" <declaracio_funcio_sub> "{" <sentencies> "}"
@@ -139,6 +139,7 @@ public class Parser implements Compiler {
         AbstractTreeNode tree = this.generateAbstractTree();
         if (tree == null) return;
         SymbolTable symbolTable = this.generateSymbolTable(tree);
+        symbolTable.apply();
         System.out.println();
     }
 
