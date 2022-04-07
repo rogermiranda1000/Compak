@@ -69,7 +69,8 @@ public class Parser implements Compiler {
         return this.generateAbstractTree(this.grammarRequest.getFirstFollowHash(), this.grammarRequest.getEntryPoint());
     }
 
-    private SymbolTable generateSymbolTable(AbstractTreeNode abstractTree, SymbolTable parent) throws DuplicateVariableException {
+    private void generateSymbolTable(AbstractTreeNode abstractTree, SymbolTable parent, SymbolTable top) throws DuplicateVariableException {
+        boolean topTable = false;
         SymbolTable symbolTable = new SymbolTable(parent);
         List<Object> nodes = abstractTree.getTreeExtend();
 
@@ -80,10 +81,15 @@ public class Parser implements Compiler {
             symbolTable.addEntry(new SymbolTableVariableEntries(VariableTypes.tokenToVariableType(tipus), ((TokenDataPair) nodes.get(1)).getData(), symbolTable)); // <tipus> <nom_variable>
         }
         else if (abstractTree.getOriginalProduction() == GrammarAnalizer.start) {
+            // function already on top
             // main declaration
             symbolTable.addEntry(new SymbolTableFunctionEntries(VariableTypes.VOID, (String) Token.MAIN.getMatch(), new VariableTypes[]{}, symbolTable));
         }
         else if (abstractTree.getOriginalProduction() == GrammarAnalizer.declaracioFuncio) {
+            // functions must be on top
+            symbolTable = new SymbolTable(top);
+            topTable = true;
+
             // function declaration: "func " <nom_funcio> "(" <arguments> ")" <declaracio_funcio_sub> "{" <sentencies> "}"
             String funcName = ((TokenDataPair) nodes.get(1)).getData();
 
@@ -116,16 +122,17 @@ public class Parser implements Compiler {
         }
 
         for (Object node : nodes) {
-            if (node instanceof AbstractTreeNode) symbolTable.addSubtable(this.generateSymbolTable((AbstractTreeNode) node, symbolTable));
+            if (node instanceof AbstractTreeNode) this.generateSymbolTable((AbstractTreeNode) node, symbolTable, top);
             // else TokenDataPair; already done in the first part with Production
         }
 
-        return symbolTable;
+        (topTable ? top : parent).addSubtable(symbolTable);
     }
 
     private SymbolTable generateSymbolTable(AbstractTreeNode abstractTree) throws DuplicateVariableException {
-        return this.generateSymbolTable(abstractTree, null)
-                .optimize();
+        SymbolTable r = new SymbolTable();
+        this.generateSymbolTable(abstractTree, r, r);
+        return r.optimize();
     }
 
     public void compile(File out) throws InvalidTreeException, DuplicateVariableException {
