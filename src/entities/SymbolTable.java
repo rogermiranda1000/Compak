@@ -50,6 +50,7 @@ public class SymbolTable {
 
             this.parent.subtables.remove(this);
             this.parent.subtables.add(this.subtables.get(0));
+            this.subtables.get(0).parent = this.parent;
         }
         return this;
     }
