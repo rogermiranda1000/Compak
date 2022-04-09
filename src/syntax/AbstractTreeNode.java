@@ -40,4 +40,32 @@ public class AbstractTreeNode {
         }
         return sb.toString();
     }
+
+    public void printTree(StringBuilder buffer, String prefix, String childrenPrefix) {
+        buffer.append(prefix);
+        if (this.treeExtend.size() == 0) {
+            buffer.append("EPSILON");
+        } else {
+            buffer.append("PRODUCTION");
+        }
+        buffer.append('\n');
+
+        for (int i = 0; i < this.treeExtend.size(); i++) {
+            Object o = this.treeExtend.get(i);
+
+            if (o instanceof AbstractTreeNode){
+                if (i == this.treeExtend.size()-1) {
+                    ((AbstractTreeNode)o).printTree(buffer, childrenPrefix + "└── ", childrenPrefix + "    ");
+                } else {
+                    ((AbstractTreeNode)o).printTree(buffer, childrenPrefix + "├── ", childrenPrefix + "│   ");
+                }
+            } else {
+                if (i == this.treeExtend.size()-1) {
+                    buffer.append(childrenPrefix).append("└── ").append(((TokenDataPair) o).getToken().name()).append("\n");
+                } else {
+                    buffer.append(childrenPrefix).append("├── ").append(((TokenDataPair) o).getToken().name()).append("\n");
+                }
+            }
+        }
+    }
 }
