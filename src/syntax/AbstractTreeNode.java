@@ -40,4 +40,31 @@ public class AbstractTreeNode {
         }
         return sb.toString();
     }
+
+    public void removeEpsilons(AbstractTreeNode father) {
+        if (this.treeExtend.size() == 0) {
+            father.treeExtend.remove(this);
+        }
+
+        for (int i = 0; i < this.treeExtend.size(); i++) {
+            Object o = this.treeExtend.get(i);
+
+            if (o instanceof AbstractTreeNode) {
+                ((AbstractTreeNode)o).removeEpsilons(this);
+            }
+        }
+    }
+
+    public void removeRedundantProductions() {
+        for (int i = 0; i < this.treeExtend.size(); i++) {
+            Object o = this.treeExtend.get(i);
+
+            if (o instanceof AbstractTreeNode) {
+                ((AbstractTreeNode)o).removeRedundantProductions();
+                if (((AbstractTreeNode)o).treeExtend.size() == 1) {
+                    this.treeExtend.set(i, ((AbstractTreeNode)o).treeExtend.get(0));
+                }
+            }
+        }
+    }
 }
