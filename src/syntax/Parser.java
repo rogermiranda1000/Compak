@@ -76,7 +76,8 @@ public class Parser implements Compiler {
 
     public void compile(File out) {
         AbstractTreeNode tree = this.generateAbstractTree();
-        System.out.println();
+        tree.removeEpsilons(null);
+        tree.removeRedundantProductions();
     }
 
     public static void main(String[] args) throws FileNotFoundException {
