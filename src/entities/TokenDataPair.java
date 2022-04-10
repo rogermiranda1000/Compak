@@ -27,4 +27,13 @@ public class TokenDataPair {
         if (this.data != null) data = " (" + this.data + ")";
         return token.name() + data;
     }
+
+    public boolean isMeaningLessToken(Token[] list) {
+        for (int i = 0; i < list.length; i++) {
+            if (this.token == list[i]) {
+                return true;
+            }
+        }
+        return false;
+    }
 }

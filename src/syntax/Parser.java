@@ -78,6 +78,8 @@ public class Parser implements Compiler {
         AbstractSyntaxTree tree = new AbstractSyntaxTree(parseTree);
         tree.removeEpsilons();
         tree.removeRedundantProductions();
+        tree.removeMeaningLessTokens();
+        tree.removeRedundantProductions();
         return tree;
     }
 
