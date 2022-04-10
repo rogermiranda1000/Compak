@@ -83,6 +83,10 @@ public class AbstractTreeNode {
         }
     }
 
+    public void removeEpsilons() {
+        this.removeEpsilons(null);
+    }
+
     public void removeRedundantProductions() {
         for (int i = 0; i < this.treeExtend.size(); i++) {
             Object o = this.treeExtend.get(i);
