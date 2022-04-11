@@ -1,0 +1,6 @@
+func function() {
+    int a;
+    int b = 1;
+}
+main() {
+}
