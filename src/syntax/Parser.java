@@ -7,6 +7,7 @@ import lexic.TokenBuffer;
 import lexic.TokenRequest;
 import org.jetbrains.annotations.Nullable;
 import preprocesser.CodeProcessor;
+import testing.TestMaster;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -16,6 +17,7 @@ public class Parser implements Compiler {
     private final TokenRequest tokenRequest;
     private final GrammarRequest grammarRequest;
     private final SymbolTable symbolTable;
+    private AbstractTreeNode tree;
 
     public Parser(TokenRequest tokenRequest, GrammarRequest grammarRequest) {
         this.tokenRequest = tokenRequest;
@@ -43,7 +45,7 @@ public class Parser implements Compiler {
                         if (!first) {
                             Set<Token> firstFollow = firstFollowData.get((Production) tokenOrProduction).getFirst();
                             if (firstFollow.remove(Token.EPSILON)) firstFollow.addAll(firstFollowData.get((Production) tokenOrProduction).getFollow()); // if epsilon -> also follow
-                            //throw new InvalidTreeException(token.getToken(), this.tokenRequest.getCurrentLine(), this.tokenRequest.getCurrentColumn(), firstFollow);
+                            throw new InvalidTreeException(token.getToken(), this.tokenRequest.getCurrentLine(), this.tokenRequest.getCurrentColumn(), firstFollow);
                         }
                         this.tokenRequest.returnTokens(requestedTokens);
                         match = false;
@@ -56,8 +58,8 @@ public class Parser implements Compiler {
 
                     if (!token.getToken().equals((Token)tokenOrProduction)) {
                         // error; return the tokens and start with other production
-                        /*if (!first) throw new InvalidTreeException(token.getToken(), this.tokenRequest.getCurrentLine(),
-                                this.tokenRequest.getCurrentColumn(), (Token)tokenOrProduction);*/
+                        if (!first) throw new InvalidTreeException(token.getToken(), this.tokenRequest.getCurrentLine(),
+                                this.tokenRequest.getCurrentColumn(), (Token)tokenOrProduction);
                         this.tokenRequest.returnTokens(requestedTokens);
                         match = false;
                         break;
@@ -74,14 +76,18 @@ public class Parser implements Compiler {
         return this.generateAbstractTree(this.grammarRequest.getFirstFollowHash(), this.grammarRequest.getEntryPoint());
     }
 
-    public void compile(File out) {
-        AbstractTreeNode tree = this.generateAbstractTree();
+    public void compile(File out) throws InvalidTreeException {
+        this.tree = this.generateAbstractTree();
         System.out.println();
+    }
+    public void test() {
+        TestMaster.testAll();
     }
 
     public static void main(String[] args) throws FileNotFoundException {
         Parser p = new Parser(new TokenBuffer(new CodeProcessor("file.sus")), new GrammarAnalizer());
         p.compile(null);
+        p.test();
         System.out.println();
     }
 }
