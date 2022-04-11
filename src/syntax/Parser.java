@@ -78,7 +78,6 @@ public class Parser implements Compiler {
 
     public void compile(File out) throws InvalidTreeException {
         this.tree = this.generateAbstractTree();
-        System.out.println();
     }
     public void test() {
         TestMaster.testAll();
