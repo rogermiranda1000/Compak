@@ -8,6 +8,8 @@ import syntax.Parser;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Objects;
 
 public class TestMaster {
@@ -19,12 +21,17 @@ public class TestMaster {
 
     private static void testFolder(boolean shouldPass, String folder) {
         File testsFolder = new File(folder);
+        ArrayList<String> results = new ArrayList<>();
         for (String testFile : Objects.requireNonNull(testsFolder.list())) {
-            TestMaster.testFile(shouldPass, folder+"/"+testFile);
+            results.add(TestMaster.testFile(shouldPass, folder+"/"+testFile));
+        }
+        Collections.sort(results);
+        for (String error : results) {
+            if (!Objects.equals(error, "")) System.err.println(error);
         }
     }
 
-    private static void testFile(boolean shouldPass, String file) {
+    private static String testFile(boolean shouldPass, String file) {
         try {
             Parser p = new Parser(new TokenBuffer(new CodeProcessor(file)), new GrammarAnalizer());
             boolean passed = true;
@@ -33,10 +40,11 @@ public class TestMaster {
             } catch (InvalidTreeException e) {
                 passed = false;
             }
-            if (shouldPass != passed) System.err.println("Test error: Test " + file + " should have " + (shouldPass?"passed":"failed") + " but " + (passed?"passed":"failed"));
-
+            if (shouldPass != passed) return ("Test error: Test " + file + " should have " + (shouldPass?"passed":"failed") + " but " + (passed?"passed":"failed"));
+            return "";
         } catch (FileNotFoundException e) {
             e.printStackTrace();
+            return "";
         }
     }
 }
