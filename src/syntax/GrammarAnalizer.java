@@ -96,7 +96,7 @@ public class GrammarAnalizer extends GrammarRequest {
                 .addProduction();
 
         possiblesOpcions.addProduction(declaracioFuncio)
-                .addProduction(declaracioVariable);
+                .addProduction(declaracioVariable, Token.EOL);
 
         opcions.addProduction(possiblesOpcions, opcions)
                 .addProduction();
