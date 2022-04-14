@@ -5,6 +5,7 @@ import lexic.TokenBuffer;
 import lexic.TokenRequest;
 import org.jetbrains.annotations.Nullable;
 import preprocesser.CodeProcessor;
+import testing.TestMaster;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -13,10 +14,14 @@ import java.util.*;
 public class Parser implements Compiler {
     private final TokenRequest tokenRequest;
     private final GrammarRequest grammarRequest;
+    private final SymbolTable symbolTable;
+    private AbstractTreeNode tree;
 
     public Parser(TokenRequest tokenRequest, GrammarRequest grammarRequest) {
         this.tokenRequest = tokenRequest;
         this.grammarRequest = grammarRequest;
+
+        this.symbolTable = new SymbolTable();
     }
 
     @Nullable
@@ -135,17 +140,22 @@ public class Parser implements Compiler {
         return r.optimize();
     }
 
-    public void compile(File out) throws InvalidTreeException, DuplicateVariableException {
-        AbstractTreeNode tree = this.generateAbstractTree();
-        if (tree == null) return;
+    public boolean compile(File out) throws InvalidTreeException {
+        this.tree = this.generateAbstractTree();
+        if (tree == null) return false;
         SymbolTable symbolTable = this.generateSymbolTable(tree);
         symbolTable.apply();
-        System.out.println();
+        return true;
+    }
+
+    public void test() {
+        TestMaster.testAll();
     }
 
     public static void main(String[] args) throws FileNotFoundException {
         Parser p = new Parser(new TokenBuffer(new CodeProcessor("file.sus")), new GrammarAnalizer());
         p.compile(null);
+        p.test();
         System.out.println();
     }
 }

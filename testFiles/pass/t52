@@ -1,0 +1,10 @@
+str a = "hola";
+a = "";
+a = "hola \"text\"";
+a = "\"";
+a = "main(){}";
+a = "int";
+a = "false";
+a = "-+%!º&¬^*;";
+main() {
+}

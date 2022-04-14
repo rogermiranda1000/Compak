@@ -1,0 +1,7 @@
+func function(int a, big b, lf c, bit d, str e) {
+}
+func function2(int a, big b, lf c, bit d, str e): int {
+    return 0;
+}
+main() {
+}
