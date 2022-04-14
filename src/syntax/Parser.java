@@ -45,7 +45,7 @@ public class Parser implements Compiler {
                         if (!first) {
                             Set<Token> firstFollow = firstFollowData.get((Production) tokenOrProduction).getFirst();
                             if (firstFollow.remove(Token.EPSILON)) firstFollow.addAll(firstFollowData.get((Production) tokenOrProduction).getFollow()); // if epsilon -> also follow
-                            throw new InvalidTreeException(token.getToken(), this.tokenRequest.getCurrentLine(), this.tokenRequest.getCurrentColumn(), firstFollow);
+                            //throw new InvalidTreeException(token.getToken(), this.tokenRequest.getCurrentLine(), this.tokenRequest.getCurrentColumn(), firstFollow);
                         }
                         this.tokenRequest.returnTokens(requestedTokens);
                         match = false;
@@ -58,8 +58,8 @@ public class Parser implements Compiler {
 
                     if (!token.getToken().equals((Token)tokenOrProduction)) {
                         // error; return the tokens and start with other production
-                        if (!first) throw new InvalidTreeException(token.getToken(), this.tokenRequest.getCurrentLine(),
-                                this.tokenRequest.getCurrentColumn(), (Token)tokenOrProduction);
+                        /*if (!first) throw new InvalidTreeException(token.getToken(), this.tokenRequest.getCurrentLine(),
+                                this.tokenRequest.getCurrentColumn(), (Token)tokenOrProduction);*/
                         this.tokenRequest.returnTokens(requestedTokens);
                         match = false;
                         break;
@@ -76,8 +76,9 @@ public class Parser implements Compiler {
         return this.generateAbstractTree(this.grammarRequest.getFirstFollowHash(), this.grammarRequest.getEntryPoint());
     }
 
-    public void compile(File out) throws InvalidTreeException {
+    public boolean compile(File out) throws InvalidTreeException {
         this.tree = this.generateAbstractTree();
+        return tree != null;
     }
     public void test() {
         TestMaster.testAll();
