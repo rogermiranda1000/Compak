@@ -1,6 +1,3 @@
-//if ( else SUS "AMONG US"
-int a;
-
 main ( ) {
     int a = 3;
 }
