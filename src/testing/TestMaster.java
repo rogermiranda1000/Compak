@@ -34,9 +34,9 @@ public class TestMaster {
     private static String testFile(boolean shouldPass, String file) {
         try {
             Parser p = new Parser(new TokenBuffer(new CodeProcessor(file)), new GrammarAnalizer());
-            boolean passed = true;
+            boolean passed;
             try {
-                p.compile(null);
+                passed = p.compile(null);
             } catch (InvalidTreeException e) {
                 passed = false;
             }
