@@ -105,7 +105,7 @@ public class GrammarAnalizer extends GrammarRequest {
 
         start.addProduction(opcions, Token.MAIN, Token.OPN_PARENTH, Token.CLS_PARENTH, Token.OPN_CONTEXT, sentencies, Token.CLS_CONTEXT);
 
-        condicional.addProduction(Token.IF, Token.OPN_PARENTH, n0, Token.CLS_PARENTH, elseConditional);
+        condicional.addProduction(Token.IF, Token.OPN_PARENTH, n0, Token.CLS_PARENTH, Token.OPN_CONTEXT, sentencies, Token.CLS_CONTEXT, elseConditional);
 
         elseConditional.addProduction(Token.ELSE, Token.OPN_CONTEXT, sentencies, Token.CLS_CONTEXT)
                 .addProduction();
