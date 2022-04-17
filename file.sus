@@ -1,3 +1,9 @@
-main ( ) {
-    int a = 3;
+func a (int a, int b): int {
+    int c;
+    return a;
+}
+
+main () {
+    int a;
+    int b = a+b;
 }
