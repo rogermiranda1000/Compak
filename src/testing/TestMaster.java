@@ -15,7 +15,7 @@ import java.util.Objects;
 public class TestMaster {
 
     public static void main(String[] args) {
-        System.err.println((TestMaster.testFile(true, "testFiles/pass/t02")));
+        System.err.println((TestMaster.testFile(true, "testFiles/pass/t50")));
     }
 
     public static void testAll() {
