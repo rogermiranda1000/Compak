@@ -3,15 +3,13 @@ package syntax;
 import entities.Token;
 import entities.TokenDataPair;
 
-import java.util.ArrayList;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Queue;
+import java.util.*;
 
 public class AbstractSyntaxTree extends Tree {
     // Remove nodes for tokens that don't add meaning. Those are intermediate keywords (like "then"), separators (like comma) and brackets (like parenthesis).
     // Promote meaningful tokens (like "if") to be the parent of other tokens in the same rule.
     Token operation = null;
+
 
     public AbstractSyntaxTree(ParseTree parseTree) {
         super();
@@ -95,8 +93,30 @@ public class AbstractSyntaxTree extends Tree {
                 }
                 ((AbstractSyntaxTree)o).promoteTokens();
             } else {
+
             }
         }
+
+
+    }
+
+
+    public void reduceTokens(Stack<TokenDataPair> stack) {
+        for (int i = 0; i < this.treeExtend.size(); i++) {
+            Object o = this.treeExtend.get(i);
+
+            if (o instanceof AbstractSyntaxTree) {
+                ((AbstractSyntaxTree)o).reduceTokens(stack);
+            } else {
+                stack.push(((TokenDataPair)o));
+            }
+        }
+        System.out.println("....................");
+
+        while (!stack.isEmpty()) {
+            System.out.println(stack.pop());
+        }
+        System.out.println("------------------");
 
 
     }
