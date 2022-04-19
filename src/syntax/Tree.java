@@ -14,16 +14,17 @@ public class Tree {
 
     public void printTree() {
         StringBuilder sb = new StringBuilder();
-        printTree(sb, "", "");
+        printTree(sb, "", "", 0);
         System.out.println(sb);
     }
 
-    protected void printTree(StringBuilder buffer, String prefix, String childrenPrefix) {
+    protected void printTree(StringBuilder buffer, String prefix, String childrenPrefix, int t) {
         buffer.append(prefix);
         if (this.treeExtend.size() == 0) {
             buffer.append("EPSILON");
         } else {
-            buffer.append("PRODUCTION");
+            buffer.append("PRODUCTION" + " t" + t);
+            t++;
         }
         buffer.append('\n');
 
@@ -32,9 +33,9 @@ public class Tree {
 
             if (o instanceof AbstractSyntaxTree){
                 if (i == this.treeExtend.size()-1) {
-                    ((AbstractSyntaxTree)o).printTree(buffer, childrenPrefix + "└── ", childrenPrefix + "    ");
+                    ((AbstractSyntaxTree)o).printTree(buffer, childrenPrefix + "└── ", childrenPrefix + "    ", t);
                 } else {
-                    ((AbstractSyntaxTree)o).printTree(buffer, childrenPrefix + "├── ", childrenPrefix + "│   ");
+                    ((AbstractSyntaxTree)o).printTree(buffer, childrenPrefix + "├── ", childrenPrefix + "│   ", t);
                 }
             } else {
                 if (i == this.treeExtend.size()-1) {

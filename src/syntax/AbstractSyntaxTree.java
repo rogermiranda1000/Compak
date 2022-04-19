@@ -102,6 +102,7 @@ public class AbstractSyntaxTree extends Tree {
 
 
     public void reduceTokens(Stack<TokenDataPair> stack) {
+
         for (int i = 0; i < this.treeExtend.size(); i++) {
             Object o = this.treeExtend.get(i);
 
