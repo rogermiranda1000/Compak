@@ -10,6 +10,7 @@ import preprocesser.CodeProcessor;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.lang.reflect.Field;
 import java.util.*;
 
 public class Parser implements Compiler {
@@ -33,6 +34,10 @@ public class Parser implements Compiler {
             AbstractTreeNode r = new AbstractTreeNode(p);
             for (Object tokenOrProduction : productions) {
                 TokenDataPair token = this.tokenRequest.requestNextToken();
+
+                // Debugg to see errors from grammar
+                // System.out.println(token + " ? " + tokenOrProduction);
+
                 requestedTokens.add(token);
 
                 if (tokenOrProduction instanceof Production) {
@@ -43,7 +48,7 @@ public class Parser implements Compiler {
                         if (!first) {
                             Set<Token> firstFollow = firstFollowData.get((Production) tokenOrProduction).getFirst();
                             if (firstFollow.remove(Token.EPSILON)) firstFollow.addAll(firstFollowData.get((Production) tokenOrProduction).getFollow()); // if epsilon -> also follow
-                            //throw new InvalidTreeException(token.getToken(), this.tokenRequest.getCurrentLine(), this.tokenRequest.getCurrentColumn(), firstFollow);
+                            throw new InvalidTreeException(token.getToken(), this.tokenRequest.getCurrentLine(), this.tokenRequest.getCurrentColumn(), firstFollow);
                         }
                         this.tokenRequest.returnTokens(requestedTokens);
                         match = false;
@@ -56,8 +61,8 @@ public class Parser implements Compiler {
 
                     if (!token.getToken().equals((Token)tokenOrProduction)) {
                         // error; return the tokens and start with other production
-                        /*if (!first) throw new InvalidTreeException(token.getToken(), this.tokenRequest.getCurrentLine(),
-                                this.tokenRequest.getCurrentColumn(), (Token)tokenOrProduction);*/
+                        if (!first) throw new InvalidTreeException(token.getToken(), this.tokenRequest.getCurrentLine(),
+                                this.tokenRequest.getCurrentColumn(), (Token)tokenOrProduction);
                         this.tokenRequest.returnTokens(requestedTokens);
                         match = false;
                         break;
@@ -75,8 +80,40 @@ public class Parser implements Compiler {
     }
 
     public void compile(File out) {
+        // Debugg to show functions to check grammar
+        /*
+        for (Production i : this.grammarRequest.getFirstFollowHash().keySet()) {
+
+            System.out.print(i + " -> ");
+            for (int j = 0; j < i.getProduccions().size(); j++) {
+                System.out.print(Arrays.toString(i.getProduccions().get(j)));
+            }
+            System.out.println("");
+        }
+        */
+
         AbstractTreeNode tree = this.generateAbstractTree();
-        System.out.println();
+
+        StringBuilder buffer = new StringBuilder();
+        tree.printTree(buffer, "", "");
+        System.out.println(buffer.toString());
+
+
+        tree.removeEpsilons(null);
+
+        buffer = new StringBuilder();
+        tree.printTree(buffer, "", "");
+        System.out.println(buffer.toString());
+
+
+        tree.removeRedundantProductions();
+
+        buffer = new StringBuilder();
+        tree.printTree(buffer, "", "");
+        System.out.println(buffer.toString());
+
+
+        tree.getIntermediateCode(null);
     }
 
     public static void main(String[] args) throws FileNotFoundException {

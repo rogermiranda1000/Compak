@@ -133,8 +133,9 @@ public class GrammarAnalizer extends GrammarRequest {
         n3Sub.addProduction(Token.RAISE, n5, n3Sub)
                 .addProduction();
 
-        n5.addProduction(negat, Token.OPN_PARENTH, n0, Token.CLS_PARENTH)
-                .addProduction(Token.ID);
+        n5.addProduction(Token.NOT, Token.OPN_PARENTH, n0, Token.CLS_PARENTH)
+                .addProduction(Token.OPN_PARENTH, n0, Token.CLS_PARENTH)
+                .addProduction(id);
 
         sentencies.addProduction(possibleSentencies, sentencies)
                 .addProduction(Token.RETURN, id, Token.EOL)
