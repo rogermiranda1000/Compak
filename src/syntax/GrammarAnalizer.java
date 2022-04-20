@@ -30,15 +30,15 @@ public class GrammarAnalizer extends GrammarRequest {
     protected static final Production possibleAssignacio = new Production();
 
     protected static final Production valueBit = new Production(
-            new Object[]{Token.TRUE},
-            new Object[]{Token.FALSE}
+        new Object[]{Token.TRUE},
+        new Object[]{Token.FALSE}
     );
 
     protected static final Production value = new Production(
-            new Object[]{Token.NUMBER},
-            new Object[]{Token.FLOAT},
-            new Object[]{Token.STRING_VALUE},
-            new Object[]{valueBit}
+        new Object[]{Token.NUMBER},
+        new Object[]{Token.FLOAT},
+        new Object[]{Token.STRING_VALUE},
+        new Object[]{valueBit}
     );
 
     protected static final Production tipus = new Production(
@@ -90,13 +90,14 @@ public class GrammarAnalizer extends GrammarRequest {
     static {
         declaracioFuncio.addProduction(Token.FUNC, Token.ID, Token.OPN_PARENTH, arguments, Token.CLS_PARENTH, declaracioFuncioSub, Token.OPN_CONTEXT, sentencies, Token.CLS_CONTEXT);
 
-        arguments.addProduction(tipus, Token.ID, argumentsSub);
+        arguments.addProduction(tipus, Token.ID, argumentsSub)
+                .addProduction();
 
         argumentsSub.addProduction(Token.COMMA, arguments)
                 .addProduction();
 
         possiblesOpcions.addProduction(declaracioFuncio)
-                .addProduction(declaracioVariable);
+                .addProduction(declaracioVariable, Token.EOL);
 
         opcions.addProduction(possiblesOpcions, opcions)
                 .addProduction();
@@ -133,8 +134,9 @@ public class GrammarAnalizer extends GrammarRequest {
         n3Sub.addProduction(Token.RAISE, n5, n3Sub)
                 .addProduction();
 
-        n5.addProduction(negat, Token.OPN_PARENTH, n0, Token.CLS_PARENTH)
-                .addProduction(Token.ID);
+        n5.addProduction(Token.NOT, Token.OPN_PARENTH, n0, Token.CLS_PARENTH)
+                .addProduction(Token.OPN_PARENTH, n0, Token.CLS_PARENTH)
+                .addProduction(id);
 
         sentencies.addProduction(possibleSentencies, sentencies)
                 .addProduction(Token.RETURN, id, Token.EOL)

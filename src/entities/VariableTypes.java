@@ -5,7 +5,10 @@ public enum VariableTypes {
     BIG(16),
     FLO(4),
     STR(1),
-    BIT(1);
+    BIT(1),
+
+    VOID(0), // para funciones
+    UNKNOWN(0); // aún no se ha computado
 
     private int size;
     private VariableTypes(int size) {
@@ -14,5 +17,27 @@ public enum VariableTypes {
 
     public int getSize() {
         return this.size;
+    }
+
+    public static VariableTypes tokenToVariableType(Token t) {
+        switch (t) {
+            case STR:
+                return VariableTypes.STR;
+
+            case BIG:
+                return VariableTypes.BIG;
+
+            case INT:
+                return VariableTypes.INT;
+
+            case BIT:
+                return VariableTypes.BIT;
+
+            case FLO:
+                return VariableTypes.FLO;
+
+            default:
+                return VariableTypes.UNKNOWN;
+        }
     }
 }
