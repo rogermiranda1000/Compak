@@ -90,13 +90,14 @@ public class GrammarAnalizer extends GrammarRequest {
     static {
         declaracioFuncio.addProduction(Token.FUNC, Token.ID, Token.OPN_PARENTH, arguments, Token.CLS_PARENTH, declaracioFuncioSub, Token.OPN_CONTEXT, sentencies, Token.CLS_CONTEXT);
 
-        arguments.addProduction(tipus, Token.ID, argumentsSub);
+        arguments.addProduction(tipus, Token.ID, argumentsSub)
+                .addProduction();
 
         argumentsSub.addProduction(Token.COMMA, arguments)
                 .addProduction();
 
         possiblesOpcions.addProduction(declaracioFuncio)
-                .addProduction(declaracioVariable);
+                .addProduction(declaracioVariable, Token.EOL);
 
         opcions.addProduction(possiblesOpcions, opcions)
                 .addProduction();

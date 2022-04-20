@@ -1,0 +1,6 @@
+int a = 0;
+int b = 4;
+main() {
+    loop (for a in range b) {
+    }
+}
