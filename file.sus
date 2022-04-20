@@ -1,6 +1,8 @@
-//if ( else SUS "AMONG US"
-int a;
-
 main ( ) {
-    int a = 3;
+    d = 3 + (5 + 3) + 2 + 1;
+    int a = ((3 + 5) * (2 + 6)) / 3;
+    bit c = ((true) & (false));
+    loop (3) {
+        a = a + 1;
+    }
 }

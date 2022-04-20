@@ -25,19 +25,19 @@ public class Parser implements Compiler {
     }
 
     @Nullable
-    private AbstractTreeNode generateAbstractTree(HashMap<Production, FirstFollowData> firstFollowData, Production p) throws InvalidTreeException {
+    private ParseTree generateParseTree(HashMap<Production, FirstFollowData> firstFollowData, Production p) throws InvalidTreeException {
         for (Object[] productions : p.getProduccions()) {
             List<TokenDataPair> requestedTokens = new ArrayList<>();
             boolean match = true,
                 first = true; // if it's the first token it can fail, but if not then it's an error
-            AbstractTreeNode r = new AbstractTreeNode(p);
+            ParseTree r = new ParseTree();
             for (Object tokenOrProduction : productions) {
                 TokenDataPair token = this.tokenRequest.requestNextToken();
                 requestedTokens.add(token);
 
                 if (tokenOrProduction instanceof Production) {
                     this.tokenRequest.returnTokens(requestedTokens.remove(requestedTokens.size()-1));
-                    AbstractTreeNode node = this.generateAbstractTree(firstFollowData, (Production) tokenOrProduction);
+                    ParseTree node = this.generateParseTree(firstFollowData, (Production) tokenOrProduction);
                     if (node == null) {
                         // error; return the tokens and start with other production
                         if (!first) {
@@ -70,20 +70,39 @@ public class Parser implements Compiler {
         return null;
     }
 
-    private AbstractTreeNode generateAbstractTree() throws InvalidTreeException {
-        return this.generateAbstractTree(this.grammarRequest.getFirstFollowHash(), this.grammarRequest.getEntryPoint());
+    private ParseTree generateParseTree() throws InvalidTreeException {
+        return this.generateParseTree(this.grammarRequest.getFirstFollowHash(), this.grammarRequest.getEntryPoint());
+    }
+
+    private AbstractSyntaxTree generateAbstractSyntaxTree(ParseTree parseTree) {
+        AbstractSyntaxTree tree = new AbstractSyntaxTree(parseTree);
+        tree.removeEpsilons();
+        tree.removeRedundantProductions();
+        tree.removeMeaningLessTokens();
+        tree.removeRedundantProductions();
+        tree.calculateLevels();
+        tree.calculateHeight();
+
+        tree.recalculateFathers();
+        tree.promoteTokens();
+
+        tree.removeRedundantProductions();
+        tree.recalculateFathers();
+
+        // First approach to 3@Code
+        // tree.travelWithPriorityDepth();
+
+        return tree;
     }
 
     public void compile(File out) {
-        AbstractTreeNode tree = this.generateAbstractTree();
-        tree.removeEpsilons();
-        tree.removeRedundantProductions();
-        System.out.println();
+        ParseTree parseTree = this.generateParseTree();
+        AbstractSyntaxTree abstractSyntaxTree = this.generateAbstractSyntaxTree(parseTree);
+        abstractSyntaxTree.printTree();
     }
 
     public static void main(String[] args) throws FileNotFoundException {
         Parser p = new Parser(new TokenBuffer(new CodeProcessor("file.sus")), new GrammarAnalizer());
         p.compile(null);
-        System.out.println();
     }
 }
