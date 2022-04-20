@@ -2,8 +2,10 @@ package intermediateCode;
 
 import entities.Token;
 import entities.TokenDataPair;
+import syntax.AbstractSyntaxTree;
 
 import java.io.Serial;
+import java.util.Objects;
 
 public class ThreeAddressLine {
     private final TokenDataPair op;
@@ -40,9 +42,36 @@ public class ThreeAddressLine {
         return op;
     }
 
-    @Override
-    public String toString(){
-        return (op.toString() + arg1.toString() + arg2.toString() + serialCounter);
+    public String printLine(int idOp) {
+        String arg1String;
+        String arg2String;
 
+        if (arg1 instanceof TokenDataPair) {
+            arg1String = ((TokenDataPair) arg1).getData();
+        } else {
+            arg1String = "t" + String.valueOf(((AbstractSyntaxTree) arg1).getId());
+        }
+
+        if (arg2 instanceof TokenDataPair) {
+            arg2String = ((TokenDataPair) arg2).getData();
+        } else {
+            arg2String = "t" + String.valueOf(((AbstractSyntaxTree) arg2).getId());
+        }
+
+        if (op == null) {
+            if (arg1String == null) {
+                return arg2String;
+            } else if (arg2String == null) {
+                return arg1String;
+            } else {
+                return null;
+            }
+        }
+
+        if (Objects.equals(op.getData(), "=")) {
+            return (arg1String + " := " + arg2String  + "\nt" + idOp + " := " + arg1String);
+        }
+
+        return ("t" + idOp + " := " + arg1String + " " + op.getData() + " " + arg2String);
     }
 }
