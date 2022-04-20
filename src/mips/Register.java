@@ -1,7 +1,6 @@
 package mips;
 
 public class Register {
-    //TODO: atribut que indica quan es llibera el registre
     private int positionThatEnds;
     //Estat del registre
     private boolean status;
