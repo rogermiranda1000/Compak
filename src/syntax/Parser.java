@@ -80,8 +80,18 @@ public class Parser implements Compiler {
         tree.removeRedundantProductions();
         tree.removeMeaningLessTokens();
         tree.removeRedundantProductions();
-        Stack<TokenDataPair> stack = new Stack<>();
-        tree.reduceTokens(stack);
+        tree.calculateLevels();
+        tree.calculateHeight();
+
+        tree.recalculateFathers();
+        tree.promoteTokens();
+
+        tree.removeRedundantProductions();
+        tree.recalculateFathers();
+
+        // First approach to 3@Code
+        // tree.travelWithPriorityDepth();
+
         return tree;
     }
 

@@ -5,14 +5,17 @@ import entities.TokenDataPair;
 
 import java.util.*;
 
-public class AbstractSyntaxTree extends Tree {
-    // Remove nodes for tokens that don't add meaning. Those are intermediate keywords (like "then"), separators (like comma) and brackets (like parenthesis).
-    // Promote meaningful tokens (like "if") to be the parent of other tokens in the same rule.
-    Token operation = null;
+public class AbstractSyntaxTree {
+    private final List<Object> treeExtend;
+    private AbstractSyntaxTree father;
+    private static int t;
+    private int level;
+    private int height;
+    private TokenDataPair operation;
 
 
     public AbstractSyntaxTree(ParseTree parseTree) {
-        super();
+        this.treeExtend = new ArrayList<>();
         cloneTree(parseTree);
     }
 
@@ -22,6 +25,7 @@ public class AbstractSyntaxTree extends Tree {
 
             if (o instanceof ParseTree) {
                 Object o2 = new AbstractSyntaxTree((ParseTree) o);
+                ((AbstractSyntaxTree)o2).father = this;
                 treeExtend.add(o2);
             } else {
                 treeExtend.add(o);
@@ -78,47 +82,161 @@ public class AbstractSyntaxTree extends Tree {
         }
     }
 
-    public void promoteTokens() {
-        Queue<TokenDataPair> queue = new LinkedList<TokenDataPair>();
-
+    public void promoteOneLevelTokens() {
         for (int i = 0; i < this.treeExtend.size(); i++) {
             Object o = this.treeExtend.get(i);
 
             if (o instanceof AbstractSyntaxTree) {
-                if (((AbstractSyntaxTree)o).treeExtend.get(0) instanceof TokenDataPair) {
-                    Token token = ((TokenDataPair) ((AbstractSyntaxTree)o).treeExtend.get(0)).getToken();
-                    if (token == Token.ASSIGN) {
+                //((AbstractSyntaxTree)o).promoteOneLevelTokens();
+            } else {
+                // Promote un nivell
+                Token tk = ((TokenDataPair) o).getToken();
 
+                if (i == 1 && tk == Token.ASSIGN) {
+                    if (this.father != null && !((TokenDataPair) o).isPromoted()) {
+                        ((TokenDataPair) o).setPromoted();
+                        this.operation = ((TokenDataPair) o);
+                        this.treeExtend.remove(o);
+                    }
+                } else if (tk == Token.SUM || tk == Token.SUBSTRACT || tk == Token.AND || tk == Token.OR || tk == Token.MULT || tk == Token.DIVIDE || tk == Token.ASSIGN) {
+                    if (this.father != null && !((TokenDataPair) o).isPromoted()) {
+                        ((TokenDataPair) o).setPromoted();
+                        this.father.operation = ((TokenDataPair) o);
+                        this.treeExtend.remove(o);
                     }
                 }
-                ((AbstractSyntaxTree)o).promoteTokens();
-            } else {
-
             }
         }
-
-
     }
 
-
-    public void reduceTokens(Stack<TokenDataPair> stack) {
+    public void promoteTokens() {
+        PriorityQueue<AbstractSyntaxTree> pq = new PriorityQueue<AbstractSyntaxTree>((a,b) -> b.height - a.height);
 
         for (int i = 0; i < this.treeExtend.size(); i++) {
             Object o = this.treeExtend.get(i);
 
             if (o instanceof AbstractSyntaxTree) {
-                ((AbstractSyntaxTree)o).reduceTokens(stack);
-            } else {
-                stack.push(((TokenDataPair)o));
+                pq.add(((AbstractSyntaxTree)o));
             }
         }
-        System.out.println("....................");
 
-        while (!stack.isEmpty()) {
-            System.out.println(stack.pop());
+        while (!pq.isEmpty()) {
+            AbstractSyntaxTree tree = pq.remove();
+            tree.promoteTokens();
+            tree.promoteOneLevelTokens();
         }
-        System.out.println("------------------");
+    }
 
+    public void calculateLevels() {
+        this.calculateLevels(0);
+    }
 
+    private void calculateLevels(int level) {
+        this.level = level;
+        for (int i = 0; i < treeExtend.size(); i++) {
+            Object o = treeExtend.get(i);
+            if (o instanceof AbstractSyntaxTree) {
+                ((AbstractSyntaxTree)o).calculateLevels(level+1);
+            }
+        }
+    }
+
+    public int calculateHeight() {
+        int max = Integer.MIN_VALUE;
+        int value;
+
+        for (int i = 0; i < treeExtend.size(); i++) {
+            Object o = treeExtend.get(i);
+            if (o instanceof AbstractSyntaxTree) {
+                value = ((AbstractSyntaxTree)o).calculateHeight();
+                ((AbstractSyntaxTree)o).height = value;
+
+                if (value > max) {
+                    max = value;
+                }
+            }
+        }
+
+        if (max == Integer.MIN_VALUE) {
+            return 0;
+        }
+
+        return max+1;
+    }
+
+    public void travelWithPriorityDepth() {
+        PriorityQueue<AbstractSyntaxTree> pq = new PriorityQueue<AbstractSyntaxTree>((a,b) -> b.height - a.height);
+
+        for (int i = 0; i < this.treeExtend.size(); i++) {
+            Object o = this.treeExtend.get(i);
+
+            if (o instanceof AbstractSyntaxTree) {
+                pq.add(((AbstractSyntaxTree)o));
+                //((AbstractSyntaxTree)o).reduceTokens(stack);
+            } else {
+                //stack.push(((TokenDataPair)o));
+            }
+        }
+
+        while (!pq.isEmpty()) {
+            AbstractSyntaxTree tree = pq.remove();
+            tree.travelWithPriorityDepth();
+            System.out.println();
+            System.out.println("h: " + tree.height + " - " + tree.treeExtend + " fath: " + tree.father.operation);
+        }
+    }
+
+    public static void initT() {
+        AbstractSyntaxTree.t = 0;
+    }
+
+    public void recalculateFathers() {
+        for (int i = 0; i < this.treeExtend.size(); i++) {
+            Object o = this.treeExtend.get(i);
+
+            if (o instanceof AbstractSyntaxTree) {
+                ((AbstractSyntaxTree)o).father = this;
+                ((AbstractSyntaxTree)o).recalculateFathers();
+            }
+        }
+    }
+
+    public void printTree() {
+        StringBuilder sb = new StringBuilder();
+        printTree(sb, "", "");
+        System.out.println(sb);
+    }
+
+    protected void printTree(StringBuilder buffer, String prefix, String childrenPrefix) {
+        buffer.append(prefix);
+        if (this.treeExtend.size() == 0) {
+            buffer.append("EPSILON");
+        } else {
+            if (this.operation == null) {
+                buffer.append("⬜");
+            } else {
+                buffer.append(this.operation.toString());
+            }
+
+        }
+        buffer.append('\n');
+
+        for (int i = 0; i < this.treeExtend.size(); i++) {
+            Object o = this.treeExtend.get(i);
+
+            if (o instanceof AbstractSyntaxTree){
+                if (i == this.treeExtend.size()-1) {
+                    ((AbstractSyntaxTree)o).printTree(buffer, childrenPrefix + "└── ", childrenPrefix + "    ");
+                } else {
+                    ((AbstractSyntaxTree)o).printTree(buffer, childrenPrefix + "├── ", childrenPrefix + "│   ");
+                }
+            } else {
+                if (i == this.treeExtend.size()-1) {
+                    buffer.append(childrenPrefix).append("└── ").append(((TokenDataPair) o)).append("\n");
+                } else {
+                    buffer.append(childrenPrefix).append("├── ").append(((TokenDataPair) o)).append("\n");
+                }
+            }
+        }
     }
 }
