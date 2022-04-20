@@ -1,6 +1,7 @@
 package intermediateCode;
 
 import entities.Token;
+import entities.TokenDataPair;
 
 import java.util.ArrayList;
 
@@ -20,7 +21,16 @@ public class IntermediateCodeData {
         data = new ArrayList<>();
     }
 
-    public void addLine(Token op, String arg1, String arg2, String result) {
-        data.add(new ThreeAddressLine(op, arg1, arg2, result));
+    public void addLine(TokenDataPair op, Object arg1, Object arg2) {
+        data.add(new ThreeAddressLine(op, arg1, arg2));
+    }
+
+    @Override
+    public String toString(){
+        StringBuilder s = new StringBuilder();
+        for(ThreeAddressLine d : data){
+            s.append(d.toString());
+        }
+        return s.toString();
     }
 }
