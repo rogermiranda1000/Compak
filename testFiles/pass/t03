@@ -1,0 +1,5 @@
+func function() {
+    return 0;
+}
+main() {
+}
