@@ -173,13 +173,13 @@ public class Parser implements Compiler {
         symbolTable.apply();
 
         this.abstractSyntaxTree = this.generateAbstractSyntaxTree(parseTree);
-        //this.abstractSyntaxTree.printTree();
+        this.abstractSyntaxTree.printTree();
 
         return true;
     }
 
     public void test() {
-        TestMaster.testAll();
+        //TestMaster.testAll();
     }
 
     public static void main(String[] args) throws FileNotFoundException {
