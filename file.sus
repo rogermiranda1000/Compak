@@ -1,4 +1,9 @@
-//if ( else SUS "AMONG US"
-//int a ;
+func a (int a, int b): int {
+    int c;
+    return a;
+}
 
-main ( ) { }
+main () {
+    int a;
+    int b = a+b;
+}
