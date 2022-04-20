@@ -3,10 +3,20 @@ package entities;
 public class TokenDataPair {
     private final Token token;
     private final String data; // used for variables, functions, strings and digits
+    private boolean promoted;
 
     public TokenDataPair(Token token, String data) {
         this.token = token;
         this.data = data;
+        this.promoted = false;
+    }
+
+    public boolean isPromoted() {
+        return promoted;
+    }
+
+    public void setPromoted() {
+        this.promoted = true;
     }
 
     public TokenDataPair(Token token) {

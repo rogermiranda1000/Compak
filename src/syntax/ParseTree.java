@@ -5,9 +5,11 @@ import entities.TokenDataPair;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ParseTree extends Tree {
+public class ParseTree {
+    private final List<Object> treeExtend;
+
     public ParseTree() {
-        super();
+        this.treeExtend = new ArrayList<>();
     }
 
     public List<Object> getTreeExtend() {
