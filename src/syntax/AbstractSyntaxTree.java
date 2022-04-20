@@ -2,6 +2,9 @@ package syntax;
 
 import entities.Token;
 import entities.TokenDataPair;
+import intermediateCode.IntermediateCodeData;
+import intermediateCode.IntermediateCodeGenerator;
+import intermediateCode.ThreeAddressLine;
 
 import java.util.*;
 
@@ -164,7 +167,9 @@ public class AbstractSyntaxTree {
         return max+1;
     }
 
-    public void travelWithPriorityDepth() {
+
+
+    public void travelWithPriorityDepth(IntermediateCodeData intermediateCodeData) {
         PriorityQueue<AbstractSyntaxTree> pq = new PriorityQueue<AbstractSyntaxTree>((a,b) -> b.height - a.height);
 
         for (int i = 0; i < this.treeExtend.size(); i++) {
@@ -180,9 +185,19 @@ public class AbstractSyntaxTree {
 
         while (!pq.isEmpty()) {
             AbstractSyntaxTree tree = pq.remove();
-            tree.travelWithPriorityDepth();
+            tree.travelWithPriorityDepth(intermediateCodeData);
             System.out.println();
-            System.out.println("h: " + tree.height + " - " + tree.treeExtend + " fath: " + tree.father.operation);
+
+            intermediateCodeData.addLine(
+                    tree.operation,
+                    tree.treeExtend.get(0), tree.treeExtend.get(1));
+
+
+
+
+            System.out.println("h: " + tree.height + " - " + tree.treeExtend + " fath: " + tree.operation);
+
+            System.out.println(tree.operation);
         }
     }
 

@@ -1,6 +1,7 @@
 package syntax;
 
 import entities.*;
+import intermediateCode.IntermediateCodeGenerator;
 import lexic.TokenBuffer;
 import lexic.TokenRequest;
 import org.jetbrains.annotations.Nullable;
@@ -175,6 +176,10 @@ public class Parser implements Compiler {
         this.abstractSyntaxTree = this.generateAbstractSyntaxTree(parseTree);
         this.abstractSyntaxTree.printTree();
 
+        //TODO: Eliminar?
+        IntermediateCodeGenerator intermediateCodeGenerator = new IntermediateCodeGenerator();
+        intermediateCodeGenerator.process(abstractSyntaxTree);
+
         return true;
     }
 
@@ -185,6 +190,7 @@ public class Parser implements Compiler {
     public static void main(String[] args) throws FileNotFoundException {
         Parser p = new Parser(new TokenBuffer(new CodeProcessor("file.sus")), new GrammarAnalizer());
         p.compile(null);
-        p.test();
+        //TODO: Uncomment for final commit
+        //p.test();
     }
 }
