@@ -15,7 +15,8 @@ public class Parser implements Compiler {
     private final TokenRequest tokenRequest;
     private final GrammarRequest grammarRequest;
     private final SymbolTable symbolTable;
-    private AbstractSyntaxTree tree;
+    private AbstractSyntaxTree abstractSyntaxTree;
+    private ParseTree parseTree;
 
     public Parser(TokenRequest tokenRequest, GrammarRequest grammarRequest) {
         this.tokenRequest = tokenRequest;
@@ -30,7 +31,7 @@ public class Parser implements Compiler {
             List<TokenDataPair> requestedTokens = new ArrayList<>();
             boolean match = true,
                 first = true; // if it's the first token it can fail, but if not then it's an error
-            ParseTree r = new ParseTree();
+            ParseTree r = new ParseTree(p);
             for (Object tokenOrProduction : productions) {
                 TokenDataPair token = this.tokenRequest.requestNextToken();
                 requestedTokens.add(token);
@@ -95,52 +96,52 @@ public class Parser implements Compiler {
         return tree;
     }
 
-    private void generateSymbolTable(AbstractSyntaxTree abstractTree, SymbolTable parent, SymbolTable top) throws DuplicateVariableException {
+    private void generateSymbolTable(ParseTree parseTree, SymbolTable parent, SymbolTable top) throws DuplicateVariableException {
         boolean topTable = false;
-        SymbolTable symbolTable = new SymbolTable(abstractTree, parent);
-        List<Object> nodes = abstractTree.getTreeExtend();
+        SymbolTable symbolTable = new SymbolTable(parseTree, parent);
+        List<Object> nodes = parseTree.getTreeExtend();
 
-        if (abstractTree.getOriginalProduction() == GrammarAnalizer.declaracioVariable) {
+        if (parseTree.getOriginalProduction() == GrammarAnalizer.declaracioVariable) {
             // variable declaration
-            AbstractSyntaxTree tipusNode = (AbstractSyntaxTree) nodes.get(0);
+            ParseTree tipusNode = (ParseTree) nodes.get(0);
             Token tipus = ((TokenDataPair) tipusNode.getTreeExtend().get(0)).getToken();
             symbolTable.addEntry(new SymbolTableVariableEntries(VariableTypes.tokenToVariableType(tipus), ((TokenDataPair) nodes.get(1)).getData(), symbolTable)); // <tipus> <nom_variable>
         }
-        else if (abstractTree.getOriginalProduction() == GrammarAnalizer.start) {
+        else if (parseTree.getOriginalProduction() == GrammarAnalizer.start) {
             // function already on top
             // main declaration
             symbolTable.addEntry(new SymbolTableFunctionEntries(VariableTypes.VOID, (String) Token.MAIN.getMatch(), new VariableTypes[]{}, symbolTable));
         }
-        else if (abstractTree.getOriginalProduction() == GrammarAnalizer.declaracioFuncio) {
+        else if (parseTree.getOriginalProduction() == GrammarAnalizer.declaracioFuncio) {
             // functions must be on top
-            symbolTable = new SymbolTable(abstractTree, top);
+            symbolTable = new SymbolTable(parseTree, top);
             topTable = true;
 
             // function declaration: "func " <nom_funcio> "(" <arguments> ")" <declaracio_funcio_sub> "{" <sentencies> "}"
             String funcName = ((TokenDataPair) nodes.get(1)).getData();
 
-            AbstractSyntaxTree funcRet = (AbstractSyntaxTree) nodes.get(5);
+            ParseTree funcRet = (ParseTree) nodes.get(5);
             VariableTypes returnType = VariableTypes.VOID;
             if (funcRet.getTreeExtend().size() > 0) { // it may be epsilon
                 //  ":" <tipus>
-                AbstractSyntaxTree returnTypeNode = (AbstractSyntaxTree) funcRet.getTreeExtend().get(1);
+                ParseTree returnTypeNode = (ParseTree) funcRet.getTreeExtend().get(1);
                 Token returnTypeToken = ((TokenDataPair) returnTypeNode.getTreeExtend().get(0)).getToken();
                 returnType = VariableTypes.tokenToVariableType(returnTypeToken);
             }
 
-            AbstractSyntaxTree funcAttr = (AbstractSyntaxTree) nodes.get(3);
+            ParseTree funcAttr = (ParseTree) nodes.get(3);
             List<VariableTypes> arguments = new ArrayList<>();
             while (funcAttr.getTreeExtend().size() > 0) { // it may be epsilon
                 // <tipus> <nom_variable> <arguments_sub>
-                AbstractSyntaxTree argumentTypeNode = (AbstractSyntaxTree) funcAttr.getTreeExtend().get(0);
+                ParseTree argumentTypeNode = (ParseTree) funcAttr.getTreeExtend().get(0);
                 Token argumentTypeToken = ((TokenDataPair) argumentTypeNode.getTreeExtend().get(0)).getToken();
                 VariableTypes argumentType = VariableTypes.tokenToVariableType(argumentTypeToken);
 
                 arguments.add(argumentType);
                 symbolTable.addEntry(new SymbolTableVariableEntries(argumentType, ((TokenDataPair) funcAttr.getTreeExtend().get(1)).getData(), symbolTable));
 
-                funcAttr = (AbstractSyntaxTree) funcAttr.getTreeExtend().get(2);
-                if (funcAttr.getTreeExtend().size() > 0) funcAttr = (AbstractSyntaxTree) funcAttr.getTreeExtend().get(1);
+                funcAttr = (ParseTree) funcAttr.getTreeExtend().get(2);
+                if (funcAttr.getTreeExtend().size() > 0) funcAttr = (ParseTree) funcAttr.getTreeExtend().get(1);
                 // add the next argument in the next iteration
             }
 
@@ -148,16 +149,16 @@ public class Parser implements Compiler {
         }
 
         for (Object node : nodes) {
-            if (node instanceof AbstractSyntaxTree) this.generateSymbolTable((AbstractSyntaxTree) node, symbolTable, top);
+            if (node instanceof ParseTree) this.generateSymbolTable((ParseTree) node, symbolTable, top);
             // else TokenDataPair; already done in the first part with Production
         }
 
         (topTable ? top : parent).addSubtable(symbolTable);
     }
 
-    private SymbolTable generateSymbolTable(AbstractSyntaxTree abstractTree) throws DuplicateVariableException {
+    private SymbolTable generateSymbolTable(ParseTree parseTree) throws DuplicateVariableException {
         SymbolTable r = new SymbolTable();
-        this.generateSymbolTable(abstractTree, r, r);
+        this.generateSymbolTable(parseTree, r, r);
         return r.optimize();
     }
 
@@ -165,12 +166,15 @@ public class Parser implements Compiler {
 
 
     public boolean compile(File out) throws InvalidTreeException {
-        ParseTree parseTree = this.generateParseTree();
-        this.tree = this.generateAbstractSyntaxTree(parseTree);
-        if (tree == null) return false;
-        SymbolTable symbolTable = this.generateSymbolTable(tree);
+        this.parseTree = generateParseTree();
+        if (parseTree == null) return false;
+
+        SymbolTable symbolTable = this.generateSymbolTable(parseTree);
         symbolTable.apply();
-        this.tree.printTree();
+
+        this.abstractSyntaxTree = this.generateAbstractSyntaxTree(parseTree);
+        //this.abstractSyntaxTree.printTree();
+
         return true;
     }
 
