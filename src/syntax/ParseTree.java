@@ -1,13 +1,15 @@
 package syntax;
 
 import entities.SymbolTable;
+import entities.SymbolTable;
 import entities.TokenDataPair;
+import entities.VariableTypes;
 import entities.VariableTypes;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class AbstractTreeNode {
+public class ParseTree {
     private final Production originalProduction;
 
     private SymbolTable table;
@@ -22,7 +24,7 @@ public class AbstractTreeNode {
      */
     private final List<Object> treeExtend;
 
-    public AbstractTreeNode(Production production) {
+    public ParseTree(Production production) {
         this.originalProduction = production;
         this.treeExtend = new ArrayList<>();
     }
@@ -59,7 +61,7 @@ public class AbstractTreeNode {
     public String toString() {
         StringBuilder sb = new StringBuilder();
         for (Object o : this.treeExtend) {
-            if (o instanceof AbstractTreeNode) sb.append(((AbstractTreeNode)o).toString());
+            if (o instanceof ParseTree) sb.append(((ParseTree)o).toString());
             else sb.append(((TokenDataPair)o).getToken().name());
             sb.append(' ');
         }
