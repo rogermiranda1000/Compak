@@ -33,11 +33,22 @@ public class IntermediateCodeData {
             if (lineData != null) {
                 System.out.println(lineData);
             }
+        }
+    }
 
-            try (Writer writer = new BufferedWriter(new OutputStreamWriter(
-                    new FileOutputStream("filename.txt"), "utf-8"))) {
-                writer.write("something");
+    public void generateIntermediateCodeFile() {
+        try {
+            FileWriter myWriter = new FileWriter("tac.txt");
+            for (int i = 0; i < data.size(); i++) {
+                String lineData = data.get(i).printLine(i);
+                if (lineData != null) {
+                    myWriter.write(lineData + "\n");
+                }
             }
+            myWriter.close();
+        } catch (IOException e) {
+            System.out.println("An error occurred.");
+            e.printStackTrace();
         }
     }
 }

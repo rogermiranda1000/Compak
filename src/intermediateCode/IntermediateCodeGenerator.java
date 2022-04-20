@@ -17,5 +17,6 @@ public class IntermediateCodeGenerator {
     public void process(AbstractSyntaxTree abstractSyntaxTree) {
         abstractSyntaxTree.travelWithPriorityDepth(intermediateCodeData);
         intermediateCodeData.printData();
+        intermediateCodeData.generateIntermediateCodeFile();
     }
 }
