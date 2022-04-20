@@ -3,6 +3,7 @@ package intermediateCode;
 import entities.Token;
 import entities.TokenDataPair;
 
+import java.io.*;
 import java.util.ArrayList;
 
 public class IntermediateCodeData {
@@ -21,16 +22,22 @@ public class IntermediateCodeData {
         data = new ArrayList<>();
     }
 
-    public void addLine(TokenDataPair op, Object arg1, Object arg2) {
+    public int addLine(TokenDataPair op, Object arg1, Object arg2) {
         data.add(new ThreeAddressLine(op, arg1, arg2));
+        return data.size()-1;
     }
 
-    @Override
-    public String toString(){
-        StringBuilder s = new StringBuilder();
-        for(ThreeAddressLine d : data){
-            s.append(d.toString());
+    public void printData() {
+        for (int i = 0; i < data.size(); i++) {
+            String lineData = data.get(i).printLine(i);
+            if (lineData != null) {
+                System.out.println(lineData);
+            }
+
+            try (Writer writer = new BufferedWriter(new OutputStreamWriter(
+                    new FileOutputStream("filename.txt"), "utf-8"))) {
+                writer.write("something");
+            }
         }
-        return s.toString();
     }
 }
