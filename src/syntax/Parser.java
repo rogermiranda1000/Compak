@@ -32,8 +32,9 @@ public class Parser implements Compiler {
             boolean match = true,
                 first = true; // if it's the first token it can fail, but if not then it's an error
             AbstractTreeNode r = new AbstractTreeNode(p);
+            TokenDataPair token;
             for (Object tokenOrProduction : productions) {
-                TokenDataPair token = this.tokenRequest.requestNextToken();
+                token = this.tokenRequest.requestNextToken();
 
                 if (tokenOrProduction instanceof Production) {
                     this.tokenRequest.returnTokens(token);
@@ -65,11 +66,19 @@ public class Parser implements Compiler {
                 }
                 first = false;
             }
-            if (match) return r;
-            else {
-                // s'han de retornar tots els tokens utilitzats per construir el que portavem d'arbre
-                this.tokenRequest.returnTokens(r.getTokens());
+
+            if (match) {
+                if (p != this.grammarRequest.getEntryPoint()) return r;
+
+                // si és el punt d'entrada ha d'acabar amb EOF
+                token = this.tokenRequest.requestNextToken();
+                if (token.getToken() == Token.EOF) return r;
+                this.tokenRequest.returnTokens(token);
+                // !match
             }
+
+            // !match => s'han de retornar tots els tokens utilitzats per construir el que portavem d'arbre
+            this.tokenRequest.returnTokens(r.getTokens());
         }
         return null;
     }
