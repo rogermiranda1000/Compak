@@ -53,37 +53,48 @@ public class MipsGenerator {
 
     public static String generateMIPSExpression(String[] tokens) {
         String expr;
-        switch (tokens[3]) {
-            case "+":
-                expr = mipsSum(tokens);
-                break;
-            case "-":
-                expr = mipsSub(tokens);
-                break;
-            case "*":
-                expr = "mult " + arg(tokens[0]) + ", " + arg(tokens[2]) + ", " + arg(tokens[4]);
-                break;
-            default:
-                expr = null;
+        if (tokens.length <= 3) {
+            expr = "li " + formatArg(tokens[0]) + ", " + formatArg(tokens[2]);
+        } else {
+            switch (tokens[3]) {
+                case "+":
+                    expr = mipsSum(tokens);
+                    break;
+                case "-":
+                    expr = mipsSub(tokens);
+                    break;
+                case "*":
+                    expr = mipsMult(tokens);
+                    break;
+                default:
+                    expr = null;
+            }
         }
         return expr;
     }
-
+    // No podem rebre operacions entre dos literals
+    // Literal ha d'anar després de variable
     private static String mipsSum(String[] tokens) {
         String operation = isNumber(tokens[2]) || isNumber(tokens[4]) ? "addi" : "add";
-        return operation + " " + arg(tokens[0]) + ", " + arg(tokens[2]) + ", " + arg(tokens[4]);
+        return operation + " " + formatArg(tokens[0]) + ", " + formatArg(tokens[2]) + ", " + formatArg(tokens[4]);
     }
 
     private static String mipsSub(String[] tokens) {
         String operation = isNumber(tokens[2]) || isNumber(tokens[4]) ? "subi" : "sub";
-        return operation + " " + arg(tokens[0]) + ", " + arg(tokens[2]) + ", " + arg(tokens[4]);
+        return operation + " " + formatArg(tokens[0]) + ", " + formatArg(tokens[2]) + ", " + formatArg(tokens[4]);
+    }
+
+    private static String mipsMult(String[] tokens) {
+        String operation = isNumber(tokens[2]) || isNumber(tokens[4]) ? "mult???" : "mult";
+        return operation + " " + formatArg(tokens[2]) + ", " + formatArg(tokens[4]) + "\n" +
+                "mflo " + formatArg(tokens[0]);
     }
 
     private static boolean isNumber(String input) {
-        return input.matches("\\d");
+        return input.matches("\\d+");
     }
 
-    private static String arg(String argument) {
+    private static String formatArg(String argument) {
         if (argument.charAt(0) == 't') {
             return "$" + argument;
         }
