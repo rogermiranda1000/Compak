@@ -66,6 +66,12 @@ public class MipsGenerator {
                 case "*":
                     expr = mipsMult(tokens);
                     break;
+                case "/":
+                    expr = mipsDiv(tokens);
+                    break;
+                case "%":
+                    expr = mipsMod(tokens);
+                    break;
                 default:
                     expr = null;
             }
@@ -84,10 +90,30 @@ public class MipsGenerator {
         return operation + " " + formatArg(tokens[0]) + ", " + formatArg(tokens[2]) + ", " + formatArg(tokens[4]);
     }
 
+    private static String moveLow(String token) {
+        return "mflo " + formatArg(token);
+    }
+
+    private static String moveHigh(String token) {
+        return "mfhi " + formatArg(token);
+    }
+
     private static String mipsMult(String[] tokens) {
-        String operation = isNumber(tokens[2]) || isNumber(tokens[4]) ? "mult???" : "mult";
+        String operation = isNumber(tokens[2]) || isNumber(tokens[4]) ? "multi???" : "mult";
         return operation + " " + formatArg(tokens[2]) + ", " + formatArg(tokens[4]) + "\n" +
-                "mflo " + formatArg(tokens[0]);
+                moveLow(tokens[0]);
+    }
+
+    private static String mipsDiv(String[] tokens) {
+        String operation = isNumber(tokens[2]) || isNumber(tokens[4]) ? "divi???" : "div";
+        return operation + " " + formatArg(tokens[2]) + ", " + formatArg(tokens[4]) + "\n" +
+                moveLow(tokens[0]);
+    }
+
+    private static String mipsMod(String[] tokens) {
+        String operation = isNumber(tokens[2]) || isNumber(tokens[4]) ? "divi???" : "div";
+        return operation + " " + formatArg(tokens[2]) + ", " + formatArg(tokens[4]) + "\n" +
+                moveHigh(tokens[0]);
     }
 
     private static boolean isNumber(String input) {
