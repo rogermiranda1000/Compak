@@ -81,12 +81,12 @@ public class MipsGenerator {
     // No podem rebre operacions entre dos literals
     // Literal ha d'anar després de variable
     private static String mipsSum(String[] tokens) {
-        String operation = isNumber(tokens[2]) || isNumber(tokens[4]) ? "addi" : "add";
+        String operation = anyNumbers(tokens[2], tokens[4]) ? "addi" : "add";
         return operation + " " + formatArg(tokens[0]) + ", " + formatArg(tokens[2]) + ", " + formatArg(tokens[4]);
     }
 
     private static String mipsSub(String[] tokens) {
-        String operation = isNumber(tokens[2]) || isNumber(tokens[4]) ? "subi" : "sub";
+        String operation = anyNumbers(tokens[2], tokens[4]) ? "subi" : "sub";
         return operation + " " + formatArg(tokens[0]) + ", " + formatArg(tokens[2]) + ", " + formatArg(tokens[4]);
     }
 
@@ -98,20 +98,24 @@ public class MipsGenerator {
         return "mfhi " + formatArg(token);
     }
 
+    // Per multiplicacions i divisions si es vol der variable * numero cal posar numero a un registre abans
     private static String mipsMult(String[] tokens) {
-        String operation = isNumber(tokens[2]) || isNumber(tokens[4]) ? "multi???" : "mult";
+        if (anyNumbers(tokens[2], tokens[4])) throw new InvalidTacException();
+        String operation = "mult";
         return operation + " " + formatArg(tokens[2]) + ", " + formatArg(tokens[4]) + "\n" +
                 moveLow(tokens[0]);
     }
 
     private static String mipsDiv(String[] tokens) {
-        String operation = isNumber(tokens[2]) || isNumber(tokens[4]) ? "divi???" : "div";
+        if (anyNumbers(tokens[2], tokens[4])) throw new InvalidTacException();
+        String operation = "div";
         return operation + " " + formatArg(tokens[2]) + ", " + formatArg(tokens[4]) + "\n" +
                 moveLow(tokens[0]);
     }
 
     private static String mipsMod(String[] tokens) {
-        String operation = isNumber(tokens[2]) || isNumber(tokens[4]) ? "divi???" : "div";
+        if (anyNumbers(tokens[2], tokens[4])) throw new InvalidTacException();
+        String operation = "div";
         return operation + " " + formatArg(tokens[2]) + ", " + formatArg(tokens[4]) + "\n" +
                 moveHigh(tokens[0]);
     }
@@ -121,7 +125,9 @@ public class MipsGenerator {
         return operation + " " + formatArg(tokens[0]) + ", " + formatArg(tokens[2]);
     }
 
-
+    private static boolean anyNumbers(String token1, String token2) {
+        return isNumber(token1) || isNumber(token2);
+    }
     private static boolean isNumber(String input) {
         return input.matches("\\d+");
     }
