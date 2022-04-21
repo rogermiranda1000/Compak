@@ -117,7 +117,7 @@ public class MipsGenerator {
     }
 
     private static String mipsAssign(String[] tokens) {
-        String operation = isNumber(tokens[2]) ? "li" : "mov";
+        String operation = isNumber(tokens[2]) ? "li" : "move";
         return operation + " " + formatArg(tokens[0]) + ", " + formatArg(tokens[2]);
     }
 
