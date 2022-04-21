@@ -29,16 +29,14 @@ public class Parser implements Compiler {
     @Nullable
     private AbstractTreeNode generateAbstractTree(HashMap<Production, FirstFollowData> firstFollowData, Production p) throws InvalidTreeException {
         for (Object[] productions : p.getProduccions()) {
-            List<TokenDataPair> requestedTokens = new ArrayList<>();
             boolean match = true,
                 first = true; // if it's the first token it can fail, but if not then it's an error
             AbstractTreeNode r = new AbstractTreeNode(p);
             for (Object tokenOrProduction : productions) {
                 TokenDataPair token = this.tokenRequest.requestNextToken();
-                requestedTokens.add(token);
 
                 if (tokenOrProduction instanceof Production) {
-                    this.tokenRequest.returnTokens(requestedTokens.remove(requestedTokens.size()-1));
+                    this.tokenRequest.returnTokens(token);
                     AbstractTreeNode node = this.generateAbstractTree(firstFollowData, (Production) tokenOrProduction);
                     if (node == null) {
                         // error; return the tokens and start with other production
@@ -47,7 +45,7 @@ public class Parser implements Compiler {
                             if (firstFollow.remove(Token.EPSILON)) firstFollow.addAll(firstFollowData.get((Production) tokenOrProduction).getFollow()); // if epsilon -> also follow
                             //throw new InvalidTreeException(token.getToken(), this.tokenRequest.getCurrentLine(), this.tokenRequest.getCurrentColumn(), firstFollow);
                         }
-                        this.tokenRequest.returnTokens(requestedTokens);
+
                         match = false;
                         break;
                     }
@@ -60,7 +58,7 @@ public class Parser implements Compiler {
                         // error; return the tokens and start with other production
                         /*if (!first) throw new InvalidTreeException(token.getToken(), this.tokenRequest.getCurrentLine(),
                                 this.tokenRequest.getCurrentColumn(), (Token)tokenOrProduction);*/
-                        this.tokenRequest.returnTokens(requestedTokens);
+
                         match = false;
                         break;
                     }
@@ -68,6 +66,10 @@ public class Parser implements Compiler {
                 first = false;
             }
             if (match) return r;
+            else {
+                // s'han de retornar tots els tokens utilitzats per construir el que portavem d'arbre
+                this.tokenRequest.returnTokens(r.getTokens());
+            }
         }
         return null;
     }
