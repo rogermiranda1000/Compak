@@ -1,7 +1,7 @@
 package entities;
 
 import org.jetbrains.annotations.Nullable;
-import syntax.AbstractTreeNode;
+import syntax.ParseTree;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -21,9 +21,9 @@ public class SymbolTable {
 
     private final List<SymbolTable> subtables;
 
-    private final List<AbstractTreeNode> nodes;
+    private final List<ParseTree> nodes;
 
-    public SymbolTable(AbstractTreeNode node, SymbolTable parent) {
+    public SymbolTable(ParseTree node, SymbolTable parent) {
         this.parent = parent;
         this.subtables = new ArrayList<>();
         this.nodes = new ArrayList<>();
@@ -71,7 +71,7 @@ public class SymbolTable {
     }
 
     public void apply() {
-        for (AbstractTreeNode node : this.nodes) node.setTable(this);
+        for (ParseTree node : this.nodes) node.setTable(this);
         for (SymbolTable table : this.subtables) table.apply();
     }
 }
