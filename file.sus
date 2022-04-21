@@ -1,9 +1,7 @@
-func a (int a, int b): int {
-    int c;
-    return a;
-}
-
-main () {
-    int a;
-    int b = a+b;
+main ( ) {
+    int d = 3 + (9 + 7) + 2 + 1;
+    int a = ((3 + 5) * (2 + 6)) / 3;
+    int c = a;
+    bit c = ((true) & (false));
+    bit w = (x | y & z);
 }
