@@ -54,7 +54,7 @@ public class MipsGenerator {
     public static String generateMIPSExpression(String[] tokens) {
         String expr;
         if (tokens.length <= 3) {
-            expr = "li " + formatArg(tokens[0]) + ", " + formatArg(tokens[2]);
+            expr = mipsAssign(tokens);
         } else {
             switch (tokens[3]) {
                 case "+":
@@ -115,6 +115,12 @@ public class MipsGenerator {
         return operation + " " + formatArg(tokens[2]) + ", " + formatArg(tokens[4]) + "\n" +
                 moveHigh(tokens[0]);
     }
+
+    private static String mipsAssign(String[] tokens) {
+        String operation = isNumber(tokens[2]) ? "li" : "mov";
+        return operation + " " + formatArg(tokens[0]) + ", " + formatArg(tokens[2]);
+    }
+
 
     private static boolean isNumber(String input) {
         return input.matches("\\d+");
