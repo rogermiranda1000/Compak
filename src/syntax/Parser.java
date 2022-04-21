@@ -1,6 +1,7 @@
 package syntax;
 
 import entities.*;
+import intermediateCode.IntermediateCodeGenerator;
 import lexic.TokenBuffer;
 import lexic.TokenRequest;
 import org.jetbrains.annotations.Nullable;
@@ -75,7 +76,7 @@ public class Parser implements Compiler {
         return this.generateParseTree(this.grammarRequest.getFirstFollowHash(), this.grammarRequest.getEntryPoint());
     }
 
-    private AbstractSyntaxTree generateAbstractSyntaxTree(ParseTree parseTree) {
+    private AbstractSyntaxTree generateAbstractSyntaxTree(ParseTree parseTree, ArrayList<AbstractSyntaxTree> codes) {
         AbstractSyntaxTree tree = new AbstractSyntaxTree(parseTree);
         tree.removeEpsilons();
         tree.removeRedundantProductions();
@@ -172,19 +173,26 @@ public class Parser implements Compiler {
         SymbolTable symbolTable = this.generateSymbolTable(parseTree);
         symbolTable.apply();
 
-        this.abstractSyntaxTree = this.generateAbstractSyntaxTree(parseTree);
-        //this.abstractSyntaxTree.printTree();
+
+        ArrayList<AbstractSyntaxTree> codes = new ArrayList<>();
+
+        this.abstractSyntaxTree = this.generateAbstractSyntaxTree(parseTree, codes);
+        this.abstractSyntaxTree.printTree();
+
+        IntermediateCodeGenerator intermediateCodeGenerator = new IntermediateCodeGenerator();
+        intermediateCodeGenerator.process(abstractSyntaxTree);
 
         return true;
     }
 
     public void test() {
-        TestMaster.testAll();
+        //TestMaster.testAll();
     }
 
     public static void main(String[] args) throws FileNotFoundException {
         Parser p = new Parser(new TokenBuffer(new CodeProcessor("file.sus")), new GrammarAnalizer());
         p.compile(null);
-        p.test();
+        //TODO: Uncomment for final commit
+        //p.test();
     }
 }

@@ -2,16 +2,20 @@ package syntax;
 
 import entities.Token;
 import entities.TokenDataPair;
+import intermediateCode.IntermediateCodeData;
+import intermediateCode.IntermediateCodeGenerator;
+import intermediateCode.ThreeAddressLine;
 
 import java.util.*;
 
 public class AbstractSyntaxTree {
-    private final List<Object> treeExtend;
+    private List<Object> treeExtend;
     private AbstractSyntaxTree father;
     private static int t;
     private int level;
     private int height;
     private TokenDataPair operation;
+    private int id;
 
 
     public AbstractSyntaxTree(ParseTree parseTree) {
@@ -164,30 +168,49 @@ public class AbstractSyntaxTree {
         return max+1;
     }
 
-    public void travelWithPriorityDepth() {
-        PriorityQueue<AbstractSyntaxTree> pq = new PriorityQueue<AbstractSyntaxTree>((a,b) -> b.height - a.height);
+
+
+    public void travelWithPriorityDepth(IntermediateCodeData intermediateCodeData) {
+        Comparator<AbstractSyntaxTree> comparator = new Comparator<AbstractSyntaxTree>() {
+            @Override
+            public int compare(AbstractSyntaxTree a, AbstractSyntaxTree b) {
+                if (a.operation == null) {
+                    return 1;
+                }
+
+                if (b.operation == null) {
+                    return 1;
+                }
+                if (a.operation.getToken() == Token.ASSIGN && b.operation.getToken() == Token.ASSIGN) {
+                    return 0;
+                }
+                return b.height - a.height;
+            }
+        };
+
+
+        PriorityQueue<AbstractSyntaxTree> pq = new PriorityQueue<AbstractSyntaxTree>(comparator);
 
         for (int i = 0; i < this.treeExtend.size(); i++) {
             Object o = this.treeExtend.get(i);
 
             if (o instanceof AbstractSyntaxTree) {
                 pq.add(((AbstractSyntaxTree)o));
-                //((AbstractSyntaxTree)o).reduceTokens(stack);
-            } else {
-                //stack.push(((TokenDataPair)o));
             }
         }
 
         while (!pq.isEmpty()) {
             AbstractSyntaxTree tree = pq.remove();
-            tree.travelWithPriorityDepth();
-            System.out.println();
-            System.out.println("h: " + tree.height + " - " + tree.treeExtend + " fath: " + tree.father.operation);
+            tree.travelWithPriorityDepth(intermediateCodeData);
+            tree.id = intermediateCodeData.addLine(tree.operation, tree.treeExtend.get(0), tree.treeExtend.get(1));
+
+            // debug line for 3@Code
+            // System.out.println(tree + "->" + tree.treeExtend + " id: " + tree.id);
         }
     }
 
-    public static void initT() {
-        AbstractSyntaxTree.t = 0;
+    public int getId() {
+        return id;
     }
 
     public void recalculateFathers() {
