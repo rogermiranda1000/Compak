@@ -27,6 +27,7 @@ public class GrammarAnalizer extends GrammarRequest {
     protected static final Production n5 = new Production();
     protected static final Production sentencies = new Production();
     protected static final Production possibleSentencies = new Production();
+    protected static final Production sentenciaVariable = new Production();
     protected static final Production possibleAssignacio = new Production();
 
     protected static final Production valueBit = new Production(
@@ -97,14 +98,14 @@ public class GrammarAnalizer extends GrammarRequest {
                 .addProduction();
 
         possiblesOpcions.addProduction(declaracioFuncio)
-                .addProduction(declaracioVariable, Token.EOL);
+                .addProduction(sentenciaVariable);
 
         opcions.addProduction(possiblesOpcions, opcions)
                 .addProduction();
 
         start.addProduction(opcions, Token.MAIN, Token.OPN_PARENTH, Token.CLS_PARENTH, Token.OPN_CONTEXT, sentencies, Token.CLS_CONTEXT);
 
-        condicional.addProduction(Token.IF, Token.OPN_PARENTH, n0, Token.CLS_PARENTH, elseConditional);
+        condicional.addProduction(Token.IF, Token.OPN_PARENTH, n0, Token.CLS_PARENTH, Token.OPN_CONTEXT, sentencies, Token.CLS_CONTEXT, elseConditional);
 
         elseConditional.addProduction(Token.ELSE, Token.OPN_CONTEXT, sentencies, Token.CLS_CONTEXT)
                 .addProduction();
@@ -142,10 +143,12 @@ public class GrammarAnalizer extends GrammarRequest {
                 .addProduction(Token.RETURN, id, Token.EOL)
                 .addProduction();
 
-        possibleSentencies.addProduction(declaracioVariable, possibleAssignacio, Token.EOL)
-                .addProduction(Token.ID, Token.ASSIGN, n0, Token.EOL)
+        possibleSentencies.addProduction(sentenciaVariable)
                 .addProduction(condicional)
                 .addProduction(declaracioBucle);
+
+        sentenciaVariable.addProduction(declaracioVariable, possibleAssignacio, Token.EOL)
+                .addProduction(Token.ID, Token.ASSIGN, n0, Token.EOL);
 
         possibleAssignacio.addProduction(Token.ASSIGN, n0)
                 .addProduction();
