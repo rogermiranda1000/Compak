@@ -60,9 +60,8 @@ public class MipsGenerator {
         if (!label.isEmpty()) tokens = cutFrom(1, tokens);
 
         if (tokens.length == 2) {
-            //expr += mipsGoto(tokens);
-        }
-        if (tokens.length == 3) {
+            expr += mipsGoto(tokens);
+        } else if (tokens.length == 3) {
             expr += mipsAssign(tokens);
         } else if (tokens.length == 5){
             switch (tokens[3]) {
@@ -93,6 +92,10 @@ public class MipsGenerator {
     }
     private static String mipsX(String[] tokens) {
         return "";
+    }
+
+    private static String mipsGoto(String[] tokens) {
+        return "j " + "$" + tokens[1];
     }
 
     private static String mipsIf(String[] tokens) {
