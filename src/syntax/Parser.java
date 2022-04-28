@@ -183,7 +183,7 @@ public class Parser implements Compiler {
     private SymbolTable generateSymbolTable(ParseTree parseTree) throws DuplicateVariableException, UnknownVariableException {
         SymbolTable r = new SymbolTable();
         this.generateSymbolTable(parseTree, r);
-        return r; // TODO optimize? (maybe if there's a lot of open context)
+        return r.optimize();
     }
 
     public boolean compile(File out) throws InvalidTreeException, DuplicateVariableException, UnknownVariableException {
