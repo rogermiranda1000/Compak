@@ -82,4 +82,37 @@ public class ParseTree {
         }
         return sb.toString();
     }
+
+    public void printTree() {
+        System.out.println(this.printTree(new StringBuilder(), "").toString());
+    }
+
+    private StringBuilder printTree(StringBuilder buffer, String childrenPrefix) {
+        if (this.treeExtend.size() == 0) {
+            buffer.append("EPSILON\n");
+            return buffer;
+        }
+        buffer.append("⬜\n");
+
+        for (int i = 0; i < this.treeExtend.size(); i++) {
+            Object o = this.treeExtend.get(i);
+
+            if (o instanceof ParseTree) {
+                if (i == this.treeExtend.size()-1) {
+                    buffer.append(childrenPrefix).append("└── ");
+                    ((ParseTree)o).printTree(buffer, childrenPrefix + "    ");
+                } else {
+                    buffer.append(childrenPrefix).append("├── ");
+                    ((ParseTree)o).printTree(buffer, childrenPrefix + "│   ");
+                }
+            } else {
+                if (i == this.treeExtend.size()-1) {
+                    buffer.append(childrenPrefix).append("└── ").append(((TokenDataPair) o)).append("\n");
+                } else {
+                    buffer.append(childrenPrefix).append("├── ").append(((TokenDataPair) o)).append("\n");
+                }
+            }
+        }
+        return buffer;
+    }
 }
