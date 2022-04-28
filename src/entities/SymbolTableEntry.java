@@ -28,4 +28,6 @@ public abstract class SymbolTableEntry {
     public SymbolTable getScope() {
         return scope;
     }
+
+    // TODO setScope on optimization
 }
