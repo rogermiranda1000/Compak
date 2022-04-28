@@ -4,5 +4,8 @@ main ( ) {
     loop(for i in range(5)) {
         b = i; // 0 + 1 + 2 + 3 + 4 = 10
     }
-    b = 13;
+    int x = 13;
+    loop(3) {
+        z = i;
+    }
 }

@@ -47,7 +47,8 @@ public enum Token {
     FLOAT(Pattern.compile("^(\\d+\\.\\d+)$")),
     NUMBER(Pattern.compile("^(\\d+)$")),
     STRING_VALUE(Pattern.compile("^\"((?:[^\"]|(?<=\\\\)\")*)\"$")),
-
+    REPEAT("repeat"),
+    FOR_IN("for_in"),
     // reserved characters
     NONE(Pattern.compile("^(.*)$")),
     EOF(""),

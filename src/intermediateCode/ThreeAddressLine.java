@@ -76,7 +76,7 @@ public class ThreeAddressLine {
             return tag.getVarIterate() + " := " + tag.getVarIterate() + " + 1" + "\ngoto " + tag.getName1() + "\n" + tag.getName2() + ":";
         }
 
-        if (Objects.equals(op.getData(), "loop")) {
+        if (Objects.equals(op.getData(), "range")) {
             // CASE LOOP (FOR I IN RANGE(NUM))
             Tag tag = new Tag(arg1String);
             tags.push(tag);
