@@ -94,6 +94,9 @@ public class Parser implements Compiler {
     private void generateSymbolTable(ParseTree parseTree, SymbolTable scope) throws DuplicateVariableException, UnknownVariableException {
         List<Object> nodes = parseTree.getTreeExtend();
 
+        Stack<SymbolTable> scopes = new Stack<>();
+        scopes.add(scope);
+
         if (parseTree.getOriginalProduction() == GrammarAnalizer.declaracioVariable) {
             // variable declaration
             ParseTree tipusNode = (ParseTree) nodes.get(0);
@@ -117,6 +120,7 @@ public class Parser implements Compiler {
                 returnType = VariableTypes.tokenToVariableType(returnTypeToken);
             }
 
+            SymbolTable functionScope = new SymbolTable(scope);
             ParseTree funcAttr = (ParseTree) nodes.get(3);
             List<VariableTypes> arguments = new ArrayList<>();
             while (funcAttr.getTreeExtend().size() > 0) { // it may be epsilon
@@ -126,19 +130,18 @@ public class Parser implements Compiler {
                 VariableTypes argumentType = VariableTypes.tokenToVariableType(argumentTypeToken);
 
                 arguments.add(argumentType);
-                // TODO
-                //symbolTable.addEntry(new SymbolTableVariableEntry(argumentType, ((TokenDataPair) funcAttr.getTreeExtend().get(1)).getData(), symbolTable));
+                functionScope.addEntry(new SymbolTableVariableEntry(argumentType, ((TokenDataPair) funcAttr.getTreeExtend().get(1)).getData(), functionScope));
 
                 funcAttr = (ParseTree) funcAttr.getTreeExtend().get(2);
                 if (funcAttr.getTreeExtend().size() > 0) funcAttr = (ParseTree) funcAttr.getTreeExtend().get(1);
                 // add the next argument in the next iteration
             }
 
+            scopes.empty(); scopes.add(functionScope); // for the ID substitution from below
             scope.addEntry(new SymbolTableFunctionEntry(returnType, funcName, arguments.toArray(new VariableTypes[0]), scope));
+            scope.addSubtable(functionScope);
         }
 
-        Stack<SymbolTable> scopes = new Stack<>();
-        scopes.add(scope);
         for (Object node : nodes) {
             if (node instanceof ParseTree) {
                 this.generateSymbolTable((ParseTree) node, scopes.peek());
@@ -169,13 +172,13 @@ public class Parser implements Compiler {
     private SymbolTable generateSymbolTable(ParseTree parseTree) throws DuplicateVariableException, UnknownVariableException {
         SymbolTable r = new SymbolTable();
         this.generateSymbolTable(parseTree, r);
-        return r;
+        return r; // TODO optimize? (maybe if there's a lot of open context)
     }
 
     public boolean compile(File out) throws InvalidTreeException, DuplicateVariableException, UnknownVariableException {
         ParseTree parseTree = generateParseTree();
         if (parseTree == null) return false;
-        parseTree.printTree();
+        //parseTree.printTree();
 
         SymbolTable symbolTable = this.generateSymbolTable(parseTree);
         ArrayList<AbstractSyntaxTree> codes = new ArrayList<>();
