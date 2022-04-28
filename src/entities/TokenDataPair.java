@@ -2,7 +2,8 @@ package entities;
 
 public class TokenDataPair {
     private final Token token;
-    private final String data; // used for variables, functions, strings and digits
+    private final String data;                  // used for variables, functions, strings and digits
+    private SymbolTableEntry variableNode;      // used for variables/functions
     private boolean promoted;
 
     public TokenDataPair(Token token, String data) {
@@ -29,6 +30,14 @@ public class TokenDataPair {
 
     public String getData() {
         return this.data;
+    }
+
+    public SymbolTableEntry getVariableNode() {
+        return this.variableNode;
+    }
+
+    public void setVariableNode(SymbolTableEntry entry) {
+        this.variableNode = entry;
     }
 
     @Override

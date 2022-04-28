@@ -1,7 +1,6 @@
 package entities;
 
 import org.jetbrains.annotations.Nullable;
-import syntax.ParseTree;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -9,7 +8,7 @@ import java.util.Set;
 import java.util.TreeSet;
 
 public class SymbolTable {
-    private final Set<SymbolTableEntries> entries = new TreeSet<>((SymbolTableEntries o1, SymbolTableEntries o2) -> {
+    private final Set<SymbolTableEntry> entries = new TreeSet<>((SymbolTableEntry o1, SymbolTableEntry o2) -> {
         if (o1 == o2) return 0;
         if (!o1.getName().equals(o2.getName())) return o1.getName().compareTo(o2.getName());
         if (!o1.getScope().equals(o2.getScope())) return 1;
@@ -21,26 +20,37 @@ public class SymbolTable {
 
     private final List<SymbolTable> subtables;
 
-    private final List<ParseTree> nodes;
-
-    public SymbolTable(ParseTree node, SymbolTable parent) {
+    public SymbolTable(@Nullable SymbolTable parent) {
         this.parent = parent;
         this.subtables = new ArrayList<>();
-        this.nodes = new ArrayList<>();
-        if (node != null) this.nodes.add(node);
     }
 
     public SymbolTable() {
-        this(null, null);
+        this(null);
     }
 
-    public void addEntry(SymbolTableEntries entry) throws DuplicateVariableException {
+    public void addEntry(SymbolTableEntry entry) throws DuplicateVariableException {
         if (!this.entries.add(entry)) throw new DuplicateVariableException("The variable '" + entry.getName() + "' already exists in this scope!");
     }
 
-    public void addSubtable(SymbolTable symbolTable) {
-        if (symbolTable.isUsed()) this.subtables.add(symbolTable); // first-phase optimization
-        else this.nodes.addAll(symbolTable.nodes);
+    /**
+     * Search in the current scope (and above) and returns the node with the same name (if any)
+     * @param name Variable name
+     * @return Node representing that variable
+     */
+    @Nullable
+    public SymbolTableEntry searchEntry(String name) {
+        SymbolTable table = this;
+        while (table != null) {
+            for (SymbolTableEntry e : table.entries) {
+                if (e.getName().equals(name)) return e;
+            }
+
+            // TODO explorar subtaules
+
+            table = table.parent; // not found, maybe upper?
+        }
+        return null; // not found
     }
 
     public SymbolTable optimize() {
@@ -57,21 +67,20 @@ public class SymbolTable {
             this.parent.subtables.remove(this);
             this.parent.subtables.add(this.subtables.get(0));
             this.subtables.get(0).parent = this.parent;
-            this.parent.nodes.addAll(this.nodes);
         }
         return this;
     }
 
+    public void addSubtable(SymbolTable symbolTable) {
+        if (symbolTable.isUsed()) this.subtables.add(symbolTable); // first-phase optimization
+    }
+
+    @Nullable
     public SymbolTable getParent() {
         return this.parent;
     }
 
     public boolean isUsed() {
         return this.entries.size() > 0 || this.subtables.size() > 0;
-    }
-
-    public void apply() {
-        for (ParseTree node : this.nodes) node.setTable(this);
-        for (SymbolTable table : this.subtables) table.apply();
     }
 }
