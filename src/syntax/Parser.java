@@ -6,7 +6,6 @@ import lexic.TokenBuffer;
 import lexic.TokenRequest;
 import org.jetbrains.annotations.Nullable;
 import preprocesser.CodeProcessor;
-import testing.TestMaster;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -15,15 +14,10 @@ import java.util.*;
 public class Parser implements Compiler {
     private final TokenRequest tokenRequest;
     private final GrammarRequest grammarRequest;
-    private final SymbolTable symbolTable;
-    private AbstractSyntaxTree abstractSyntaxTree;
-    private ParseTree parseTree;
 
     public Parser(TokenRequest tokenRequest, GrammarRequest grammarRequest) {
         this.tokenRequest = tokenRequest;
         this.grammarRequest = grammarRequest;
-
-        this.symbolTable = new SymbolTable();
     }
 
     @Nullable
@@ -97,25 +91,25 @@ public class Parser implements Compiler {
         return tree;
     }
 
-    private void generateSymbolTable(ParseTree parseTree, SymbolTable parent, SymbolTable top) throws DuplicateVariableException {
+    private void generateSymbolTable(ParseTree parseTree, SymbolTable parent, SymbolTable top) throws DuplicateVariableException, UnknownVariableException {
         boolean topTable = false;
-        SymbolTable symbolTable = new SymbolTable(parseTree, parent);
+        SymbolTable symbolTable = new SymbolTable(parent);
         List<Object> nodes = parseTree.getTreeExtend();
 
         if (parseTree.getOriginalProduction() == GrammarAnalizer.declaracioVariable) {
             // variable declaration
             ParseTree tipusNode = (ParseTree) nodes.get(0);
             Token tipus = ((TokenDataPair) tipusNode.getTreeExtend().get(0)).getToken();
-            symbolTable.addEntry(new SymbolTableVariableEntries(VariableTypes.tokenToVariableType(tipus), ((TokenDataPair) nodes.get(1)).getData(), symbolTable)); // <tipus> <nom_variable>
+            symbolTable.addEntry(new SymbolTableVariableEntry(VariableTypes.tokenToVariableType(tipus), ((TokenDataPair) nodes.get(1)).getData(), symbolTable)); // <tipus> <nom_variable>
         }
         else if (parseTree.getOriginalProduction() == GrammarAnalizer.start) {
             // function already on top
             // main declaration
-            symbolTable.addEntry(new SymbolTableFunctionEntries(VariableTypes.VOID, (String) Token.MAIN.getMatch(), new VariableTypes[]{}, symbolTable));
+            symbolTable.addEntry(new SymbolTableFunctionEntry(VariableTypes.VOID, (String) Token.MAIN.getMatch(), new VariableTypes[]{}, symbolTable));
         }
         else if (parseTree.getOriginalProduction() == GrammarAnalizer.declaracioFuncio) {
             // functions must be on top
-            symbolTable = new SymbolTable(parseTree, top);
+            symbolTable = new SymbolTable(top);
             topTable = true;
 
             // function declaration: "func " <nom_funcio> "(" <arguments> ")" <declaracio_funcio_sub> "{" <sentencies> "}"
@@ -139,45 +133,48 @@ public class Parser implements Compiler {
                 VariableTypes argumentType = VariableTypes.tokenToVariableType(argumentTypeToken);
 
                 arguments.add(argumentType);
-                symbolTable.addEntry(new SymbolTableVariableEntries(argumentType, ((TokenDataPair) funcAttr.getTreeExtend().get(1)).getData(), symbolTable));
+                symbolTable.addEntry(new SymbolTableVariableEntry(argumentType, ((TokenDataPair) funcAttr.getTreeExtend().get(1)).getData(), symbolTable));
 
                 funcAttr = (ParseTree) funcAttr.getTreeExtend().get(2);
                 if (funcAttr.getTreeExtend().size() > 0) funcAttr = (ParseTree) funcAttr.getTreeExtend().get(1);
                 // add the next argument in the next iteration
             }
 
-            symbolTable.addEntry(new SymbolTableFunctionEntries(returnType, funcName, arguments.toArray(new VariableTypes[0]), symbolTable));
+            symbolTable.addEntry(new SymbolTableFunctionEntry(returnType, funcName, arguments.toArray(new VariableTypes[0]), symbolTable));
         }
 
         for (Object node : nodes) {
             if (node instanceof ParseTree) this.generateSymbolTable((ParseTree) node, symbolTable, top);
-            // else TokenDataPair; already done in the first part with Production
+            else {
+                // TokenDataPair
+                TokenDataPair dataPair = (TokenDataPair)node;
+                if (dataPair.getToken() == Token.ID) {
+                    String varName = dataPair.getData();
+                    SymbolTableEntry idNode = symbolTable.searchEntry(varName);
+                    if (idNode == null) throw new UnknownVariableException("Unknown variable (" + varName + ")"); // TODO error line?
+                    dataPair.setVariableNode(idNode);
+                }
+            }
         }
 
         (topTable ? top : parent).addSubtable(symbolTable);
     }
 
-    private SymbolTable generateSymbolTable(ParseTree parseTree) throws DuplicateVariableException {
+    private SymbolTable generateSymbolTable(ParseTree parseTree) throws DuplicateVariableException, UnknownVariableException {
         SymbolTable r = new SymbolTable();
         this.generateSymbolTable(parseTree, r, r);
         return r.optimize();
     }
 
-
-
-
-    public boolean compile(File out) throws InvalidTreeException {
-        this.parseTree = generateParseTree();
+    public boolean compile(File out) throws InvalidTreeException, DuplicateVariableException, UnknownVariableException {
+        ParseTree parseTree = generateParseTree();
         if (parseTree == null) return false;
 
         SymbolTable symbolTable = this.generateSymbolTable(parseTree);
-        symbolTable.apply();
-
-
         ArrayList<AbstractSyntaxTree> codes = new ArrayList<>();
 
-        this.abstractSyntaxTree = this.generateAbstractSyntaxTree(parseTree, codes);
-        this.abstractSyntaxTree.printTree();
+        AbstractSyntaxTree abstractSyntaxTree = this.generateAbstractSyntaxTree(parseTree, codes); // TODO send symbolTable
+        abstractSyntaxTree.printTree();
 
         IntermediateCodeGenerator intermediateCodeGenerator = new IntermediateCodeGenerator();
         intermediateCodeGenerator.process(abstractSyntaxTree);
