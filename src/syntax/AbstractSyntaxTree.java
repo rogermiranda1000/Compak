@@ -98,10 +98,17 @@ public class AbstractSyntaxTree {
 
                 if (tk == Token.BUCLE) {
                     if (this.father != null && !((TokenDataPair) o).isPromoted()) {
-                        ((TokenDataPair) o).setPromoted();
-                        this.operation = new TokenDataPair(Token.END_LOOP, "end_loop");
-                        ((AbstractSyntaxTree)this.treeExtend.get(1)).operation = ((TokenDataPair) o);
-                        this.treeExtend.remove(o);
+                        // Case loop(for i in range (5))
+                        if (this.treeExtend.get(1) instanceof AbstractSyntaxTree) {
+                            //((TokenDataPair) o).setPromoted();
+                            //this.operation = new TokenDataPair(Token.END_LOOP, "end_loop");
+                            //((AbstractSyntaxTree)this.treeExtend.get(1)).operation = new TokenDataPair(Token.FOR_IN, "range");
+                            //this.treeExtend.remove(o);
+                        } else {
+                            // Case loop(3)
+                            //this.operation = new TokenDataPair(Token.REPEAT, "repeat");
+                            //this.treeExtend.remove(o);
+                        }
                     }
                 } else if (i == 1 && tk == Token.ASSIGN) {
                     if (this.father != null && !((TokenDataPair) o).isPromoted()) {
