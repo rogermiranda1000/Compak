@@ -59,7 +59,9 @@ public class MipsGenerator {
         label = checkLabel(tokens); // Check if label was present in line
         if (!label.isEmpty()) tokens = cutFrom(1, tokens);
 
-        if (tokens.length == 2) {
+        if (tokens.length == 0) {
+            // Single label, do nothing
+        } else if (tokens.length == 2) {
             expr += mipsGoto(tokens);
         } else if (tokens.length == 3) {
             expr += mipsAssign(tokens);
