@@ -57,8 +57,11 @@ public class MipsGenerator {
     public static String generateMIPSExpression(String[] tokens) {
         String expr = INDENT, label;
         label = checkLabel(tokens); // Check if label was present in line
-        if (!label.isEmpty()) tokens = Arrays.copyOfRange(tokens, 1, tokens.length);
+        if (!label.isEmpty()) tokens = cutFrom(1, tokens);
 
+        if (tokens.length == 2) {
+            //expr += mipsGoto(tokens);
+        }
         if (tokens.length == 3) {
             expr += mipsAssign(tokens);
         } else if (tokens.length == 5){
@@ -93,13 +96,18 @@ public class MipsGenerator {
     }
 
     private static String mipsIf(String[] tokens) {
-        if (tokens[2].equals("==")) {
-            return mipsIfEquals(tokens);
-        }
-        return "";
-    }
-    private static String mipsIfEquals(String[] tokens) {
-        return "beq " + formatArg(tokens[1]) + ", " + formatArg(tokens[3]) + ", " + tokens[5];
+        String result = "ERROR";
+        String command = switch (tokens[2]) {
+            case "==" -> "beq";
+            case "!=" -> "bne";
+            case ">" -> "bgt";
+            case ">=" -> "bge";
+            case "<" -> "blt";
+            case "<=" -> "ble";
+            default -> "ERROR";
+        };
+        // if unsigned -> result += "u";
+        return command + " " + formatArg(tokens[1]) + ", " + formatArg(tokens[3]) + ", " + tokens[5];
     }
 
     private static String checkLabel(String[] tokens) {
@@ -165,5 +173,9 @@ public class MipsGenerator {
             return "$" + argument;
         }
         return(argument);
+    }
+
+    private static String[] cutFrom(int index, String[] array) {
+        return Arrays.copyOfRange(array, index, array.length);
     }
 }
