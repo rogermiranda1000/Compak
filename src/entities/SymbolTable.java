@@ -53,6 +53,24 @@ public class SymbolTable {
         return null; // not found
     }
 
+    public SymbolTable optimize() {
+        List<SymbolTable> subtableClone = new ArrayList<>(this.subtables);
+        for (SymbolTable table : subtableClone) table.optimize();
+        if (this.entries.size() == 0 && this.subtables.size() == 1) {
+            // you can remove this table
+            if (this.parent == null) {
+                SymbolTable r = this.subtables.get(0);
+                r.parent = null;
+                return r;
+            }
+
+            this.parent.subtables.remove(this);
+            this.parent.subtables.add(this.subtables.get(0));
+            this.subtables.get(0).parent = this.parent;
+        }
+        return this;
+    }
+
     public void addSubtable(SymbolTable symbolTable) {
         if (symbolTable.isUsed()) this.subtables.add(symbolTable); // first-phase optimization
     }
