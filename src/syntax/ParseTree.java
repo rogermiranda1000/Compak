@@ -49,7 +49,7 @@ public class ParseTree {
         List<TokenDataPair> r = new ArrayList<>();
 
         for (Object o : this.treeExtend) {
-            if (o instanceof AbstractTreeNode) r.addAll(((AbstractTreeNode)o).getTokens());
+            if (o instanceof ParseTree) r.addAll(((ParseTree)o).getTokens());
             else r.add((TokenDataPair) o); // TokenDataPair
         }
 
