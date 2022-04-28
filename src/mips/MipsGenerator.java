@@ -2,8 +2,10 @@ package mips;
 
 import java.io.*;
 import java.util.ArrayList;
+import java.util.Arrays;
 
 public class MipsGenerator {
+    private static final String INDENT = "    ";
     public static void main(String[] args) {
         generateMipsFromFile("tac.txt", "mips.asm");
     }
@@ -39,8 +41,9 @@ public class MipsGenerator {
     public static void createMIPS(ArrayList<String> lines, FileWriter writer) throws IOException {
         ArrayList<String> out = new ArrayList<>();
         out.add(".text\n");
+        out.add("main:");
         for (String line : lines) {
-            String[] tokens = line.split(" ");
+            String[] tokens = line.trim().split(" ");
             String expression = generateMIPSExpression(tokens);
             out.add(expression);
         }
@@ -52,32 +55,57 @@ public class MipsGenerator {
     }
 
     public static String generateMIPSExpression(String[] tokens) {
-        String expr;
-        if (tokens.length <= 3) {
-            expr = mipsAssign(tokens);
-        } else {
+        String expr = INDENT, label;
+        label = checkLabel(tokens); // Check if label was present in line
+        if (!label.isEmpty()) tokens = Arrays.copyOfRange(tokens, 1, tokens.length);
+
+        if (tokens.length == 3) {
+            expr += mipsAssign(tokens);
+        } else if (tokens.length == 5){
             switch (tokens[3]) {
                 case "+":
-                    expr = mipsSum(tokens);
+                    expr += mipsSum(tokens);
                     break;
                 case "-":
-                    expr = mipsSub(tokens);
+                    expr += mipsSub(tokens);
                     break;
                 case "*":
-                    expr = mipsMult(tokens);
+                    expr += mipsMult(tokens);
                     break;
                 case "/":
-                    expr = mipsDiv(tokens);
+                    expr += mipsDiv(tokens);
                     break;
                 case "%":
-                    expr = mipsMod(tokens);
+                    expr += mipsMod(tokens);
                     break;
                 default:
-                    expr = null;
+                    expr += null;
             }
+        } else if (tokens.length > 5) {
+            expr += mipsIf(tokens);
+        } else {
+            expr += "ERROR";
         }
-        return expr;
+        return label + expr;
     }
+    private static String mipsX(String[] tokens) {
+        return "";
+    }
+
+    private static String mipsIf(String[] tokens) {
+        if (tokens[2].equals("==")) {
+            return mipsIfEquals(tokens);
+        }
+        return "";
+    }
+    private static String mipsIfEquals(String[] tokens) {
+        return "beq " + formatArg(tokens[1]) + ", " + formatArg(tokens[3]) + ", " + tokens[5];
+    }
+
+    private static String checkLabel(String[] tokens) {
+        return tokens[0].matches("L\\d:")  ? "$"+tokens[0]+"\n" : "";
+    }
+
     // No podem rebre operacions entre dos literals
     // Literal ha d'anar després de variable
     private static String mipsSum(String[] tokens) {
