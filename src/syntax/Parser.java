@@ -31,14 +31,14 @@ public class Parser implements Compiler {
         for (Object[] productions : p.getProduccions()) {
             boolean match = true,
                 first = true; // if it's the first token it can fail, but if not then it's an error
-            AbstractTreeNode r = new AbstractTreeNode(p);
+            ParseTree r = new ParseTree(p);
             TokenDataPair token;
             for (Object tokenOrProduction : productions) {
                 token = this.tokenRequest.requestNextToken();
 
                 if (tokenOrProduction instanceof Production) {
                     this.tokenRequest.returnTokens(token);
-                    AbstractTreeNode node = this.generateAbstractTree(firstFollowData, (Production) tokenOrProduction);
+                    ParseTree node = this.generateParseTree(firstFollowData, (Production) tokenOrProduction);
                     if (node == null) {
                         // error; return the tokens and start with other production
                         if (!first) {
