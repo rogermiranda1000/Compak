@@ -41,6 +41,21 @@ public class ParseTree {
         this.treeExtend.add(o);
     }
 
+    /**
+     * Obtè els tokens que formen aquesta part de l'arbre
+     * @return Tokens que han construit l'arbre
+     */
+    public List<TokenDataPair> getTokens() {
+        List<TokenDataPair> r = new ArrayList<>();
+
+        for (Object o : this.treeExtend) {
+            if (o instanceof ParseTree) r.addAll(((ParseTree)o).getTokens());
+            else r.add((TokenDataPair) o); // TokenDataPair
+        }
+
+        return r;
+    }
+
     public VariableTypes getEvaluates() {
         return this.evaluates;
     }
