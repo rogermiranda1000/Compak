@@ -173,7 +173,6 @@ public class Parser implements Compiler {
         SymbolTable symbolTable = this.generateSymbolTable(parseTree);
         symbolTable.apply();
 
-
         ArrayList<AbstractSyntaxTree> codes = new ArrayList<>();
 
         this.abstractSyntaxTree = this.generateAbstractSyntaxTree(parseTree, codes);
