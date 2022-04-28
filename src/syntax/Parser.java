@@ -23,16 +23,15 @@ public class Parser implements Compiler {
     @Nullable
     private ParseTree generateParseTree(HashMap<Production, FirstFollowData> firstFollowData, Production p) throws InvalidTreeException {
         for (Object[] productions : p.getProduccions()) {
-            List<TokenDataPair> requestedTokens = new ArrayList<>();
             boolean match = true,
                 first = true; // if it's the first token it can fail, but if not then it's an error
             ParseTree r = new ParseTree(p);
+            TokenDataPair token;
             for (Object tokenOrProduction : productions) {
-                TokenDataPair token = this.tokenRequest.requestNextToken();
-                requestedTokens.add(token);
+                token = this.tokenRequest.requestNextToken();
 
                 if (tokenOrProduction instanceof Production) {
-                    this.tokenRequest.returnTokens(requestedTokens.remove(requestedTokens.size()-1));
+                    this.tokenRequest.returnTokens(token);
                     ParseTree node = this.generateParseTree(firstFollowData, (Production) tokenOrProduction);
                     if (node == null) {
                         // error; return the tokens and start with other production
@@ -41,7 +40,7 @@ public class Parser implements Compiler {
                             if (firstFollow.remove(Token.EPSILON)) firstFollow.addAll(firstFollowData.get((Production) tokenOrProduction).getFollow()); // if epsilon -> also follow
                             //throw new InvalidTreeException(token.getToken(), this.tokenRequest.getCurrentLine(), this.tokenRequest.getCurrentColumn(), firstFollow);
                         }
-                        this.tokenRequest.returnTokens(requestedTokens);
+
                         match = false;
                         break;
                     }
@@ -54,14 +53,26 @@ public class Parser implements Compiler {
                         // error; return the tokens and start with other production
                         /*if (!first) throw new InvalidTreeException(token.getToken(), this.tokenRequest.getCurrentLine(),
                                 this.tokenRequest.getCurrentColumn(), (Token)tokenOrProduction);*/
-                        this.tokenRequest.returnTokens(requestedTokens);
+
                         match = false;
                         break;
                     }
                 }
                 first = false;
             }
-            if (match) return r;
+
+            if (match) {
+                if (p != this.grammarRequest.getEntryPoint()) return r;
+
+                // si és el punt d'entrada ha d'acabar amb EOF
+                token = this.tokenRequest.requestNextToken();
+                if (token.getToken() == Token.EOF) return r;
+                this.tokenRequest.returnTokens(token);
+                // !match
+            }
+
+            // !match => s'han de retornar tots els tokens utilitzats per construir el que portavem d'arbre
+            this.tokenRequest.returnTokens(r.getTokens());
         }
         return null;
     }
