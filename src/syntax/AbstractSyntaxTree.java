@@ -96,7 +96,14 @@ public class AbstractSyntaxTree {
                 // Promote un nivell
                 Token tk = ((TokenDataPair) o).getToken();
 
-                if (i == 1 && tk == Token.ASSIGN) {
+                if (tk == Token.BUCLE) {
+                    if (this.father != null && !((TokenDataPair) o).isPromoted()) {
+                        ((TokenDataPair) o).setPromoted();
+                        this.operation = new TokenDataPair(Token.END_LOOP, "end_loop");
+                        ((AbstractSyntaxTree)this.treeExtend.get(1)).operation = ((TokenDataPair) o);
+                        this.treeExtend.remove(o);
+                    }
+                } else if (i == 1 && tk == Token.ASSIGN) {
                     if (this.father != null && !((TokenDataPair) o).isPromoted()) {
                         ((TokenDataPair) o).setPromoted();
                         this.operation = ((TokenDataPair) o);
@@ -181,13 +188,17 @@ public class AbstractSyntaxTree {
                 if (b.operation == null) {
                     return 1;
                 }
+
+                if (a.operation.getToken() == Token.BUCLE) {
+                    return 1;
+                }
+
                 if (a.operation.getToken() == Token.ASSIGN && b.operation.getToken() == Token.ASSIGN) {
                     return 0;
                 }
                 return b.height - a.height;
             }
         };
-
 
         PriorityQueue<AbstractSyntaxTree> pq = new PriorityQueue<AbstractSyntaxTree>(comparator);
 
@@ -202,10 +213,11 @@ public class AbstractSyntaxTree {
         while (!pq.isEmpty()) {
             AbstractSyntaxTree tree = pq.remove();
             tree.travelWithPriorityDepth(intermediateCodeData);
+
             tree.id = intermediateCodeData.addLine(tree.operation, tree.treeExtend.get(0), tree.treeExtend.get(1));
 
             // debug line for 3@Code
-            // System.out.println(tree + "->" + tree.treeExtend + " id: " + tree.id);
+            System.out.println(tree + "->" + tree.treeExtend + "   op: " + tree.operation);
         }
     }
 

@@ -1,11 +1,14 @@
 package intermediateCode;
 
+import entities.Tag;
 import entities.Token;
 import entities.TokenDataPair;
 import syntax.AbstractSyntaxTree;
 
 import java.io.Serial;
 import java.util.Objects;
+import java.util.Queue;
+import java.util.Stack;
 
 public class ThreeAddressLine {
     private final TokenDataPair op;
@@ -42,7 +45,7 @@ public class ThreeAddressLine {
         return op;
     }
 
-    public String printLine(int idOp) {
+    public String printLine(int idOp, Stack<Tag> tags) {
         String arg1String;
         String arg2String;
 
@@ -66,6 +69,19 @@ public class ThreeAddressLine {
             } else {
                 return null;
             }
+        }
+
+        if (Objects.equals(op.getData(), "end_loop")) {
+            Tag tag = tags.pop();
+            return tag.getVarIterate() + " := " + tag.getVarIterate() + " + 1" + "\ngoto " + tag.getName1() + "\n" + tag.getName2() + ":";
+        }
+
+        if (Objects.equals(op.getData(), "loop")) {
+            // CASE LOOP (FOR I IN RANGE(NUM))
+            Tag tag = new Tag(arg1String);
+            tags.push(tag);
+
+            return arg1String + " := " + "0\n" + tag.getName1() + ": if " + arg1String + " >= " + arg2String + " goto " + tag.getName2();
         }
 
         if (Objects.equals(op.getData(), "=")) {
