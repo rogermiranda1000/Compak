@@ -39,6 +39,9 @@ public class MipsGenerator {
     public static void createMIPS(ArrayList<String> lines, FileWriter writer) throws IOException {
         ArrayList<String> out = new ArrayList<>();
         out.add(".text\n");
+
+        RegisterManager.kColoringGraphRegisterGenerator(lines);
+
         for (String line : lines) {
             String[] tokens = line.split(" ");
             String expression = generateMIPSExpression(tokens);
