@@ -143,21 +143,21 @@ public class MipsGenerator {
     private static String mipsMult(String[] tokens) {
         if (anyNumbers(tokens[2], tokens[4])) throw new InvalidTacException();
         String operation = "mult";
-        return operation + " " + formatArg(tokens[2]) + ", " + formatArg(tokens[4]) + "\n" +
+        return operation + " " + formatArg(tokens[2]) + ", " + formatArg(tokens[4]) + "\n" + INDENT +
                 moveLow(tokens[0]);
     }
 
     private static String mipsDiv(String[] tokens) {
         if (anyNumbers(tokens[2], tokens[4])) throw new InvalidTacException();
         String operation = "div";
-        return operation + " " + formatArg(tokens[2]) + ", " + formatArg(tokens[4]) + "\n" +
+        return operation + " " + formatArg(tokens[2]) + ", " + formatArg(tokens[4]) + "\n"+ INDENT +
                 moveLow(tokens[0]);
     }
 
     private static String mipsMod(String[] tokens) {
         if (anyNumbers(tokens[2], tokens[4])) throw new InvalidTacException();
         String operation = "div";
-        return operation + " " + formatArg(tokens[2]) + ", " + formatArg(tokens[4]) + "\n" +
+        return operation + " " + formatArg(tokens[2]) + ", " + formatArg(tokens[4]) + "\n"+ INDENT +
                 moveHigh(tokens[0]);
     }
 
