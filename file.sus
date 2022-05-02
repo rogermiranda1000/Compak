@@ -1,7 +1,4 @@
 main ( ) {
     int d = 3 + (9 + 7) + 2 + 1;
-    int a = ((3 + 5) * (2 + 6)) / 3;
-    int c = a;
-    bit c = ((true) & (false));
-    bit w = (x | y & z);
+
 }
