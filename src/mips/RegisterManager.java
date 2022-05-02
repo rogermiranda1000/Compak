@@ -25,7 +25,6 @@ public class RegisterManager {
             String[] tokens = line.split(" ");
 
             for(String token : tokens) {
-                //TODO: change to regEx
                 if(token.matches("^t\\d+$")) {
                     int registerNumber = Integer.parseInt(token.substring(1));
                     //Si no esta directament mapejat el agreugem a la taula
