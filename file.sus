@@ -1,11 +1,5 @@
 main ( ) {
-    int b = 0;
-    int i;
-    loop(for i in range(5)) {
-        b = i; // 0 + 1 + 2 + 3 + 4 = 10
-    }
-    int x = 13;
-    loop(3) {
+    loop( (3 < 4) & (true == false) ) {
         z = i;
     }
 }
