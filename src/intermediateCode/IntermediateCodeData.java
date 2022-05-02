@@ -31,6 +31,11 @@ public class IntermediateCodeData {
         return data.size()-1;
     }
 
+    public int addLine(TokenDataPair op, Object arg1) {
+        data.add(new ThreeAddressLine(op, arg1, null));
+        return data.size()-1;
+    }
+
     public void printData() {
         Stack<Tag> stack = new Stack<>();
 

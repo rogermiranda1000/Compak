@@ -49,6 +49,7 @@ public enum Token {
     STRING_VALUE(Pattern.compile("^\"((?:[^\"]|(?<=\\\\)\")*)\"$")),
     REPEAT("repeat"),
     FOR_IN("for_in"),
+    WHILE("while"),
     // reserved characters
     NONE(Pattern.compile("^(.*)$")),
     EOF(""),
