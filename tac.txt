@@ -1,3 +1,6 @@
-t0 := 2 + 3a := t0
-t1 := at2 := 5 == 4L2: if !(t2) goto L3goto L2
-L3:
+L0: if !(true) goto L1
+t1 := 2 + 3
+a := t1
+t2 := a
+goto L0
+L1:
