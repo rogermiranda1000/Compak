@@ -98,7 +98,7 @@ public class ThreeAddressLine {
             Tag tag = new Tag(arg1String);
             tags.push(tag);
 
-            return tag.getName1() + ": if !(" + arg1String + ") goto " + tag.getName2();
+            return tag.getName1() + ": if !" + arg1String + " goto " + tag.getName2();
         }
 
         if (Objects.equals(op.getData(), "while")) {
@@ -106,7 +106,7 @@ public class ThreeAddressLine {
             Tag tag = new Tag(arg1String);
             tags.push(tag);
 
-            return tag.getName1() + ": if !(" + arg1String + ") goto " + tag.getName2();
+            return tag.getName1() + ": if !" + arg1String + " goto " + tag.getName2();
         }
 
         if (Objects.equals(op.getData(), "range")) {
