@@ -1,6 +1,18 @@
-L0: if !(true) goto L1
-t1 := 2 + 3
-a := t1
-t2 := a
+n := 5
+t0 := n
+i := 0
+t1 := i
+j := 1
+t2 := j
+k := 0
+L0: if k >= n goto L1
+t4 := i + j
+t := t4
+t5 := t
+i := j
+t6 := i
+j := t
+t7 := j
+k := k + 1
 goto L0
 L1:
