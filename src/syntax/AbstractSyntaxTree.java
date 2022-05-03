@@ -99,9 +99,23 @@ public class AbstractSyntaxTree {
                 // Promote un nivell
                 Token tk = ((TokenDataPair) o).getToken();
 
-                if (tk == Token.BUCLE) {
+                if (tk == Token.IF) {
+                    ((TokenDataPair) o).setPromoted();
+                    this.operation = new TokenDataPair(Token.END_IF, "end_if");
+
+                    //new TokenDataPair(Token.WHILE, "while")
+                    Object obj = this.treeExtend.get(1);
+                    AbstractSyntaxTree newObject =  new AbstractSyntaxTree();
+                    newObject.treeExtend.add(obj);
+                    this.treeExtend.add(0, newObject);
+
+                    this.treeExtend.remove(obj);
+                    this.treeExtend.remove(o);
+
+                    ((AbstractSyntaxTree) this.treeExtend.get(0)).operation = new TokenDataPair(Token.IF, "if");
+                } else if (tk == Token.BUCLE) {
                     if (this.father != null && !((TokenDataPair) o).isPromoted()) {
-                        // Case loop(for i in range (5))
+                        // Case loop(for i in range (5)) - for
                         if (this.treeExtend.get(1) instanceof AbstractSyntaxTree && ((AbstractSyntaxTree) this.treeExtend.get(1)).operation == null) {
                             ((TokenDataPair) o).setPromoted();
                             this.operation = new TokenDataPair(Token.END_LOOP, "end_for");
@@ -110,7 +124,7 @@ public class AbstractSyntaxTree {
                         } else if (false) {
                             // Case loop(number)
                         } else {
-                            // Case loop(boolean)
+                            // Case loop(boolean) - while
                             ((TokenDataPair) o).setPromoted();
                             this.operation = new TokenDataPair(Token.END_LOOP, "end_while");
 
@@ -250,7 +264,7 @@ public class AbstractSyntaxTree {
 
 
             // debug line for 3@Code
-            System.out.println(tree + "->" + tree.treeExtend + "   op: " + tree.operation);
+            // System.out.println(tree + "->" + tree.treeExtend + "   op: " + tree.operation);
         }
     }
 
