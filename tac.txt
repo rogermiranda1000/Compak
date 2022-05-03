@@ -1,18 +1,22 @@
-n := 5
-t0 := n
-i := 0
-t1 := i
-j := 1
-t2 := j
-k := 0
-L0: if k >= n goto L1
-t4 := i + j
-t := t4
-t5 := t
-i := j
-t6 := i
-j := t
-t7 := j
-k := k + 1
+t0 := 5
+t1 := t0
+t2 := 0
+t3 := t2
+t4 := 1
+t5 := t4
+t6 := t7 < t0
+L0: if !t3 goto L1
+t8 := t2 + t4
+t9 := t8
+t10 := t9
+t2 := t4
+t11 := t2
+t4 := t9
+t12 := t4
+t13 := t7 + 1
+t7 := t13
+t14 := t7
 goto L0
 L1:
+t7 := 0
+t15 := t7

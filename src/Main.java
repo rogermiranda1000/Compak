@@ -2,6 +2,7 @@ import entities.Token;
 import entities.TokenDataPair;
 import lexic.TokenBuffer;
 import lexic.TokenRequest;
+import optimizer.OptimizerManager;
 import preprocesser.CodeProcessor;
 import preprocesser.LineRequest;
 import syntax.GrammarAnalizer;
@@ -20,6 +21,8 @@ public class Main {
         Parser p = new Parser(new TokenBuffer(new CodeProcessor(PATH_FILE)), new GrammarAnalizer());
         p.compile(null);
         //p.test(); TODO: Uncomment for final commit
+        OptimizerManager om = new OptimizerManager();
+        om.optimize();
         generateMipsFromFile(PATH_TAC, PATH_MIPS);
     }
 }
