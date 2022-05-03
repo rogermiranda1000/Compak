@@ -1,10 +1,14 @@
 package intermediateCode;
 
+import entities.Tag;
 import entities.Token;
 import entities.TokenDataPair;
 
 import java.io.*;
 import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.Queue;
+import java.util.Stack;
 
 public class IntermediateCodeData {
 
@@ -27,9 +31,16 @@ public class IntermediateCodeData {
         return data.size()-1;
     }
 
+    public int addLine(TokenDataPair op, Object arg1) {
+        data.add(new ThreeAddressLine(op, arg1, null));
+        return data.size()-1;
+    }
+
     public void printData() {
+        Stack<Tag> stack = new Stack<>();
+
         for (int i = 0; i < data.size(); i++) {
-            String lineData = data.get(i).printLine(i);
+            String lineData = data.get(i).printLine(i, stack);
             if (lineData != null) {
                 System.out.println(lineData);
             }
@@ -39,10 +50,12 @@ public class IntermediateCodeData {
     public void generateIntermediateCodeFile() {
         try {
             FileWriter myWriter = new FileWriter("tac.txt");
+            Stack<Tag> stack = new Stack<>();
             for (int i = 0; i < data.size(); i++) {
-                String lineData = data.get(i).printLine(i);
+                String lineData = data.get(i).printLine(i, stack);
                 if (lineData != null) {
-                    myWriter.write(lineData + "\n");
+                    myWriter.write(lineData);
+                    myWriter.write("\n");
                 }
             }
             myWriter.close();

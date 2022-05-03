@@ -1,5 +1,15 @@
 main ( ) {
-    int d = 3 + (9 + 7) + 2 + 1;
-    int a = 3 + 5 / 4 + (3 - 5 * 6 - 7);
-    int b = 2 - 1 + 4 * (4 - 6) + 3 - 5;
+    int n = 5; // Input from fibonacci
+    int i = 0;
+    int j = 1;
+    int k;
+
+    loop (for k in range(n)) {
+        int t;
+        t = i + j;
+        i = j;
+        j = t;
+    }
+
+    // Solution from fibonacci is j
 }
