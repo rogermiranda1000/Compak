@@ -55,6 +55,7 @@ public class IntermediateCodeData {
                 String lineData = data.get(i).printLine(i, stack);
                 if (lineData != null) {
                     myWriter.write(lineData);
+                    myWriter.write("\n");
                 }
             }
             myWriter.close();
