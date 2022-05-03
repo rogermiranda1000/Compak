@@ -213,8 +213,6 @@ public class AbstractSyntaxTree {
         return max+1;
     }
 
-
-
     public void travelWithPriorityDepth(IntermediateCodeData intermediateCodeData) {
         Comparator<AbstractSyntaxTree> comparator = new Comparator<AbstractSyntaxTree>() {
             @Override
@@ -227,11 +225,19 @@ public class AbstractSyntaxTree {
                     return 1;
                 }
 
+                if (b.operation.getToken() == Token.WHILE) {
+                    return 100;
+                }
+
+                if (b.operation.getToken() == Token.IF) {
+                    return 100;
+                }
+
                 if (a.operation.getToken() == Token.BUCLE) {
                     return 1;
                 }
 
-                if (a.operation.getToken() == Token.WHILE) {
+                if (a.operation.getToken() == Token.IF) {
                     return 1;
                 }
 
@@ -255,7 +261,7 @@ public class AbstractSyntaxTree {
         while (!pq.isEmpty()) {
             AbstractSyntaxTree tree = pq.remove();
             tree.travelWithPriorityDepth(intermediateCodeData);
-            //System.out.println(tree.operation + " " + tree.treeExtend.get(0) + " " + tree.treeExtend.get(1));
+
             if (tree.treeExtend.size() == 2) {
                 tree.id = intermediateCodeData.addLine(tree.operation, tree.treeExtend.get(0), tree.treeExtend.get(1));
             } else {
