@@ -18,6 +18,8 @@ public class MipsGenerator {
         } catch (IOException e) {
             System.out.println("An error occurred.");
             e.printStackTrace();
+        } catch (NoMoreRegistersException e) {
+            throw new RuntimeException(e);
         }
     }
 
@@ -36,11 +38,11 @@ public class MipsGenerator {
         return lines;
     }
 
-    public static void createMIPS(ArrayList<String> lines, FileWriter writer) throws IOException {
+    public static void createMIPS(ArrayList<String> lines, FileWriter writer) throws IOException, NoMoreRegistersException {
         ArrayList<String> out = new ArrayList<>();
         out.add(".text\n");
 
-        RegisterManager.kColoringGraphRegisterGenerator(lines);
+        RegisterManager.kColoringGraphRegisterGenerator(lines, 8);
 
         for (String line : lines) {
             String[] tokens = line.split(" ");
