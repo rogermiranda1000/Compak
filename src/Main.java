@@ -4,17 +4,22 @@ import lexic.TokenBuffer;
 import lexic.TokenRequest;
 import preprocesser.CodeProcessor;
 import preprocesser.LineRequest;
+import syntax.GrammarAnalizer;
+import syntax.Parser;
 
 import java.io.FileNotFoundException;
 
+import static mips.MipsGenerator.generateMipsFromFile;
+
 public class Main {
-    private static final String PATH = "file.sus";
+    private static final String PATH_FILE = "file.sus";
+    private static final String PATH_TAC = "tac.txt";
+    private static final String PATH_MIPS = "mips.asm";
 
     public static void main(String[] args) throws FileNotFoundException {
-        LineRequest lr = new CodeProcessor(Main.PATH);
-        TokenRequest tr = new TokenBuffer(lr);
-
-        TokenDataPair token;
-        while ((token = tr.requestNextToken()).getToken() != Token.EOF) System.out.println(token);
+        Parser p = new Parser(new TokenBuffer(new CodeProcessor(PATH_FILE)), new GrammarAnalizer());
+        p.compile(null);
+        //p.test(); TODO: Uncomment for final commit
+        generateMipsFromFile(PATH_TAC, PATH_MIPS);
     }
 }
