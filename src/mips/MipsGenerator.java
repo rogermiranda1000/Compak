@@ -42,9 +42,9 @@ public class MipsGenerator {
         ArrayList<String> out = new ArrayList<>();
         out.add(".text\n");
 
-        RegisterManager.kColoringGraphRegisterGenerator(lines, 8);
+       String[] newLines = RegisterManager.kColoringGraphRegisterGenerator(lines, 8);
 
-        for (String line : lines) {
+        for (String line : newLines) {
             String[] tokens = line.split(" ");
             String expression = generateMIPSExpression(tokens);
             out.add(expression);
