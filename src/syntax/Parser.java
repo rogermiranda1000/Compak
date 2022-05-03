@@ -6,6 +6,7 @@ import lexic.TokenBuffer;
 import lexic.TokenRequest;
 import org.jetbrains.annotations.Nullable;
 import preprocesser.CodeProcessor;
+import testing.TestMaster;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -204,13 +205,6 @@ public class Parser implements Compiler {
     }
 
     public void test() {
-        //TestMaster.testAll();
-    }
-
-    public static void main(String[] args) throws FileNotFoundException {
-        Parser p = new Parser(new TokenBuffer(new CodeProcessor("file.sus")), new GrammarAnalizer());
-        p.compile(null);
-        //TODO: Uncomment for final commit
-        //p.test();
+        TestMaster.testAll();
     }
 }
