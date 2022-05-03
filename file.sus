@@ -1,5 +1,8 @@
 main ( ) {
-    loop( (3 < 4) & (true == false) ) {
-        z = i;
+    int i;
+    int a;
+
+    loop (true) {
+       a = 2 + 3;
     }
 }

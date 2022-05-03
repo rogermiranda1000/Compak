@@ -6,9 +6,6 @@ import java.util.Arrays;
 
 public class MipsGenerator {
     private static final String INDENT = "    ";
-    public static void main(String[] args) {
-        generateMipsFromFile("tac.txt", "mips.asm");
-    }
 
     public static void generateMipsFromFile(String inputFile, String outputFile) {
         ArrayList<String> lines = getTACLines(inputFile);
