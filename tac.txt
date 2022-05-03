@@ -4,19 +4,15 @@ t2 := 0
 t3 := t2
 t4 := 1
 t5 := t4
-t6 := t7 < t0
-L0: if !t3 goto L1
-t8 := t2 + t4
+t6 := 0
+L0: if t6 >= t0 goto L1
+t7 := t2 + t4
+t8 := t7
 t9 := t8
-t10 := t9
 t2 := t4
-t11 := t2
-t4 := t9
-t12 := t4
-t13 := t7 + 1
-t7 := t13
-t14 := t7
+t10 := t2
+t4 := t8
+t11 := t4
+t6 := t6 + 1
 goto L0
 L1:
-t7 := 0
-t15 := t7
