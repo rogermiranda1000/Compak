@@ -2,20 +2,13 @@ package mips;
 
 import entities.TokenDataPair;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 
 public class RegisterManager {
-    private static final int lengthRegisters = 10;
-    private Register[] registers = new Register[lengthRegisters];
-
-    private RegisterManager() {
-        for(int i=0; i < lengthRegisters; i++) {
-            registers[i] = new Register(-1);
-        }
-    }
-
     public static ArrayList<Integer> getUsageOfRegisters(ArrayList<String> lines, int[] biggestVirtualRegister) {
         HashMap<Integer, ArrayList<Integer>> registersEnding = new HashMap<>();
 
@@ -49,7 +42,7 @@ public class RegisterManager {
         return endsUsageAt;
     }
 
-    public static void kColoringGraphRegisterGenerator(ArrayList<String> lines, int numRegisters) throws NoMoreRegistersException {
+    public static String[] kColoringGraphRegisterGenerator(ArrayList<String> lines, int numRegisters) throws NoMoreRegistersException {
         int[] biggestVirtualRegisterArray = new int[1];
         biggestVirtualRegisterArray[0] = -1;
         ArrayList<Integer> endingUsageOfRegisters = getUsageOfRegisters(lines, biggestVirtualRegisterArray);
@@ -70,7 +63,6 @@ public class RegisterManager {
 
         int countLines = 0;
         for(String line: lines) {
-
             String[] tokens = line.split(" ");
             for (String token : tokens) {
                 if (token.matches("^t\\d+$")) {
@@ -92,6 +84,8 @@ public class RegisterManager {
                 freeRegisters[assignation[freeVirtualRegister]] = false;
             }
         }
+
+
         String[] newLines = new String[lines.size()];
         int countNewLines = 0;
         for(String line: lines) {
@@ -110,8 +104,8 @@ public class RegisterManager {
             countNewLines++;
         }
 
+        return newLines;
 
-        System.out.println("TEST");
     }
 
     private static int existsFreeRegister(boolean[] freeRegisters) {
@@ -123,20 +117,5 @@ public class RegisterManager {
         return -1;
     }
 
-    private void checkIfWeCanFreeRegisters(int actualPosition) {
-        for(int i=0; i < lengthRegisters; i++) {
-            if(registers[i].getPositionThatEnds() < actualPosition) registers[i].setStatus(false);
-        }
-    }
 
-    private int lookForFreeRegister() throws NoMoreRegistersException {
-        for(int i=0; i < lengthRegisters; i++) {
-            if(this.registers[i].getStatus()) return i;
-        }
-        throw new NoMoreRegistersException("ERROR: No more registers available");
-    }
-
-    private void freeRegister(int id) {
-        registers[id].setStatus(false);
-    }
 }
