@@ -88,8 +88,21 @@ public class ThreeAddressLine {
             return "goto " + tag.getName1() + "\n" + tag.getName2() + ":";
         }
 
+        if (Objects.equals(op.getData(), "end_if")) {
+            Tag tag = tags.pop();
+            return tag.getName2() + ":";
+        }
+
+        if (Objects.equals(op.getData(), "if")) {
+            // CASE if (bool)
+            Tag tag = new Tag(arg1String);
+            tags.push(tag);
+
+            return tag.getName1() + ": if !(" + arg1String + ") goto " + tag.getName2();
+        }
+
         if (Objects.equals(op.getData(), "while")) {
-            // CASE LOOP (FOR I IN RANGE(NUM))
+            // CASE LOOP (bool)
             Tag tag = new Tag(arg1String);
             tags.push(tag);
 

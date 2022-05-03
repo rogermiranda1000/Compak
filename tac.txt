@@ -1,3 +1,3 @@
-t0 := 3 < 4t1 := true == falset2 := t0 & t1L2: if !(t2) goto L3z := i
-t4 := zgoto L2
+t0 := 2 + 3a := t0
+t1 := at2 := 5 == 4L2: if !(t2) goto L3goto L2
 L3:
