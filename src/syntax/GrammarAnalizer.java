@@ -113,7 +113,7 @@ public class GrammarAnalizer extends GrammarRequest {
         declaracioBucle.addProduction(Token.BUCLE, Token.OPN_PARENTH, declaracioBucleSub, Token.CLS_PARENTH, Token.OPN_CONTEXT, sentencies, Token.CLS_CONTEXT);
 
         declaracioBucleSub.addProduction(n0)
-                .addProduction(Token.FOR, Token.ID, Token.IN, Token.RANGE, Token.OPN_PARENTH, Token.NUMBER, Token.CLS_PARENTH);
+                .addProduction(Token.FOR, Token.ID, Token.IN, Token.RANGE, Token.OPN_PARENTH, id, Token.CLS_PARENTH);
 
         n0.addProduction(n1, n0Sub);
 
