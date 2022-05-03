@@ -1,11 +1,14 @@
 package intermediateCode;
 
+import entities.Tag;
 import entities.Token;
 import entities.TokenDataPair;
 import syntax.AbstractSyntaxTree;
 
 import java.io.Serial;
 import java.util.Objects;
+import java.util.Queue;
+import java.util.Stack;
 
 public class ThreeAddressLine {
     private final TokenDataPair op;
@@ -42,9 +45,11 @@ public class ThreeAddressLine {
         return op;
     }
 
-    public String printLine(int idOp) {
+    public String printLine(int idOp, Stack<Tag> tags) {
         String arg1String;
         String arg2String;
+
+
 
         if (arg1 instanceof TokenDataPair) {
             arg1String = ((TokenDataPair) arg1).getData();
@@ -52,11 +57,16 @@ public class ThreeAddressLine {
             arg1String = "t" + String.valueOf(((AbstractSyntaxTree) arg1).getId());
         }
 
-        if (arg2 instanceof TokenDataPair) {
-            arg2String = ((TokenDataPair) arg2).getData();
+        if (arg2 != null) {
+            if (arg2 instanceof TokenDataPair) {
+                arg2String = ((TokenDataPair) arg2).getData();
+            } else {
+                arg2String = "t" + String.valueOf(((AbstractSyntaxTree) arg2).getId());
+            }
         } else {
-            arg2String = "t" + String.valueOf(((AbstractSyntaxTree) arg2).getId());
+            arg2String = "NULL";
         }
+
 
         if (op == null) {
             if (arg1String == null) {
@@ -66,6 +76,45 @@ public class ThreeAddressLine {
             } else {
                 return null;
             }
+        }
+
+        if (Objects.equals(op.getData(), "end_for")) {
+            Tag tag = tags.pop();
+            return tag.getVarIterate() + " := " + tag.getVarIterate() + " + 1" + "\ngoto " + tag.getName1() + "\n" + tag.getName2() + ":";
+        }
+
+        if (Objects.equals(op.getData(), "end_while")) {
+            Tag tag = tags.pop();
+            return "goto " + tag.getName1() + "\n" + tag.getName2() + ":";
+        }
+
+        if (Objects.equals(op.getData(), "end_if")) {
+            Tag tag = tags.pop();
+            return tag.getName2() + ":";
+        }
+
+        if (Objects.equals(op.getData(), "if")) {
+            // CASE if (bool)
+            Tag tag = new Tag(arg1String);
+            tags.push(tag);
+
+            return tag.getName1() + ": if !" + arg1String + " goto " + tag.getName2();
+        }
+
+        if (Objects.equals(op.getData(), "while")) {
+            // CASE LOOP (bool)
+            Tag tag = new Tag(arg1String);
+            tags.push(tag);
+
+            return tag.getName1() + ": if !" + arg1String + " goto " + tag.getName2();
+        }
+
+        if (Objects.equals(op.getData(), "range")) {
+            // CASE LOOP (FOR I IN RANGE(NUM))
+            Tag tag = new Tag(arg1String);
+            tags.push(tag);
+
+            return arg1String + " := " + "0\n" + tag.getName1() + ": if " + arg1String + " >= " + arg2String + " goto " + tag.getName2();
         }
 
         if (Objects.equals(op.getData(), "=")) {

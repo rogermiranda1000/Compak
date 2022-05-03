@@ -47,11 +47,13 @@ public enum Token {
     FLOAT(Pattern.compile("^(\\d+\\.\\d+)$")),
     NUMBER(Pattern.compile("^(\\d+)$")),
     STRING_VALUE(Pattern.compile("^\"((?:[^\"]|(?<=\\\\)\")*)\"$")),
-
+    REPEAT("repeat"),
+    FOR_IN("for_in"),
+    WHILE("while"),
     // reserved characters
     NONE(Pattern.compile("^(.*)$")),
     EOF(""),
-    EPSILON("");
+    EPSILON(""), END_LOOP("END_LOOP") , END_IF("END_IF");
 
     private String match;
     private Pattern reg_match;
