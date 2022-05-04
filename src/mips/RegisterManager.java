@@ -1,12 +1,10 @@
 package mips;
 
-import entities.TokenDataPair;
-
-import java.lang.reflect.Array;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class RegisterManager {
     public static ArrayList<Integer> getUsageOfRegisters(ArrayList<String> lines, int[] biggestVirtualRegister) {
