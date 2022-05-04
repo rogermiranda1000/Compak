@@ -82,12 +82,11 @@ public class RegisterManager {
                     for (Integer registerNum : loopRegisters.get(label)) {
                         registers.add("t"+registerNum);
                     }
-                    String newLine = "remember: " + String.join(", ", registers);
+                    String newLine = "# remember: " + String.join(", ", registers);
                     lines.add(i+1, newLine);
                 }
             }
         }
-        System.out.println("Hola");
     }
 
     public static String[] kColoringGraphRegisterGenerator(ArrayList<String> lines, int numRegisters) throws NoMoreRegistersException {
