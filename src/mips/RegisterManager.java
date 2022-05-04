@@ -45,24 +45,28 @@ public class RegisterManager {
         HashMap<Integer, ArrayList<Integer>> loopRegisters = new HashMap<>();
         Pattern loopStart = Pattern.compile("^L(\\d+): if");
         Pattern register = Pattern.compile("t(\\d+)");
-        Pattern loopEnd = Pattern.compile("^L(\\d+):$");
+        Pattern loopEnd = Pattern.compile("^goto L(\\d+)$");
         Matcher matcher;
         for (int i = 0; i < lines.size(); i++) {
             String line = lines.get(i);
 
             // Detectar nous bucles
             matcher = loopStart.matcher(line);
-            if (matcher.matches()) {
+            if (matcher.find()) {
                 int label = Integer.parseInt(matcher.group(1));
                 // Afegim nou bucle
                 activeLoops.add(label);
+                loopRegisters.put(label, new ArrayList<>());
             }
             // Afegir registres als bucles
             matcher = register.matcher(line);
             while (matcher.find()) {
-                int registerN = Integer.parseInt(matcher.group());
+                int registerN = Integer.parseInt(matcher.group(1));
                 for (Integer loop : activeLoops) {
-                    loopRegisters.get(loop).add(registerN);
+                    ArrayList<Integer> savedRegisters = loopRegisters.get(loop);
+                    if (!savedRegisters.contains(registerN)) {
+                        savedRegisters.add(registerN);
+                    }
                 }
             }
             // Tancar loops
@@ -71,15 +75,19 @@ public class RegisterManager {
                 int label = Integer.parseInt(matcher.group(1));
                 if (activeLoops.contains(label)) {
                     activeLoops.remove(label);
+
+                    // Add new line
+                    ArrayList<String> registers = new ArrayList<>();
+                    Collections.sort(loopRegisters.get(label));
+                    for (Integer registerNum : loopRegisters.get(label)) {
+                        registers.add("t"+registerNum);
+                    }
+                    String newLine = "remember: " + String.join(", ", registers);
+                    lines.add(i+1, newLine);
                 }
-                ArrayList<String> registers = new ArrayList<>();
-                for (Integer registerNum : loopRegisters.get(label)) {
-                    registers.add("t"+registerNum);
-                }
-                String newLine = String.join(" ,", registers);
-                lines.add(i+1, newLine);
             }
         }
+        System.out.println("Hola");
     }
 
     public static String[] kColoringGraphRegisterGenerator(ArrayList<String> lines, int numRegisters) throws NoMoreRegistersException {
