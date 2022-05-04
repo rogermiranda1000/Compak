@@ -42,7 +42,51 @@ public class RegisterManager {
         return endsUsageAt;
     }
 
+    private static void addRegistersToNotFree(ArrayList<String> lines) {
+        ArrayList<Integer> activeLoops = new ArrayList<>();
+        HashMap<Integer, ArrayList<Integer>> loopRegisters = new HashMap<>();
+        Pattern loopStart = Pattern.compile("^L(\\d+): if");
+        Pattern register = Pattern.compile("t(\\d+)");
+        Pattern loopEnd = Pattern.compile("^L(\\d+):$");
+        Matcher matcher;
+        for (int i = 0; i < lines.size(); i++) {
+            String line = lines.get(i);
+
+            // Detectar nous bucles
+            matcher = loopStart.matcher(line);
+            if (matcher.matches()) {
+                int label = Integer.parseInt(matcher.group(1));
+                // Afegim nou bucle
+                activeLoops.add(label);
+            }
+            // Afegir registres als bucles
+            matcher = register.matcher(line);
+            while (matcher.find()) {
+                int registerN = Integer.parseInt(matcher.group());
+                for (Integer loop : activeLoops) {
+                    loopRegisters.get(loop).add(registerN);
+                }
+            }
+            // Tancar loops
+            matcher = loopEnd.matcher(line.trim());
+            if (matcher.matches()) {
+                int label = Integer.parseInt(matcher.group(1));
+                if (activeLoops.contains(label)) {
+                    activeLoops.remove(label);
+                }
+                ArrayList<String> registers = new ArrayList<>();
+                for (Integer registerNum : loopRegisters.get(label)) {
+                    registers.add("t"+registerNum);
+                }
+                String newLine = String.join(" ,", registers);
+                lines.add(i+1, newLine);
+            }
+        }
+    }
+
     public static String[] kColoringGraphRegisterGenerator(ArrayList<String> lines, int numRegisters) throws NoMoreRegistersException {
+        addRegistersToNotFree(lines);
+
         int[] biggestVirtualRegisterArray = new int[1];
         biggestVirtualRegisterArray[0] = -1;
         ArrayList<Integer> endingUsageOfRegisters = getUsageOfRegisters(lines, biggestVirtualRegisterArray);
