@@ -42,7 +42,7 @@ public class MipsGenerator {
         out.add(".text\n");
         out.add("main:");
 
-        String[] newLines = RegisterManager.kColoringGraphRegisterGenerator(lines, 8);
+        String[] newLines = RegisterManager.kColoringGraphRegisterGenerator(lines, 10);
 
         for (String line : newLines) {
             String[] tokens = line.split(" ");
