@@ -1,12 +1,10 @@
 package mips;
 
-import entities.TokenDataPair;
-
-import java.lang.reflect.Array;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class RegisterManager {
     public static ArrayList<Integer> getUsageOfRegisters(ArrayList<String> lines, int[] biggestVirtualRegister) {
@@ -42,7 +40,58 @@ public class RegisterManager {
         return endsUsageAt;
     }
 
+    private static void addRegistersToNotFree(ArrayList<String> lines) {
+        ArrayList<Integer> activeLoops = new ArrayList<>();
+        HashMap<Integer, ArrayList<Integer>> loopRegisters = new HashMap<>();
+        Pattern loopStart = Pattern.compile("^L(\\d+): if");
+        Pattern register = Pattern.compile("t(\\d+)");
+        Pattern loopEnd = Pattern.compile("^goto L(\\d+)$");
+        Matcher matcher;
+        for (int i = 0; i < lines.size(); i++) {
+            String line = lines.get(i);
+
+            // Detectar nous bucles
+            matcher = loopStart.matcher(line);
+            if (matcher.find()) {
+                int label = Integer.parseInt(matcher.group(1));
+                // Afegim nou bucle
+                activeLoops.add(label);
+                loopRegisters.put(label, new ArrayList<>());
+            }
+            // Afegir registres als bucles
+            matcher = register.matcher(line);
+            while (matcher.find()) {
+                int registerN = Integer.parseInt(matcher.group(1));
+                for (Integer loop : activeLoops) {
+                    ArrayList<Integer> savedRegisters = loopRegisters.get(loop);
+                    if (!savedRegisters.contains(registerN)) {
+                        savedRegisters.add(registerN);
+                    }
+                }
+            }
+            // Tancar loops
+            matcher = loopEnd.matcher(line.trim());
+            if (matcher.matches()) {
+                int label = Integer.parseInt(matcher.group(1));
+                if (activeLoops.contains(label)) {
+                    activeLoops.remove(label);
+
+                    // Add new line
+                    ArrayList<String> registers = new ArrayList<>();
+                    Collections.sort(loopRegisters.get(label));
+                    for (Integer registerNum : loopRegisters.get(label)) {
+                        registers.add("t"+registerNum);
+                    }
+                    String newLine = "# remember: " + String.join(", ", registers);
+                    lines.add(i+1, newLine);
+                }
+            }
+        }
+    }
+
     public static String[] kColoringGraphRegisterGenerator(ArrayList<String> lines, int numRegisters) throws NoMoreRegistersException {
+        addRegistersToNotFree(lines);
+
         int[] biggestVirtualRegisterArray = new int[1];
         biggestVirtualRegisterArray[0] = -1;
         ArrayList<Integer> endingUsageOfRegisters = getUsageOfRegisters(lines, biggestVirtualRegisterArray);
