@@ -82,7 +82,7 @@ public class RegisterManager {
                     for (Integer registerNum : loopRegisters.get(label)) {
                         registers.add("t"+registerNum);
                     }
-                    String newLine = "# remember: " + String.join(", ", registers);
+                    String newLine = "# remember: " + String.join(" ", registers);
                     lines.add(i+1, newLine);
                 }
             }
@@ -133,9 +133,15 @@ public class RegisterManager {
                 freeRegisters[assignation[freeVirtualRegister]] = false;
             }
         }
+        int countRemembers = 0;
+        for(String line : lines){
+            if(line.startsWith("# remember:")) {
+                countRemembers++;
+            }
+        }
 
 
-        String[] newLines = new String[lines.size()];
+        String[] newLines = new String[lines.size() - countRemembers + 1];
         int countNewLines = 0;
         for(String line: lines) {
 
@@ -143,6 +149,7 @@ public class RegisterManager {
             StringBuilder newLine = new StringBuilder();
 
             for (String token : tokens) {
+
                 if (token.matches("^t\\d+$")) {
                     int idVirtualRegister = Integer.parseInt(token.substring(1));
                     newLine.append("t" + assignation[idVirtualRegister] + " ");
