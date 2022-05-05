@@ -47,21 +47,16 @@ public class IntermediateCodeData {
         }
     }
 
-    public void generateIntermediateCodeFile() {
-        try {
-            FileWriter myWriter = new FileWriter("tac.txt");
-            Stack<Tag> stack = new Stack<>();
-            for (int i = 0; i < data.size(); i++) {
-                String lineData = data.get(i).printLine(i, stack);
-                if (lineData != null) {
-                    myWriter.write(lineData);
-                    myWriter.write("\n");
-                }
+    public void generateIntermediateCodeFile(File out) throws IOException {
+        FileWriter myWriter = new FileWriter(out);
+        Stack<Tag> stack = new Stack<>();
+        for (int i = 0; i < data.size(); i++) {
+            String lineData = data.get(i).printLine(i, stack);
+            if (lineData != null) {
+                myWriter.write(lineData);
+                myWriter.write("\n");
             }
-            myWriter.close();
-        } catch (IOException e) {
-            System.out.println("An error occurred.");
-            e.printStackTrace();
         }
+        myWriter.close();
     }
 }
