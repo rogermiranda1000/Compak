@@ -141,7 +141,7 @@ public class RegisterManager {
         }
 
 
-        String[] newLines = new String[lines.size() - countRemembers + 1];
+        String[] newLines = new String[lines.size() - countRemembers];
         int countNewLines = 0;
         for(String line: lines) {
 
@@ -156,8 +156,10 @@ public class RegisterManager {
 
                 }else newLine.append(token + " ");
             }
-            newLines[countNewLines] = newLine.toString().trim();
-            countNewLines++;
+            if(!newLine.toString().startsWith("# remember:")) {
+                newLines[countNewLines] = newLine.toString().trim();
+                countNewLines++;
+            }
         }
 
         return newLines;
