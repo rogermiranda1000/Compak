@@ -22,10 +22,10 @@ public class Parser implements Compiler {
     }
 
     @Nullable
-    private ParseTree generateParseTree(HashMap<Production, FirstFollowData> firstFollowData, Production p) throws InvalidTreeException {
+    private ParseTree generateParseTree(Production p) throws InvalidTreeException {
         for (Object[] productions : p.getProduccions()) {
             boolean match = true,
-                first = true; // if it's the first token it can fail, but if not then it's an error
+                    first = true;
             ParseTree r = new ParseTree(p);
             TokenDataPair token;
             for (Object tokenOrProduction : productions) {
@@ -33,18 +33,13 @@ public class Parser implements Compiler {
 
                 if (tokenOrProduction instanceof Production) {
                     this.tokenRequest.returnTokens(token);
-                    ParseTree node = this.generateParseTree(firstFollowData, (Production) tokenOrProduction);
+                    ParseTree node = this.generateParseTree((Production) tokenOrProduction);
                     if (node == null) {
                         // error; return the tokens and start with other production
-                        if (!first) {
-                            Set<Token> firstFollow = firstFollowData.get((Production) tokenOrProduction).getFirst();
-                            if (firstFollow.remove(Token.EPSILON)) firstFollow.addAll(firstFollowData.get((Production) tokenOrProduction).getFollow()); // if epsilon -> also follow
-                            //throw new InvalidTreeException(token.getToken(), this.tokenRequest.getCurrentLine(), this.tokenRequest.getCurrentColumn(), firstFollow);
-                        }
-
                         match = false;
                         break;
                     }
+                    if (first && node.getTokens().size() > 0) first = false;
                     r.addTree(node);
                 }
                 else {
@@ -52,14 +47,13 @@ public class Parser implements Compiler {
 
                     if (!token.getToken().equals((Token)tokenOrProduction)) {
                         // error; return the tokens and start with other production
-                        /*if (!first) throw new InvalidTreeException(token.getToken(), this.tokenRequest.getCurrentLine(),
-                                this.tokenRequest.getCurrentColumn(), (Token)tokenOrProduction);*/
-
+                        if (!first) throw new InvalidTreeException(token.getToken(), this.tokenRequest.getCurrentLine(), this.tokenRequest.getCurrentColumn(), (Token)tokenOrProduction); // TODO al anar per ordre de declaració es pot donar el cas que s'aturi abans de trobar una solucio real?
                         match = false;
                         break;
                     }
+
+                    first = false;
                 }
-                first = false;
             }
 
             if (match) {
@@ -69,7 +63,9 @@ public class Parser implements Compiler {
                 token = this.tokenRequest.requestNextToken();
                 if (token.getToken() == Token.EOF) return r;
                 this.tokenRequest.returnTokens(token);
+
                 // !match
+                throw new InvalidTreeException(token.getToken(), this.tokenRequest.getCurrentLine(), this.tokenRequest.getCurrentColumn(), Token.EOF);
             }
 
             // !match => s'han de retornar tots els tokens utilitzats per construir el que portavem d'arbre
@@ -79,7 +75,7 @@ public class Parser implements Compiler {
     }
 
     private ParseTree generateParseTree() throws InvalidTreeException {
-        return this.generateParseTree(this.grammarRequest.getFirstFollowHash(), this.grammarRequest.getEntryPoint());
+        return this.generateParseTree(this.grammarRequest.getEntryPoint());
     }
 
     private AbstractSyntaxTree generateAbstractSyntaxTree(ParseTree parseTree, ArrayList<AbstractSyntaxTree> codes) {
