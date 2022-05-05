@@ -114,7 +114,7 @@ public class MipsGenerator {
             default -> "ERROR";
         };
         // if unsigned -> result += "u";
-        return command + " " + formatArg(tokens[1]) + ", " + formatArg(tokens[3]) + ", " + tokens[5];
+        return command + " " + formatArg(tokens[1]) + ", " + formatArg(tokens[3]) + ", " + "$" + tokens[5];
     }
 
     private static String checkLabel(String[] tokens) {
@@ -152,14 +152,14 @@ public class MipsGenerator {
     private static String mipsDiv(String[] tokens) {
         if (anyNumbers(tokens[2], tokens[4])) throw new InvalidTacException();
         String operation = "div";
-        return operation + " " + formatArg(tokens[2]) + ", " + formatArg(tokens[4]) + "\n"+ INDENT +
+        return operation + " " + formatArg(tokens[2]) + ", " + formatArg(tokens[4]) + "\n" + INDENT +
                 moveLow(tokens[0]);
     }
 
     private static String mipsMod(String[] tokens) {
         if (anyNumbers(tokens[2], tokens[4])) throw new InvalidTacException();
         String operation = "div";
-        return operation + " " + formatArg(tokens[2]) + ", " + formatArg(tokens[4]) + "\n"+ INDENT +
+        return operation + " " + formatArg(tokens[2]) + ", " + formatArg(tokens[4]) + "\n" + INDENT +
                 moveHigh(tokens[0]);
     }
 
