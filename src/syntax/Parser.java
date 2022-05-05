@@ -10,6 +10,7 @@ import testing.TestMaster;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.util.*;
 
 public class Parser implements Compiler {
@@ -183,7 +184,7 @@ public class Parser implements Compiler {
         return r.optimize();
     }
 
-    public boolean compile(File out) throws InvalidTreeException, DuplicateVariableException, UnknownVariableException {
+    public boolean compile(File out) throws InvalidTreeException, DuplicateVariableException, UnknownVariableException, IOException {
         ParseTree parseTree = generateParseTree();
         if (parseTree == null) return false;
         //parseTree.printTree();
@@ -195,7 +196,7 @@ public class Parser implements Compiler {
         abstractSyntaxTree.printTree();
 
         IntermediateCodeGenerator intermediateCodeGenerator = new IntermediateCodeGenerator();
-        intermediateCodeGenerator.process(abstractSyntaxTree);
+        intermediateCodeGenerator.process(abstractSyntaxTree, out);
 
         return true;
     }
