@@ -42,6 +42,7 @@ public class MipsGenerator {
         out.add(".text\n");
         out.add("main:");
 
+        lines = TacAdapter.adaptTac(lines);
         String[] newLines = RegisterManager.kColoringGraphRegisterGenerator(lines, 10);
 
         for (String line : newLines) {
@@ -176,7 +177,7 @@ public class MipsGenerator {
     }
 
     private static String formatArg(String argument) {
-        if (argument.charAt(0) == 't') {
+        if (argument.matches("-?t\\d")) {
             return "$" + argument;
         }
         return(argument);
