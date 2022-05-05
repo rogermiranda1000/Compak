@@ -5,11 +5,11 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class TacAdapter {
+public class TacMipsAdapter {
     private static final Pattern registerPattern = Pattern.compile("t(\\d+)");
 
     public static ArrayList<String> adaptTac(ArrayList<String> lines) {
-        Integer highest = findHighestRegiter(lines);
+        int highest[] = {findHighestRegiter(lines)};
         Matcher matcher;
         Pattern operation = Pattern.compile("(t\\d+) := (t?-?\\d+) ([+\\-*/%]) (t?-?\\d+)");
         for (int i = 0; i < lines.size(); i++) {
@@ -27,7 +27,6 @@ public class TacAdapter {
                         newLines = doWithRegisters(matcher, highest);
                     } else {
                         newLines = swapArguments(matcher);
-                        System.out.println(newLines); //TODO: Borrar
                     }
                     lines.remove(i);
                     lines.addAll(i, newLines);
@@ -38,17 +37,21 @@ public class TacAdapter {
         return lines;
     }
 
-    private static ArrayList<String> doWithRegisters(Matcher line, Integer maxRegisters) {
-        /*
-        String result = "";
-        String aux = "";
-        switch (line.group(3)) {
-            case "/":
-                result = "t" + maxRegisters + line.replaceFirst(" := $2");
-                aux = line.replaceFirst("$1 := -$4 + $2") + "";
-                break;
-        }*/
-        return new ArrayList<>(List.of(""));
+    private static ArrayList<String> doWithRegisters(Matcher line, int[] maxRegisters) {
+        ArrayList<String> results = new ArrayList<>();
+        String arg1 = line.group(2);
+        String arg2 = line.group(4);
+        String symbol = line.group(3);
+        if (!line.group(2).contains("t")) {
+            arg1 = "t" + ++maxRegisters[0];
+            results.add(arg1 + line.replaceFirst(" := $2"));
+        }
+        if (!line.group(4).contains("t") && !(symbol.equals("+") || symbol.equals("-"))) {  // Si estem en + o - no cal posar el segon a registre també, estalviem registres
+            arg2 = "t" + ++maxRegisters[0];
+            results.add(arg2 + line.replaceFirst(" := $4"));
+        }
+        results.add(line.group(1) + " := " + arg1 + " " + line.group(3) + " " + arg2);
+        return results;
     }
 
     private static ArrayList<String> swapArguments(Matcher line) {

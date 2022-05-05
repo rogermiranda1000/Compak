@@ -42,7 +42,7 @@ public class MipsGenerator {
         out.add(".text\n");
         out.add("main:");
 
-        lines = TacAdapter.adaptTac(lines);
+        TacMipsAdapter.adaptTac(lines); // Adaptem el TAC perquè sigui factible amb MIPS
         String[] newLines = RegisterManager.kColoringGraphRegisterGenerator(lines, 10);
 
         for (String line : newLines) {
