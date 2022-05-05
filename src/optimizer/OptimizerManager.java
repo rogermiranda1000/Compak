@@ -15,11 +15,11 @@ public class OptimizerManager {
         map = new HashMap<>();
     }
 
-    public void optimize() {
-        getTACLines();
+    public void optimize(File file) throws IOException {
+        getTACLines(file);
         //optimizeRedundantAssigns();
         refactorVarsNames();
-        writeTACtoFile();
+        writeTACtoFile(file);
     }
 
     // @TODO finish swap and remove
@@ -278,31 +278,20 @@ public class OptimizerManager {
         }
     }
 
-    private void getTACLines() {
-        String file = "tac.txt";
-        try (BufferedReader br = new BufferedReader(new FileReader(file))) {
-            for(String line; (line = br.readLine()) != null; ) {
-                lines.add(line);
-            }
-        } catch (FileNotFoundException e) {
-            System.out.println("An error occurred while reading the input file.");
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
+    private void getTACLines(File file) throws IOException {
+        BufferedReader br = new BufferedReader(new FileReader(file));
+        for(String line; (line = br.readLine()) != null; ) {
+            lines.add(line);
         }
+        br.close();
     }
 
-    private void writeTACtoFile() {
-        try {
-            FileWriter myWriter = new FileWriter("tac.txt");
-            for (int i = 0; i < data.size(); i++) {
-                myWriter.write(data.get(i));
-                myWriter.write("\n");
-            }
-            myWriter.close();
-        } catch (IOException e) {
-            System.out.println("An error occurred.");
-            e.printStackTrace();
+    private void writeTACtoFile(File file) throws IOException {
+        FileWriter myWriter = new FileWriter(file);
+        for (int i = 0; i < data.size(); i++) {
+            myWriter.write(data.get(i));
+            myWriter.write("\n");
         }
+        myWriter.close();
     }
 }
