@@ -1,4 +1,3 @@
 main ( ) {
-    bit a;
-    a = ¡(false & true);
+    bit a = ¡(false);
 }
