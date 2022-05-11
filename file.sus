@@ -1,8 +1,4 @@
 main ( ) {
-    int a = 0;
-    int b = 0;
-    if (a > 3) {
-        b = 5;
-    }
-    a = 3;
+    bit a;
+    a = ¡(false & true);
 }
