@@ -6,7 +6,6 @@ import preprocesser.CodeProcessor;
 import syntax.GrammarAnalizer;
 import syntax.InvalidTreeException;
 import syntax.Parser;
-import testing.TestMaster;
 
 import java.io.File;
 import java.io.IOException;
@@ -22,7 +21,7 @@ public class Main {
         File tac = new File(PATH_TAC);
         Parser p = new Parser(new TokenBuffer(new CodeProcessor(PATH_FILE)), new GrammarAnalizer());
         p.compile(tac);
-        TestMaster.testAll(); // TODO Uncomment for final commit
+        //TestMaster.testAll(); // TODO Uncomment for final commit
         OptimizerManager om = new OptimizerManager();
         om.optimize(tac);
         generateMipsFromFile(PATH_TAC, PATH_MIPS);
