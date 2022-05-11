@@ -17,6 +17,9 @@ public class AbstractSyntaxTree {
     private TokenDataPair operation;
     private int id;
 
+    public AbstractSyntaxTree() {
+        this.treeExtend = new ArrayList<>();
+    }
 
     public AbstractSyntaxTree(ParseTree parseTree) {
         this.treeExtend = new ArrayList<>();
@@ -61,7 +64,7 @@ public class AbstractSyntaxTree {
 
             if (o instanceof AbstractSyntaxTree) {
                 ((AbstractSyntaxTree)o).removeRedundantProductions();
-                if (((AbstractSyntaxTree)o).treeExtend.size() == 1) {
+                if (((AbstractSyntaxTree)o).treeExtend.size() == 1 && ((AbstractSyntaxTree)o).operation == null) {
                     this.treeExtend.set(i, ((AbstractSyntaxTree)o).treeExtend.get(0));
                 }
             }
@@ -96,18 +99,63 @@ public class AbstractSyntaxTree {
                 // Promote un nivell
                 Token tk = ((TokenDataPair) o).getToken();
 
-                if (i == 1 && tk == Token.ASSIGN) {
+                if (tk == Token.IF) {
+                    ((TokenDataPair) o).setPromoted();
+                    this.operation = new TokenDataPair(Token.END_IF, "end_if");
+
+                    //new TokenDataPair(Token.WHILE, "while")
+                    Object obj = this.treeExtend.get(1);
+                    AbstractSyntaxTree newObject =  new AbstractSyntaxTree();
+                    newObject.treeExtend.add(obj);
+                    this.treeExtend.add(0, newObject);
+
+                    this.treeExtend.remove(obj);
+                    this.treeExtend.remove(o);
+
+                    ((AbstractSyntaxTree) this.treeExtend.get(0)).operation = new TokenDataPair(Token.IF, "if");
+                } else if (tk == Token.BUCLE) {
+                    if (this.father != null && !((TokenDataPair) o).isPromoted()) {
+                        // Case loop(for i in range (5)) - for
+                        if (this.treeExtend.get(1) instanceof AbstractSyntaxTree && ((AbstractSyntaxTree) this.treeExtend.get(1)).operation == null) {
+                            ((TokenDataPair) o).setPromoted();
+                            this.operation = new TokenDataPair(Token.END_LOOP, "end_for");
+                            ((AbstractSyntaxTree)this.treeExtend.get(1)).operation = new TokenDataPair(Token.FOR_IN, "range");
+                            this.treeExtend.remove(o);
+                        } else if (false) {
+                            // Case loop(number)
+                        } else {
+                            // Case loop(boolean) - while
+                            ((TokenDataPair) o).setPromoted();
+                            this.operation = new TokenDataPair(Token.END_LOOP, "end_while");
+
+                            //new TokenDataPair(Token.WHILE, "while")
+                            Object obj = this.treeExtend.get(1);
+                            AbstractSyntaxTree newObject =  new AbstractSyntaxTree();
+                            newObject.treeExtend.add(obj);
+                            this.treeExtend.add(0, newObject);
+
+                            this.treeExtend.remove(obj);
+                            this.treeExtend.remove(o);
+
+                            ((AbstractSyntaxTree) this.treeExtend.get(0)).operation = new TokenDataPair(Token.WHILE, "while");
+                        }
+                    }
+                } else if (i == 1 && tk == Token.ASSIGN) {
                     if (this.father != null && !((TokenDataPair) o).isPromoted()) {
                         ((TokenDataPair) o).setPromoted();
                         this.operation = ((TokenDataPair) o);
                         this.treeExtend.remove(o);
                     }
-                } else if (tk == Token.SUM || tk == Token.SUBSTRACT || tk == Token.AND || tk == Token.OR || tk == Token.MULT || tk == Token.DIVIDE || tk == Token.ASSIGN) {
+                } else if (tk == Token.SUM || tk == Token.SUBSTRACT || tk == Token.AND || tk == Token.OR || tk == Token.MULT || tk == Token.DIVIDE || tk == Token.ASSIGN
+                        || tk == Token.GT || tk == Token.LT || tk == Token.COMP) {
                     if (this.father != null && !((TokenDataPair) o).isPromoted()) {
                         ((TokenDataPair) o).setPromoted();
                         this.father.operation = ((TokenDataPair) o);
                         this.treeExtend.remove(o);
                     }
+                } else if (tk == Token.NOT) {
+                    this.operation = ((TokenDataPair) o);
+                    this.treeExtend.remove(o);
                 }
             }
         }
@@ -168,8 +216,6 @@ public class AbstractSyntaxTree {
         return max+1;
     }
 
-
-
     public void travelWithPriorityDepth(IntermediateCodeData intermediateCodeData) {
         Comparator<AbstractSyntaxTree> comparator = new Comparator<AbstractSyntaxTree>() {
             @Override
@@ -181,13 +227,41 @@ public class AbstractSyntaxTree {
                 if (b.operation == null) {
                     return 1;
                 }
+
+                if (a.operation.getToken() == Token.END_LOOP) {
+                    return 100;
+                }
+
+                if (b.operation.getToken() == Token.END_LOOP) {
+                    return 100;
+                }
+
+                if (a.operation.getToken() == Token.END_IF) {
+                    return 100;
+                }
+
+                if (b.operation.getToken() == Token.WHILE) {
+                    return 100;
+                }
+
+                if (b.operation.getToken() == Token.IF) {
+                    return 100;
+                }
+
+                if (a.operation.getToken() == Token.BUCLE) {
+                    return 1;
+                }
+
+                if (a.operation.getToken() == Token.IF) {
+                    return 1;
+                }
+
                 if (a.operation.getToken() == Token.ASSIGN && b.operation.getToken() == Token.ASSIGN) {
                     return 0;
                 }
                 return b.height - a.height;
             }
         };
-
 
         PriorityQueue<AbstractSyntaxTree> pq = new PriorityQueue<AbstractSyntaxTree>(comparator);
 
@@ -202,10 +276,16 @@ public class AbstractSyntaxTree {
         while (!pq.isEmpty()) {
             AbstractSyntaxTree tree = pq.remove();
             tree.travelWithPriorityDepth(intermediateCodeData);
-            tree.id = intermediateCodeData.addLine(tree.operation, tree.treeExtend.get(0), tree.treeExtend.get(1));
+
+            if (tree.treeExtend.size() == 2) {
+                tree.id = intermediateCodeData.addLine(tree.operation, tree.treeExtend.get(0), tree.treeExtend.get(1));
+            } else {
+                tree.id = intermediateCodeData.addLine(tree.operation, tree.treeExtend.get(0));
+            }
+
 
             // debug line for 3@Code
-            // System.out.println(tree + "->" + tree.treeExtend + " id: " + tree.id);
+            // System.out.println(tree + "->" + tree.treeExtend + "   op: " + tree.operation);
         }
     }
 

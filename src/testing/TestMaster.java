@@ -13,6 +13,7 @@ import java.util.Collections;
 import java.util.Objects;
 
 public class TestMaster {
+
     public static void testAll() {
         // Pass tests
         TestMaster.testFolder(true, "testFiles/pass");
@@ -36,8 +37,8 @@ public class TestMaster {
             Parser p = new Parser(new TokenBuffer(new CodeProcessor(file)), new GrammarAnalizer());
             boolean passed;
             try {
-                passed = p.compile(null);
-            } catch (InvalidTreeException e) {
+                passed = p.compile(new File("tac.txt"));
+            } catch (Exception e) {
                 passed = false;
             }
             if (shouldPass != passed) return ("Test error: Test " + file + " should have " + (shouldPass?"passed":"failed") + " but " + (passed?"passed":"failed"));

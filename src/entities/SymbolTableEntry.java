@@ -1,6 +1,6 @@
 package entities;
 
-public abstract class SymbolTableEntries {
+public abstract class SymbolTableEntry {
     private static int used_add = 0;
 
     private final String name;
@@ -9,12 +9,12 @@ public abstract class SymbolTableEntries {
 
     private final SymbolTable scope;
 
-    public SymbolTableEntries(String name, int size, SymbolTable scope) {
+    public SymbolTableEntry(String name, int size, SymbolTable scope) {
         this.name = name;
         this.scope = scope;
 
-        this.address = SymbolTableEntries.used_add;
-        SymbolTableEntries.used_add += size;
+        this.address = SymbolTableEntry.used_add;
+        SymbolTableEntry.used_add += size;
     }
 
     public String getName() {
@@ -28,4 +28,6 @@ public abstract class SymbolTableEntries {
     public SymbolTable getScope() {
         return scope;
     }
+
+    // TODO setScope on optimization
 }

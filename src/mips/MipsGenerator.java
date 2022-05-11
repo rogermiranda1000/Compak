@@ -6,9 +6,6 @@ import java.util.Arrays;
 
 public class MipsGenerator {
     private static final String INDENT = "    ";
-    public static void main(String[] args) {
-        generateMipsFromFile("tac.txt", "mips.asm");
-    }
 
     public static void generateMipsFromFile(String inputFile, String outputFile) {
         ArrayList<String> lines = getTACLines(inputFile);
@@ -20,6 +17,8 @@ public class MipsGenerator {
         } catch (IOException e) {
             System.out.println("An error occurred.");
             e.printStackTrace();
+        } catch (NoMoreRegistersException e) {
+            throw new RuntimeException(e);
         }
     }
 
@@ -38,12 +37,16 @@ public class MipsGenerator {
         return lines;
     }
 
-    public static void createMIPS(ArrayList<String> lines, FileWriter writer) throws IOException {
+    public static void createMIPS(ArrayList<String> lines, FileWriter writer) throws IOException, NoMoreRegistersException {
         ArrayList<String> out = new ArrayList<>();
         out.add(".text\n");
         out.add("main:");
-        for (String line : lines) {
-            String[] tokens = line.trim().split(" ");
+
+        TacMipsAdapter.adaptTac(lines); // Adaptem el TAC perquè sigui factible amb MIPS
+        String[] newLines = RegisterManager.kColoringGraphRegisterGenerator(lines, 10);
+
+        for (String line : newLines) {
+            String[] tokens = line.split(" ");
             String expression = generateMIPSExpression(tokens);
             out.add(expression);
         }
@@ -112,7 +115,7 @@ public class MipsGenerator {
             default -> "ERROR";
         };
         // if unsigned -> result += "u";
-        return command + " " + formatArg(tokens[1]) + ", " + formatArg(tokens[3]) + ", " + tokens[5];
+        return command + " " + formatArg(tokens[1]) + ", " + formatArg(tokens[3]) + ", " + "$" + tokens[5];
     }
 
     private static String checkLabel(String[] tokens) {
@@ -150,14 +153,14 @@ public class MipsGenerator {
     private static String mipsDiv(String[] tokens) {
         if (anyNumbers(tokens[2], tokens[4])) throw new InvalidTacException();
         String operation = "div";
-        return operation + " " + formatArg(tokens[2]) + ", " + formatArg(tokens[4]) + "\n"+ INDENT +
+        return operation + " " + formatArg(tokens[2]) + ", " + formatArg(tokens[4]) + "\n" + INDENT +
                 moveLow(tokens[0]);
     }
 
     private static String mipsMod(String[] tokens) {
         if (anyNumbers(tokens[2], tokens[4])) throw new InvalidTacException();
         String operation = "div";
-        return operation + " " + formatArg(tokens[2]) + ", " + formatArg(tokens[4]) + "\n"+ INDENT +
+        return operation + " " + formatArg(tokens[2]) + ", " + formatArg(tokens[4]) + "\n" + INDENT +
                 moveHigh(tokens[0]);
     }
 
@@ -174,7 +177,7 @@ public class MipsGenerator {
     }
 
     private static String formatArg(String argument) {
-        if (argument.charAt(0) == 't') {
+        if (argument.matches("-?t\\d")) {
             return "$" + argument;
         }
         return(argument);
