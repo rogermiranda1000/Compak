@@ -1,15 +1,9 @@
+
+func x(int a, int b) {
+    a = 2 + 3;
+}
+
+
 main ( ) {
-    int n = 5; // Input from fibonacci
-    int i = 0;
-    int j = 1;
-    int k;
-
-    loop (for k in range(n)) {
-        int t;
-        t = i + j;
-        i = j;
-        j = t;
-    }
-
-    // Solution from fibonacci is j
+    int b = 3;
 }

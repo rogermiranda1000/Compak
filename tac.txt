@@ -1,18 +1,8 @@
-t0 := 5
+t0 := 2 + 3
 t1 := t0
-t2 := 0
-t3 := t2
-t4 := 1
-t5 := t4
-t6 := 0
-L0: if t6 >= t0 goto L1
-t7 := t2 + t4
-t8 := t7
+t2 := t1
+t3 := t4 name_func t5
+t6 := t1 params t5
+t7 := t3 func t5
+t8 := 3
 t9 := t8
-t2 := t4
-t10 := t2
-t4 := t8
-t11 := t4
-t6 := t6 + 1
-goto L0
-L1:
