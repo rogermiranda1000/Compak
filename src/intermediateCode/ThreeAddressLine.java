@@ -53,6 +53,13 @@ public class ThreeAddressLine {
 
         if (arg1 instanceof TokenDataPair) {
             arg1String = ((TokenDataPair) arg1).getData();
+            if (arg1String.equals("true")) {
+                arg1String = "1";
+            }
+
+            if (arg1String.equals("false")) {
+                arg1String = "0";
+            }
         } else {
             arg1String = "t" + String.valueOf(((AbstractSyntaxTree) arg1).getId());
         }
@@ -60,6 +67,14 @@ public class ThreeAddressLine {
         if (arg2 != null) {
             if (arg2 instanceof TokenDataPair) {
                 arg2String = ((TokenDataPair) arg2).getData();
+
+                if (arg2String.equals("true")) {
+                    arg2String = "1";
+                }
+
+                if (arg2String.equals("false")) {
+                    arg2String = "0";
+                }
             } else {
                 arg2String = "t" + String.valueOf(((AbstractSyntaxTree) arg2).getId());
             }
