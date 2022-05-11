@@ -153,6 +153,32 @@ public class AbstractSyntaxTree {
                         this.father.operation = ((TokenDataPair) o);
                         this.treeExtend.remove(o);
                     }
+                } else if (tk == Token.FUNC) {
+                    ((TokenDataPair) o).setPromoted();
+                    this.operation = ((TokenDataPair) o);
+                    this.treeExtend.remove(o);
+
+                    // New production to save name
+                    AbstractSyntaxTree newObject =  new AbstractSyntaxTree();
+                    newObject.operation = new TokenDataPair(Token.NAME_FUNC, "name_func");
+                    Object obj = treeExtend.get(0);
+                    newObject.treeExtend.add(obj);
+                    treeExtend.remove(obj);
+                    this.treeExtend.add(0, newObject);
+
+                    // New production to save vars
+                    AbstractSyntaxTree newObject2 =  new AbstractSyntaxTree();
+                    newObject2.operation = new TokenDataPair(Token.PARAMS, "params");
+                    for (int j = 1; j < treeExtend.size(); j++) {
+                        if (treeExtend.get(j) instanceof TokenDataPair) {
+                            // add to params
+                            newObject2.treeExtend.add(treeExtend.get(j));
+                            treeExtend.remove(treeExtend.get(j));
+                            j--;
+                        }
+                    }
+
+                    this.treeExtend.add(1, newObject2);
                 }
             }
         }
