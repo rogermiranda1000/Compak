@@ -153,6 +153,9 @@ public class AbstractSyntaxTree {
                         this.father.operation = ((TokenDataPair) o);
                         this.treeExtend.remove(o);
                     }
+                } else if (tk == Token.NOT) {
+                    this.operation = ((TokenDataPair) o);
+                    this.treeExtend.remove(o);
                 }
             }
         }
