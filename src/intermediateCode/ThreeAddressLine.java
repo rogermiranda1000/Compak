@@ -101,6 +101,11 @@ public class ThreeAddressLine {
             return tag.getName1() + ": if !" + arg1String + " goto " + tag.getName2();
         }
 
+        if (Objects.equals(op.getData(), "¡")) {
+            // CASE ¡(bool)
+            return "t" + idOp + " := " + "!" + arg1String;
+        }
+
         if (Objects.equals(op.getData(), "while")) {
             // CASE LOOP (bool)
             Tag tag = new Tag(arg1String);
