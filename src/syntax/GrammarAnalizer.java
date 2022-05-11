@@ -89,7 +89,7 @@ public class GrammarAnalizer extends GrammarRequest {
     );
 
     static {
-        declaracioFuncio.addProduction(Token.FUNC, Token.ID, Token.OPN_PARENTH, arguments, Token.CLS_PARENTH, declaracioFuncioSub, Token.OPN_CONTEXT, sentencies, Token.CLS_CONTEXT);
+        declaracioFuncio.addProduction(Token.FUNC, Token.ID_FUNC, Token.OPN_PARENTH, arguments, Token.CLS_PARENTH, declaracioFuncioSub, Token.OPN_CONTEXT, sentencies, Token.CLS_CONTEXT);
 
         arguments.addProduction(tipus, Token.ID, argumentsSub)
                 .addProduction();
