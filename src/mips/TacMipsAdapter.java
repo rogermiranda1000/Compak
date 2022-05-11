@@ -9,9 +9,12 @@ public class TacMipsAdapter {
     private static final Pattern registerPattern = Pattern.compile("t(\\d+)");
 
     public static ArrayList<String> adaptTac(ArrayList<String> lines) {
-        int highest[] = {findHighestRegiter(lines)};
+        int[] high = findHighestRegiter(lines);
+        int[] highestRegister = {high[0]};
+        int[] highestLabel = {high[1]};
+
         Matcher matcher;
-        Pattern operation = Pattern.compile("(t\\d+) := (t?-?\\d+) ([+\\-*/%]) (t?-?\\d+)");
+        Pattern operation = Pattern.compile("(t\\d+) := (t?-?\\d+) ([+\\-*/%&|]) (t?-?\\d+)");
         for (int i = 0; i < lines.size(); i++) {
             String line = lines.get(i);
             matcher = operation.matcher(line);
@@ -20,11 +23,21 @@ public class TacMipsAdapter {
                 String arg1 = matcher.group(2);
                 String arg2 = matcher.group(4);
                 String symbol = matcher.group(3);
+
+                // Logic operations
+                if (isLogicOperation(symbol)) {
+                    ArrayList<String> newLines = translateBooleanOperation(matcher, highestLabel);
+                    lines.remove(i);
+                    lines.addAll(i, newLines);
+                    i += newLines.size() - 1;
+                }
+
+                // Format number operations
                 if (!arg1.contains("t")) {
-                    ArrayList<String> newLines = new ArrayList<>();
+                    ArrayList<String> newLines;
                     // Two literals
                     if (symbol.equals("*") || symbol.equals("/") || symbol.equals("%") || !arg2.contains("t")) {
-                        newLines = doWithRegisters(matcher, highest);
+                        newLines = doWithRegisters(matcher, highestRegister);
                     } else {
                         newLines = swapArguments(matcher);
                     }
@@ -36,6 +49,38 @@ public class TacMipsAdapter {
         }
         return lines;
     }
+
+    private static boolean isLogicOperation(String symbol) {
+        return symbol.equals("&") || symbol.equals("|");
+    }
+
+    private static ArrayList<String> translateBooleanOperation(Matcher line, int[] highestLabel) {
+        String symbol = line.group(3);
+        ArrayList<String> results = new ArrayList<>();
+        String assign = line.replaceFirst("$1 := 1");
+        int label1 = ++highestLabel[0];
+        switch (symbol) {
+            case "&":
+                results.add(line.replaceFirst("if := $2 != 0 goto L" + label1));
+                results.add(line.replaceFirst("if := $4 != 0 goto L" + label1));
+                results.add(assign);
+                results.add("L"+label1+":");
+                break;
+
+            case "|":
+                int label2 = ++highestLabel[0];
+                results.add(line.replaceFirst("if := $2 != 0 goto L" + label1));
+                results.add(line.replaceFirst("if := $4 == 0 goto L" + label2));
+                results.add("L"+label1+": " + assign);
+                results.add("L"+label2+":");
+                break;
+
+            default:
+                throw new InvalidTacException();
+        }
+        return results;
+    }
+
 
     private static ArrayList<String> doWithRegisters(Matcher line, int[] maxRegisters) {
         ArrayList<String> results = new ArrayList<>();
@@ -68,14 +113,14 @@ public class TacMipsAdapter {
         return new ArrayList<>(List.of(result));
     }
 
-    private static int findHighestRegiter(ArrayList<String> lines) {
-        int highest = 0;
+    private static int[] findHighestRegiter(ArrayList<String> lines) {
+        int highest[] = {0, 0};
         Matcher matcher;
         for (String line : lines) {
             matcher = registerPattern.matcher(line);
             while (matcher.find()) {
                 int register = Integer.parseInt(matcher.group(1));
-                if (register > highest) highest = register;
+                if (register > highest[0]) highest[0] = register;
             }
         }
         return highest;
