@@ -41,6 +41,21 @@ public class ParseTree {
         this.treeExtend.add(o);
     }
 
+    /**
+     * Obtè els tokens que formen aquesta part de l'arbre
+     * @return Tokens que han construit l'arbre
+     */
+    public List<TokenDataPair> getTokens() {
+        List<TokenDataPair> r = new ArrayList<>();
+
+        for (Object o : this.treeExtend) {
+            if (o instanceof ParseTree) r.addAll(((ParseTree)o).getTokens());
+            else r.add((TokenDataPair) o); // TokenDataPair
+        }
+
+        return r;
+    }
+
     public VariableTypes getEvaluates() {
         return this.evaluates;
     }
@@ -66,5 +81,38 @@ public class ParseTree {
             sb.append(' ');
         }
         return sb.toString();
+    }
+
+    public void printTree() {
+        System.out.println(this.printTree(new StringBuilder(), "").toString());
+    }
+
+    private StringBuilder printTree(StringBuilder buffer, String childrenPrefix) {
+        if (this.treeExtend.size() == 0) {
+            buffer.append("EPSILON\n");
+            return buffer;
+        }
+        buffer.append("⬜\n");
+
+        for (int i = 0; i < this.treeExtend.size(); i++) {
+            Object o = this.treeExtend.get(i);
+
+            if (o instanceof ParseTree) {
+                if (i == this.treeExtend.size()-1) {
+                    buffer.append(childrenPrefix).append("└── ");
+                    ((ParseTree)o).printTree(buffer, childrenPrefix + "    ");
+                } else {
+                    buffer.append(childrenPrefix).append("├── ");
+                    ((ParseTree)o).printTree(buffer, childrenPrefix + "│   ");
+                }
+            } else {
+                if (i == this.treeExtend.size()-1) {
+                    buffer.append(childrenPrefix).append("└── ").append(((TokenDataPair) o)).append("\n");
+                } else {
+                    buffer.append(childrenPrefix).append("├── ").append(((TokenDataPair) o)).append("\n");
+                }
+            }
+        }
+        return buffer;
     }
 }

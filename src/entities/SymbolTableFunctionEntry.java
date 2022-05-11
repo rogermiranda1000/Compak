@@ -1,10 +1,10 @@
 package entities;
 
-public class SymbolTableFunctionEntries extends SymbolTableEntries {
+public class SymbolTableFunctionEntry extends SymbolTableEntry {
     private final VariableTypes returnType;
     private final VariableTypes[] arguments;
 
-    public SymbolTableFunctionEntries(VariableTypes returnType, String name, VariableTypes[] arguments, SymbolTable scope) {
+    public SymbolTableFunctionEntry(VariableTypes returnType, String name, VariableTypes[] arguments, SymbolTable scope) {
         super(name, 0, scope);
         this.returnType = returnType;
         this.arguments = arguments;
