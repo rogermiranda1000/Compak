@@ -1,13 +1,10 @@
 package intermediateCode;
 
 import entities.Tag;
-import entities.Token;
 import entities.TokenDataPair;
 import syntax.AbstractSyntaxTree;
 
-import java.io.Serial;
 import java.util.Objects;
-import java.util.Queue;
 import java.util.Stack;
 
 public class ThreeAddressLine {

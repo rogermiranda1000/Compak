@@ -1,13 +1,12 @@
 package intermediateCode;
 
 import entities.Tag;
-import entities.Token;
 import entities.TokenDataPair;
 
-import java.io.*;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.ArrayList;
-import java.util.LinkedList;
-import java.util.Queue;
 import java.util.Stack;
 
 public class IntermediateCodeData {
