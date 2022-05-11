@@ -15,6 +15,8 @@ public class TacMipsAdapter {
 
         Matcher matcher;
         Pattern operation = Pattern.compile("(t\\d+) := (t?-?\\d+) ([+\\-*/%&|]) (t?-?\\d+)");
+        Pattern not = Pattern.compile("(.*)(!t?-?\\d+)(.*)");
+
         for (int i = 0; i < lines.size(); i++) {
             String line = lines.get(i);
             matcher = operation.matcher(line);
@@ -46,8 +48,37 @@ public class TacMipsAdapter {
                     i += newLines.size() - 1;
                 }
             }
+
+            // Not
+            matcher = not.matcher(line);
+            if (matcher.matches()) {
+                ArrayList<String> newLines = new ArrayList<>();
+                int register = ++highestRegister[0];
+                int l1 = ++highestLabel[0], l2 = ++highestLabel[0];
+
+                newLines.addAll(translateBoolean(matcher, register, l1, l2, true));
+
+                newLines.add(matcher.group(1)+"t"+register+"!= 0"+matcher.group(3));
+
+                lines.remove(i);
+                lines.addAll(i, newLines);
+                i += newLines.size() - 1;
+            }
         }
         return lines;
+    }
+
+    private static ArrayList<String> translateBoolean(Matcher matcher, int register, int l1, int l2, boolean hasNot) {
+        ArrayList<String> newLines = new ArrayList<>();
+        String arg = matcher.group(2).substring(1);
+        String symbol = hasNot ? "!=" : "==";
+        newLines.add("if "+arg+" "+symbol+" 0 goto L"+l1);
+        newLines.add("t"+register+" := 1");
+        newLines.add("goto L"+l2);
+        newLines.add("L"+l1+": t"+register+" := 0");
+        newLines.add("L"+l2+":");
+
+        return newLines;
     }
 
     private static boolean isLogicOperation(String symbol) {
