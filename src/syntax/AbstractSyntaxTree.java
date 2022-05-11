@@ -229,6 +229,14 @@ public class AbstractSyntaxTree {
                     return 100;
                 }
 
+                if (b.operation.getToken() == Token.END_LOOP) {
+                    return 100;
+                }
+
+                if (a.operation.getToken() == Token.END_IF) {
+                    return 100;
+                }
+
                 if (b.operation.getToken() == Token.WHILE) {
                     return 100;
                 }

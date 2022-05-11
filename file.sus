@@ -1,15 +1,8 @@
 main ( ) {
-    int n = 5; // Input from fibonacci
-    int i = 0;
-    int j = 1;
-    int k;
-
-    loop (for k in range(n)) {
-        int t;
-        t = i + j;
-        i = j;
-        j = t;
+    int a = 0;
+    int b = 0;
+    if (a > 3) {
+        b = 5;
     }
-
-    // Solution from fibonacci is j
+    a = 3;
 }
