@@ -3,10 +3,11 @@ package syntax;
 import entities.Token;
 import entities.TokenDataPair;
 import intermediateCode.IntermediateCodeData;
-import intermediateCode.IntermediateCodeGenerator;
-import intermediateCode.ThreeAddressLine;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.List;
+import java.util.PriorityQueue;
 
 public class AbstractSyntaxTree {
     private List<Object> treeExtend;
