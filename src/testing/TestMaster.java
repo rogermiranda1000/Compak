@@ -3,7 +3,6 @@ package testing;
 import lexic.TokenBuffer;
 import preprocesser.CodeProcessor;
 import syntax.GrammarAnalizer;
-import syntax.InvalidTreeException;
 import syntax.Parser;
 
 import java.io.File;
