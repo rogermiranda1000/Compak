@@ -1,9 +1,10 @@
 
-func x(int a, int b) {
-    a = 2 + 3;
+func x ( ) {
+
 }
 
 
 main ( ) {
     int b = 3;
 }
+
