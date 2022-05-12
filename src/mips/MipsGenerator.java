@@ -114,7 +114,6 @@ public class MipsGenerator {
             case "<=" -> "ble";
             default -> "ERROR";
         };
-        // if unsigned -> result += "u";
         return command + " " + formatArg(tokens[1]) + ", " + formatArg(tokens[3]) + ", " + "$" + tokens[5];
     }
 
