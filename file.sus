@@ -6,5 +6,6 @@ func x ( ) {
 
 main ( ) {
     int b = 3;
+    x(3);
 }
 
