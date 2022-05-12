@@ -81,6 +81,7 @@ public class Parser implements Compiler {
 
     private AbstractSyntaxTree generateAbstractSyntaxTree(ParseTree parseTree, ArrayList<AbstractSyntaxTree> codes) {
         AbstractSyntaxTree tree = new AbstractSyntaxTree(parseTree);
+
         tree.removeEpsilons();
         tree.removeRedundantProductions();
         tree.removeMeaningLessTokens();

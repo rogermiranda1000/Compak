@@ -39,20 +39,21 @@ public class TokenBuffer implements TokenRequest {
             int column = line.length() + 1; // tmp value
             line = line.replaceAll("^\\s+", ""); // remove leading spaces
             column -= line.length(); // the difference between the old and the new string (+1) it's the column number
-            Matcher m = tokenSplitter.matcher(line), next;
+            Matcher m = tokenSplitter.matcher(line);
+            Matcher next;
             this.currentLine++;
             while (m.find()) {
                 TokenDataPair token = Token.getMatch(m.group(1));
-
                 // is it a function name?
                 next = tokenSplitter.matcher(m.group(3));
-                if (token.getToken().equals(Token.ID) && next.find() && Token.getMatch(next.group(1)).getToken().equals(Token.OPN_PARENTH)) token.setToken(Token.ID_FUNC);
+                if (token.getToken().equals(Token.ID) && next.find() && Token.getMatch(next.group(1)).getToken().equals(Token.OPN_PARENTH))
+                    token.setToken(Token.ID_FUNC);
 
                 this.tokens.add(token);
                 this.tokenPositions.add(new TokenPosition(this.currentLine, column));
                 column += m.group(1).length() + m.group(2).length();
 
-                m = next;
+                m = tokenSplitter.matcher(m.group(3));
             }
         } catch (NoSuchElementException ex) {
             this.tokens.add(new TokenDataPair(Token.EOF));
