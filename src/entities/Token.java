@@ -50,10 +50,14 @@ public enum Token {
     REPEAT("repeat"),
     FOR_IN("for_in"),
     WHILE("while"),
+    ID_FUNC(Pattern.compile("^(\\d*[a-zA-Z_]+\\w*)$")), // can't be setted with RegEx
     // reserved characters
     NONE(Pattern.compile("^(.*)$")),
     EOF(""),
-    EPSILON(""), END_LOOP("END_LOOP") , END_IF("END_IF"), END_FUNC("end_func"), START_FUNC("start_func"), PARAMS("params"),
+    EPSILON(""),
+
+    END_LOOP("END_LOOP"),
+    END_IF("END_IF"), END_FUNC("end_func"), START_FUNC("start_func"), PARAMS("params"),
     NAME_FUNC("name_func");
 
     private String match;
