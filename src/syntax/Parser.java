@@ -93,7 +93,10 @@ public class Parser implements Compiler {
         tree.promoteTokens();
 
         tree.removeRedundantProductions();
+        //tree.removeEpsilons();
         tree.recalculateFathers();
+
+
 
         // First approach to 3@Code
         // tree.travelWithPriorityDepth();

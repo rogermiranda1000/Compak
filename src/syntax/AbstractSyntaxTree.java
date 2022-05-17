@@ -169,6 +169,11 @@ public class AbstractSyntaxTree {
                     // New production to save vars
                     AbstractSyntaxTree newObject2 =  new AbstractSyntaxTree();
                     newObject2.operation = new TokenDataPair(Token.PARAMS, "params");
+
+                    if (treeExtend.size() < 2) {
+                        newObject2.treeExtend.add(new TokenDataPair(Token.EPSILON));
+                    }
+
                     for (int j = 1; j < treeExtend.size(); j++) {
                         if (treeExtend.get(j) instanceof TokenDataPair) {
                             // add to params
@@ -179,6 +184,38 @@ public class AbstractSyntaxTree {
                     }
 
                     this.treeExtend.add(1, newObject2);
+
+
+                    // New production to save vars
+                    AbstractSyntaxTree newObject3 =  new AbstractSyntaxTree();
+                    newObject3.operation = new TokenDataPair(Token.START_FUNC, "start_func");
+
+                    if (treeExtend.size() < 3) {
+                        newObject3.treeExtend.add(new TokenDataPair(Token.EPSILON));
+                    } else {
+                        newObject3.treeExtend.add(treeExtend.get(2));
+                        treeExtend.remove(treeExtend.get(2));
+                    }
+
+                    this.treeExtend.add(2, newObject3);
+                } else if (tk == Token.ID_FUNC) {
+                    // case call 1 parameter
+                    if (this.treeExtend.size() == 2 && this.treeExtend.get(0) instanceof TokenDataPair &&
+                            ((TokenDataPair) this.treeExtend.get(0)).getToken().equals(Token.ID_FUNC) &&
+                            this.treeExtend.get(1) instanceof TokenDataPair && (((TokenDataPair) this.treeExtend.get(1)).getToken().equals(Token.NUMBER))
+                    || ((TokenDataPair) this.treeExtend.get(1)).getToken().equals(Token.ID)) {
+                        this.operation = new TokenDataPair(Token.CALL_FUNC);
+                    } else {
+                        // case call 0 parameters
+                        if (this.father != null && !((TokenDataPair) o).isPromoted()) {
+                            ((TokenDataPair) o).setPromoted();
+                            AbstractSyntaxTree newObj = new AbstractSyntaxTree();
+                            newObj.treeExtend.add(o);
+                            newObj.operation = new TokenDataPair(Token.CALL_FUNC);
+                            this.treeExtend.add(i, newObj);
+                            this.treeExtend.remove(o);
+                        }
+                    }
                 }
             }
         }
