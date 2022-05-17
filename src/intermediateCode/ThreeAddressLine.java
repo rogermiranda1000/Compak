@@ -7,6 +7,10 @@ import syntax.AbstractSyntaxTree;
 import java.util.Objects;
 import java.util.Stack;
 
+/**
+ * Class Three Address Line. In this class will save a line of TAC code and be the one who process string tags,
+ * arguments and operation to string.
+ */
 public class ThreeAddressLine {
     private final TokenDataPair op;
     private final Object arg1;
@@ -14,6 +18,13 @@ public class ThreeAddressLine {
     private static int serialCounter = 0;
     private int result;
 
+    /**
+     * Instantiates a new Three Address Line.
+     *
+     * @param op   the op
+     * @param arg1 the arg 1
+     * @param arg2 the arg 2
+     */
     public ThreeAddressLine(TokenDataPair op, Object arg1, Object arg2) {
         this.op = op;
         this.arg1 = arg1;
@@ -22,31 +33,25 @@ public class ThreeAddressLine {
         serialCounter++;
     }
 
+    /**
+     * Gets string line.
+     *
+     * @return line string
+     */
     public String getLine() {
         return result + "=" + arg1 + op + arg2;
     }
 
-    public Object getArg1() {
-        return arg1;
-    }
-
-    public Object getArg2() {
-        return arg2;
-    }
-
-    public int getResult() {
-        return result;
-    }
-
-    public TokenDataPair getOp() {
-        return op;
-    }
-
+    /**
+     * Algorithm that depends on operation, id operation, tag's stack and arguments prints the corresponding tac line.
+     *
+     * @param idOp the id of operation to classify the temporal register
+     * @param tags the tags in stack (for loops and conditionals)
+     * @return the string line
+     */
     public String printLine(int idOp, Stack<Tag> tags) {
         String arg1String;
         String arg2String;
-
-
 
         if (arg1 instanceof TokenDataPair) {
             arg1String = ((TokenDataPair) arg1).getData();
