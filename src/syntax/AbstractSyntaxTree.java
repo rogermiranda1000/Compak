@@ -95,8 +95,6 @@ public class AbstractSyntaxTree {
 
             if (o instanceof AbstractSyntaxTree) {
                 //((AbstractSyntaxTree)o).promoteOneLevelTokens();
-                if (((AbstractSyntaxTree)o).treeExtend.size() != 0) {
-                }
             } else {
                 // Promote un nivell
                 Token tk = ((TokenDataPair) o).getToken();
@@ -155,6 +153,9 @@ public class AbstractSyntaxTree {
                         this.father.operation = ((TokenDataPair) o);
                         this.treeExtend.remove(o);
                     }
+                } else if (tk == Token.NOT) {
+                    this.operation = ((TokenDataPair) o);
+                    this.treeExtend.remove(o);
                 } else if (tk == Token.FUNC) {
                     ((TokenDataPair) o).setPromoted();
                     this.operation = ((TokenDataPair) o);
@@ -314,6 +315,14 @@ public class AbstractSyntaxTree {
                 }
 
                 if (a.operation.getToken() == Token.END_LOOP) {
+                    return 100;
+                }
+
+                if (b.operation.getToken() == Token.END_LOOP) {
+                    return 100;
+                }
+
+                if (a.operation.getToken() == Token.END_IF) {
                     return 100;
                 }
 

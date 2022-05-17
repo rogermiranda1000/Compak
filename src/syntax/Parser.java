@@ -2,16 +2,14 @@ package syntax;
 
 import entities.*;
 import intermediateCode.IntermediateCodeGenerator;
-import lexic.TokenBuffer;
 import lexic.TokenRequest;
 import org.jetbrains.annotations.Nullable;
-import preprocesser.CodeProcessor;
-import testing.TestMaster;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Stack;
 
 public class Parser implements Compiler {
     private final TokenRequest tokenRequest;
@@ -202,9 +200,5 @@ public class Parser implements Compiler {
         intermediateCodeGenerator.process(abstractSyntaxTree, out);
 
         return true;
-    }
-
-    public void test() {
-        TestMaster.testAll();
     }
 }

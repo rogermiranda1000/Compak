@@ -1,9 +1,7 @@
 package syntax;
 
 import entities.SymbolTable;
-import entities.SymbolTable;
 import entities.TokenDataPair;
-import entities.VariableTypes;
 import entities.VariableTypes;
 
 import java.util.ArrayList;
