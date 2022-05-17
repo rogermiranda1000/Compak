@@ -1,5 +1,13 @@
-t0 := t1 name_func t2
-t3 := t4 start_func t2
-t5 := t6 params t2
-t7 := t0 func t2
-t8 := t1 null t2
+x:
+BeginFunc
+PopParam t0
+t1 := 3 + 5
+t0 := t1
+t2 := t0
+EndFunc
+
+main:
+t3 := 0
+t4 := t3
+PushParam 2
+Call x

@@ -72,7 +72,7 @@ public class AbstractSyntaxTree {
     }
 
     public void removeMeaningLessTokens() {
-        Token[] list = new Token[] {Token.EOL, Token.INT, Token.BIG,Token.FLO,Token.STR,Token.BIT,Token.MAIN,Token.RET_TYPE,Token.IN,
+        Token[] list = new Token[] {Token.EOL, Token.INT, Token.BIG,Token.FLO,Token.STR,Token.BIT,Token.RET_TYPE,Token.IN,
                 Token.RANGE,Token.OPN_CONTEXT,Token.CLS_CONTEXT,Token.OPN_PARENTH,Token.CLS_PARENTH,Token.COMMA,Token.FOR};
 
         for (int i = 0; i < this.treeExtend.size(); i++) {
@@ -95,6 +95,8 @@ public class AbstractSyntaxTree {
 
             if (o instanceof AbstractSyntaxTree) {
                 //((AbstractSyntaxTree)o).promoteOneLevelTokens();
+                if (((AbstractSyntaxTree)o).treeExtend.size() != 0) {
+                }
             } else {
                 // Promote un nivell
                 Token tk = ((TokenDataPair) o).getToken();
@@ -170,7 +172,7 @@ public class AbstractSyntaxTree {
                     AbstractSyntaxTree newObject2 =  new AbstractSyntaxTree();
                     newObject2.operation = new TokenDataPair(Token.PARAMS, "params");
 
-                    if (treeExtend.size() < 2) {
+                    if (treeExtend.size() < 3) {
                         newObject2.treeExtend.add(new TokenDataPair(Token.EPSILON));
                     }
 
@@ -229,6 +231,17 @@ public class AbstractSyntaxTree {
 
             if (o instanceof AbstractSyntaxTree) {
                 pq.add(((AbstractSyntaxTree)o));
+            } else {
+                if (!((TokenDataPair)o).isPromoted() && ((TokenDataPair)o).getToken().equals(Token.MAIN)) {
+                    AbstractSyntaxTree newEntry = new AbstractSyntaxTree();
+                    TokenDataPair tokn = new TokenDataPair(Token.MAIN);
+                    tokn.setPromoted();
+                    newEntry.operation = new TokenDataPair(Token.MAIN);
+                    newEntry.treeExtend.add(tokn);
+                    this.treeExtend.add(i, newEntry);
+                    this.treeExtend.remove(o);
+                    pq.add(newEntry);
+                }
             }
         }
 
@@ -288,6 +301,18 @@ public class AbstractSyntaxTree {
                     return 1;
                 }
 
+                if (b.operation.getToken() == Token.MAIN) {
+                    return 100;
+                }
+
+                if (b.operation.getToken() == Token.NAME_FUNC) {
+                    return 100;
+                }
+
+                if (a.operation.getToken() == Token.START_FUNC) {
+                    return 100;
+                }
+
                 if (a.operation.getToken() == Token.END_LOOP) {
                     return 100;
                 }
@@ -311,6 +336,12 @@ public class AbstractSyntaxTree {
                 if (a.operation.getToken() == Token.ASSIGN && b.operation.getToken() == Token.ASSIGN) {
                     return 0;
                 }
+
+                // Bug dos trees diferent altura
+                if (a.father.operation == null) {
+                    return 100;
+                }
+
                 return b.height - a.height;
             }
         };
