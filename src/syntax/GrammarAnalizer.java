@@ -88,7 +88,7 @@ public class GrammarAnalizer extends GrammarRequest {
     protected static final Production id = new Production(
         new Object[]{value},
         new Object[]{Token.ID},
-        new Object[]{Token.ID_FUNC}
+        new Object[]{call}
     );
 
     static {

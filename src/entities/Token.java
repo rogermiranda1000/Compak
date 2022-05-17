@@ -58,6 +58,7 @@ public enum Token {
 
     END_LOOP("END_LOOP"),
     END_IF("END_IF"), END_FUNC("end_func"), START_FUNC("start_func"), PARAMS("params"),
+    CALL_FUNC("call_func"),
     NAME_FUNC("name_func");
 
     private String match;

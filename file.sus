@@ -1,11 +1,12 @@
 
-func x ( ) {
+func x (int b) {
 
 }
 
 
 main ( ) {
-    int b = 3;
-    x(3);
+    int a;
+    int b;
+    x();
 }
 
