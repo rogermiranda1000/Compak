@@ -9,6 +9,9 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.PriorityQueue;
 
+/**
+ * Class AbstractSyntaxTree.
+ */
 public class AbstractSyntaxTree {
     private List<Object> treeExtend;
     private AbstractSyntaxTree father;
@@ -18,10 +21,18 @@ public class AbstractSyntaxTree {
     private TokenDataPair operation;
     private int id;
 
+    /**
+     * Class constructor to instantiates new AST empty.
+     */
     public AbstractSyntaxTree() {
         this.treeExtend = new ArrayList<>();
     }
 
+    /**
+     * Class constructor to instantiates new AST cloning the parse tree.
+     *
+     * @param parseTree the parse tree to clone
+     */
     public AbstractSyntaxTree(ParseTree parseTree) {
         this.treeExtend = new ArrayList<>();
         cloneTree(parseTree);
@@ -41,7 +52,14 @@ public class AbstractSyntaxTree {
         }
     }
 
-    public void removeEpsilons(AbstractSyntaxTree father) {
+    /**
+     * Function that removes epsilons from productions.
+     */
+    public void removeEpsilons() {
+        this.removeEpsilons(null);
+    }
+
+    private void removeEpsilons(AbstractSyntaxTree father) {
         if (this.treeExtend.size() == 0) {
             father.treeExtend.remove(this);
         }
@@ -55,10 +73,9 @@ public class AbstractSyntaxTree {
         }
     }
 
-    public void removeEpsilons() {
-        this.removeEpsilons(null);
-    }
-
+    /**
+     * Function that removes redundant productions from AST.
+     */
     public void removeRedundantProductions() {
         for (int i = 0; i < this.treeExtend.size(); i++) {
             Object o = this.treeExtend.get(i);
@@ -72,6 +89,9 @@ public class AbstractSyntaxTree {
         }
     }
 
+    /**
+     * Function that removes meaningless tokens from AST. In parse tree we consider all tokens, but not AST.
+     */
     public void removeMeaningLessTokens() {
         Token[] list = new Token[] {Token.EOL, Token.INT, Token.BIG,Token.FLO,Token.STR,Token.BIT,Token.MAIN,Token.RET_TYPE,Token.IN,
                 Token.RANGE,Token.OPN_CONTEXT,Token.CLS_CONTEXT,Token.OPN_PARENTH,Token.CLS_PARENTH,Token.COMMA,Token.FOR};
@@ -90,7 +110,29 @@ public class AbstractSyntaxTree {
         }
     }
 
-    public void promoteOneLevelTokens() {
+    /**
+     * Function that promotes tokens to operations node. In parse tree we have at same level operations and arguments.
+     * In AST we have operations one level higher than arguments.
+     */
+    public void promoteTokens() {
+        PriorityQueue<AbstractSyntaxTree> pq = new PriorityQueue<AbstractSyntaxTree>((a,b) -> b.height - a.height);
+
+        for (int i = 0; i < this.treeExtend.size(); i++) {
+            Object o = this.treeExtend.get(i);
+
+            if (o instanceof AbstractSyntaxTree) {
+                pq.add(((AbstractSyntaxTree)o));
+            }
+        }
+
+        while (!pq.isEmpty()) {
+            AbstractSyntaxTree tree = pq.remove();
+            tree.promoteTokens();
+            tree.promoteTokensToOperation();
+        }
+    }
+
+    private void promoteTokensToOperation() {
         for (int i = 0; i < this.treeExtend.size(); i++) {
             Object o = this.treeExtend.get(i);
 
@@ -162,24 +204,9 @@ public class AbstractSyntaxTree {
         }
     }
 
-    public void promoteTokens() {
-        PriorityQueue<AbstractSyntaxTree> pq = new PriorityQueue<AbstractSyntaxTree>((a,b) -> b.height - a.height);
-
-        for (int i = 0; i < this.treeExtend.size(); i++) {
-            Object o = this.treeExtend.get(i);
-
-            if (o instanceof AbstractSyntaxTree) {
-                pq.add(((AbstractSyntaxTree)o));
-            }
-        }
-
-        while (!pq.isEmpty()) {
-            AbstractSyntaxTree tree = pq.remove();
-            tree.promoteTokens();
-            tree.promoteOneLevelTokens();
-        }
-    }
-
+    /**
+     * Function that calculate levels from tree to use it to travel with priority.
+     */
     public void calculateLevels() {
         this.calculateLevels(0);
     }
@@ -194,6 +221,11 @@ public class AbstractSyntaxTree {
         }
     }
 
+    /**
+     * Function that calculate height from tree to use it to travel with priority.
+     *
+     * @return height
+     */
     public int calculateHeight() {
         int max = Integer.MIN_VALUE;
         int value;
@@ -217,6 +249,11 @@ public class AbstractSyntaxTree {
         return max+1;
     }
 
+    /**
+     * Function that travel all AST with a priority defined by our language.
+     *
+     * @param intermediateCodeData intermediateCodeData
+     */
     public void travelWithPriorityDepth(IntermediateCodeData intermediateCodeData) {
         Comparator<AbstractSyntaxTree> comparator = new Comparator<AbstractSyntaxTree>() {
             @Override
@@ -290,10 +327,9 @@ public class AbstractSyntaxTree {
         }
     }
 
-    public int getId() {
-        return id;
-    }
-
+    /**
+     * Function that recalculates father's id at modify AST nodes.
+     */
     public void recalculateFathers() {
         for (int i = 0; i < this.treeExtend.size(); i++) {
             Object o = this.treeExtend.get(i);
@@ -305,13 +341,16 @@ public class AbstractSyntaxTree {
         }
     }
 
+    /**
+     * Function that prints AST.
+     */
     public void printTree() {
         StringBuilder sb = new StringBuilder();
         printTree(sb, "", "");
         System.out.println(sb);
     }
 
-    protected void printTree(StringBuilder buffer, String prefix, String childrenPrefix) {
+    private void printTree(StringBuilder buffer, String prefix, String childrenPrefix) {
         buffer.append(prefix);
         if (this.treeExtend.size() == 0) {
             buffer.append("EPSILON");
@@ -342,5 +381,14 @@ public class AbstractSyntaxTree {
                 }
             }
         }
+    }
+
+    /**
+     * Gets id.
+     *
+     * @return the id
+     */
+    public int getId() {
+        return id;
     }
 }

@@ -5,6 +5,9 @@ import entities.Token;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Class Production of the Compak grammar.
+ */
 public class Production {
     private final List<Object[]> produccions;
 
@@ -15,8 +18,9 @@ public class Production {
     }
 
     /**
+     * Class constructor for a new Production.
      *
-     * @param productions S'han de passar n (sent n el número d'ors de la producció) arrays que continguin produccions o tokens
+     * @param productions arrays containing productions or tokens must be passed n (n being the number of golds in the production).
      */
     public Production(Object[] ...productions) {
         this.produccions = new ArrayList<>();
@@ -28,13 +32,24 @@ public class Production {
         }
     }
 
+    /**
+     * Add productions.
+     *
+     * @param production the production
+     * @return the production
+     */
     public Production addProduction(Object ...production) {
         Production.checkArgument(production);
         this.produccions.add(production);
         return this;
     }
 
-    public List<Object[]> getProduccions() {
+    /**
+     * Gets productions.
+     *
+     * @return the produccions
+     */
+    public List<Object[]> getProductions() {
         return this.produccions;
     }
 }

@@ -2,7 +2,7 @@ package testing;
 
 import lexic.TokenBuffer;
 import preprocesser.CodeProcessor;
-import syntax.GrammarAnalizer;
+import syntax.GrammarAnalyzer;
 import syntax.Parser;
 
 import java.io.File;
@@ -33,7 +33,7 @@ public class TestMaster {
 
     private static String testFile(boolean shouldPass, String file) {
         try {
-            Parser p = new Parser(new TokenBuffer(new CodeProcessor(file)), new GrammarAnalizer());
+            Parser p = new Parser(new TokenBuffer(new CodeProcessor(file)), new GrammarAnalyzer());
             boolean passed;
             try {
                 passed = p.compile(new File("tac.txt"));

@@ -11,18 +11,54 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Stack;
 
+/**
+ * Class Parser. This class is the one who managed the generation od the parse tree, abstract syntax tree and
+ * intermediate address code (3@Code / TAC). It throws the specific exceptions on each case.
+ */
 public class Parser implements Compiler {
     private final TokenRequest tokenRequest;
     private final GrammarRequest grammarRequest;
 
+    /**
+     * Constructor for Parser.
+     *
+     * @param tokenRequest   the token request
+     * @param grammarRequest the grammar request
+     */
     public Parser(TokenRequest tokenRequest, GrammarRequest grammarRequest) {
         this.tokenRequest = tokenRequest;
         this.grammarRequest = grammarRequest;
     }
 
+    /**
+     * Function that executes the "compile" of the language of this project.
+     *
+     * @param out file
+     * @return boolean that tells the success of the compile
+     * @throws InvalidTreeException       the invalid tree exception
+     * @throws DuplicateVariableException the duplicate variable exception
+     * @throws UnknownVariableException   the unknown variable exception
+     * @throws IOException                the io exception
+     */
+    public boolean compile(File out) throws InvalidTreeException, DuplicateVariableException, UnknownVariableException, IOException {
+        ParseTree parseTree = generateParseTree();
+        if (parseTree == null) return false;
+
+        SymbolTable symbolTable = this.generateSymbolTable(parseTree);
+        ArrayList<AbstractSyntaxTree> codes = new ArrayList<>();
+
+        AbstractSyntaxTree abstractSyntaxTree = this.generateAbstractSyntaxTree(parseTree, codes); // TODO send symbolTable
+        abstractSyntaxTree.printTree();
+
+        IntermediateCodeGenerator intermediateCodeGenerator = new IntermediateCodeGenerator();
+        intermediateCodeGenerator.process(abstractSyntaxTree, out);
+
+        return true;
+    }
+
     @Nullable
     private ParseTree generateParseTree(Production p) throws InvalidTreeException {
-        for (Object[] productions : p.getProduccions()) {
+        for (Object[] productions : p.getProductions()) {
             boolean match = true,
                     first = true;
             ParseTree r = new ParseTree(p);
@@ -104,17 +140,17 @@ public class Parser implements Compiler {
         Stack<SymbolTable> scopes = new Stack<>();
         scopes.add(scope);
 
-        if (parseTree.getOriginalProduction() == GrammarAnalizer.declaracioVariable) {
+        if (parseTree.getOriginalProduction() == GrammarAnalyzer.declaracioVariable) {
             // variable declaration
             ParseTree tipusNode = (ParseTree) nodes.get(0);
             Token tipus = ((TokenDataPair) tipusNode.getTreeExtend().get(0)).getToken();
             scope.addEntry(new SymbolTableVariableEntry(VariableTypes.tokenToVariableType(tipus), ((TokenDataPair) nodes.get(1)).getData(), scope)); // <tipus> <nom_variable>
         }
-        else if (parseTree.getOriginalProduction() == GrammarAnalizer.start) {
+        else if (parseTree.getOriginalProduction() == GrammarAnalyzer.start) {
             // main declaration
             scope.addEntry(new SymbolTableFunctionEntry(VariableTypes.VOID, (String) Token.MAIN.getMatch(), new VariableTypes[]{}, scope));
         }
-        else if (parseTree.getOriginalProduction() == GrammarAnalizer.declaracioFuncio) {
+        else if (parseTree.getOriginalProduction() == GrammarAnalyzer.declaracioFuncio) {
             // function declaration: "func " <nom_funcio> "(" <arguments> ")" <declaracio_funcio_sub> "{" <sentencies> "}"
             String funcName = ((TokenDataPair) nodes.get(1)).getData();
 
@@ -180,22 +216,5 @@ public class Parser implements Compiler {
         SymbolTable r = new SymbolTable();
         this.generateSymbolTable(parseTree, r);
         return r.optimize();
-    }
-
-    public boolean compile(File out) throws InvalidTreeException, DuplicateVariableException, UnknownVariableException, IOException {
-        ParseTree parseTree = generateParseTree();
-        if (parseTree == null) return false;
-        //parseTree.printTree();
-
-        SymbolTable symbolTable = this.generateSymbolTable(parseTree);
-        ArrayList<AbstractSyntaxTree> codes = new ArrayList<>();
-
-        AbstractSyntaxTree abstractSyntaxTree = this.generateAbstractSyntaxTree(parseTree, codes); // TODO send symbolTable
-        abstractSyntaxTree.printTree();
-
-        IntermediateCodeGenerator intermediateCodeGenerator = new IntermediateCodeGenerator();
-        intermediateCodeGenerator.process(abstractSyntaxTree, out);
-
-        return true;
     }
 }
