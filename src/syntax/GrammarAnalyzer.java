@@ -3,9 +3,9 @@ package syntax;
 import entities.Token;
 
 /**
- * Aquesta classe contindrà totes les produccions de Gramàtica
+ * Class GrammarAnalyzer. It defines in static way all productions that form the grammar of Compak language.
  */
-public class GrammarAnalizer extends GrammarRequest {
+public class GrammarAnalyzer extends GrammarRequest {
     protected static final Production declaracioFuncio = new Production();
     protected static final Production arguments = new Production();
     protected static final Production argumentsSub = new Production();
@@ -154,8 +154,16 @@ public class GrammarAnalizer extends GrammarRequest {
                 .addProduction();
     }
 
-    public GrammarAnalizer() {}
+    /**
+     * Constructor for GrammarAnalyzer.
+     */
+    public GrammarAnalyzer() {}
 
+    /**
+     * Function that return the entry point of the grammar.
+     *
+     * @return Entry point production.
+     */
     public Production getEntryPoint() {
         return start;
     }

@@ -3,7 +3,7 @@ import entities.UnknownVariableException;
 import lexic.TokenBuffer;
 import optimizer.OptimizerManager;
 import preprocesser.CodeProcessor;
-import syntax.GrammarAnalizer;
+import syntax.GrammarAnalyzer;
 import syntax.InvalidTreeException;
 import syntax.Parser;
 
@@ -19,7 +19,7 @@ public class Main {
 
     public static void main(String[] args) throws InvalidTreeException, DuplicateVariableException, UnknownVariableException, IOException {
         File tac = new File(PATH_TAC);
-        Parser p = new Parser(new TokenBuffer(new CodeProcessor(PATH_FILE)), new GrammarAnalizer());
+        Parser p = new Parser(new TokenBuffer(new CodeProcessor(PATH_FILE)), new GrammarAnalyzer());
         p.compile(tac);
         //TestMaster.testAll(); // TODO Uncomment for final commit
         OptimizerManager om = new OptimizerManager();
