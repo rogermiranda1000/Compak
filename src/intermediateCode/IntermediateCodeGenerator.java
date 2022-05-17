@@ -1,12 +1,9 @@
 package intermediateCode;
 
-import entities.Token;
-import entities.TokenDataPair;
 import syntax.AbstractSyntaxTree;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.List;
 
 public class IntermediateCodeGenerator {
 
