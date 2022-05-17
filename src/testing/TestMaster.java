@@ -11,8 +11,14 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Objects;
 
+/**
+ * Class TestMaster. This class manages the read of all test file to be tested with a specific function.
+ */
 public class TestMaster {
 
+    /**
+     * Main function to test with all test filnes (fail and pass folders).
+     */
     public static void testAll() {
         // Pass tests
         TestMaster.testFolder(true, "testFiles/pass");
