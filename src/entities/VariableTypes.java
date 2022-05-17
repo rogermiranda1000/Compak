@@ -1,5 +1,8 @@
 package entities;
 
+/**
+ * Enum VariableTypes. It consists in all types defined in Compak's language.
+ */
 public enum VariableTypes {
     INT(4),
     BIG(16),

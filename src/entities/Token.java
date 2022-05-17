@@ -5,6 +5,9 @@ import org.jetbrains.annotations.Nullable;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+/**
+ * Enum Token. It defines each final token of Compak's grammar.
+ */
 public enum Token {
     IF("if"),
     ELSE("else"),
