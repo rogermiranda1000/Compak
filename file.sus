@@ -1,12 +1,11 @@
 
 func x (int b) {
-
+    b = 3 + 5;
 }
 
 
 main ( ) {
-    int a;
-    int b;
-    x();
+    int a = 0;
+    x(2);
 }
 

@@ -49,8 +49,6 @@ public class ThreeAddressLine {
         String arg1String;
         String arg2String;
 
-
-
         if (arg1 instanceof TokenDataPair) {
             arg1String = ((TokenDataPair) arg1).getData();
         } else {
@@ -76,6 +74,38 @@ public class ThreeAddressLine {
             } else {
                 return null;
             }
+        }
+
+        if (Objects.equals(op.getData(), "func")) {
+            return "";
+        }
+
+        if (Objects.equals(op.getToken(), Token.MAIN)) {
+            return "main:";
+        }
+
+        if (Objects.equals(op.getToken(), Token.CALL_FUNC)) {
+            if (arg2String.equals("NULL")) {
+                return "Call " + arg1String;
+            } else {
+                return "PushParam " + arg2String + "\nCall " + arg1String;
+            }
+        }
+
+        if (Objects.equals(op.getData(), "name_func")) {
+            return arg1String + ":\nBeginFunc";
+        }
+
+        if (Objects.equals(op.getData(), "params")) {
+            if (arg1String == null) {
+                return "";
+            } else {
+                return "PopParam " + arg1String;
+            }
+        }
+
+        if (Objects.equals(op.getData(), "start_func")) {
+            return "EndFunc";
         }
 
         if (Objects.equals(op.getData(), "end_for")) {
@@ -119,6 +149,10 @@ public class ThreeAddressLine {
 
         if (Objects.equals(op.getData(), "=")) {
             return (arg1String + " := " + arg2String  + "\nt" + idOp + " := " + arg1String);
+        }
+
+        if (op.getData() == null) {
+            return "";
         }
 
         return ("t" + idOp + " := " + arg1String + " " + op.getData() + " " + arg2String);
