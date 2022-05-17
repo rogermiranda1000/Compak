@@ -97,6 +97,7 @@ public class GrammarAnalizer extends GrammarRequest {
         call.addProduction(Token.ID_FUNC, Token.OPN_PARENTH, callSub, Token.CLS_PARENTH);
 
         callSub.addProduction(id)
+                .addProduction(valueBit)
                 .addProduction();
 
         arguments.addProduction(tipus, Token.ID, argumentsSub)

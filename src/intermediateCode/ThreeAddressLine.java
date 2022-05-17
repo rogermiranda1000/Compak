@@ -1,6 +1,7 @@
 package intermediateCode;
 
 import entities.Tag;
+import entities.Token;
 import entities.TokenDataPair;
 import syntax.AbstractSyntaxTree;
 
@@ -43,17 +44,19 @@ public class ThreeAddressLine {
     }
 
     public String printLine(int idOp, Stack<Tag> tags) {
-        String arg1String;
-        String arg2String;
+        String arg1String = null;
+        String arg2String = null;
 
         if (arg1 instanceof TokenDataPair) {
             arg1String = ((TokenDataPair) arg1).getData();
-            if (arg1String.equals("true")) {
-                arg1String = "1";
-            }
+            if (arg1String != null) {
+                if (arg1String.equals("true")) {
+                    arg1String = "1";
+                }
 
-            if (arg1String.equals("false")) {
-                arg1String = "0";
+                if (arg1String.equals("false")) {
+                    arg1String = "0";
+                }
             }
         } else {
             arg1String = "t" + String.valueOf(((AbstractSyntaxTree) arg1).getId());
@@ -62,13 +65,14 @@ public class ThreeAddressLine {
         if (arg2 != null) {
             if (arg2 instanceof TokenDataPair) {
                 arg2String = ((TokenDataPair) arg2).getData();
+                if (arg2String != null) {
+                    if (arg2String.equals("true")) {
+                        arg2String = "1";
+                    }
 
-                if (arg2String.equals("true")) {
-                    arg2String = "1";
-                }
-
-                if (arg2String.equals("false")) {
-                    arg2String = "0";
+                    if (arg2String.equals("false")) {
+                        arg2String = "0";
+                    }
                 }
             } else {
                 arg2String = "t" + String.valueOf(((AbstractSyntaxTree) arg2).getId());
@@ -76,8 +80,7 @@ public class ThreeAddressLine {
         } else {
             arg2String = "NULL";
         }
-
-
+        
         if (op == null) {
             if (arg1String == null) {
                 return arg2String;

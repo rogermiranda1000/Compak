@@ -1,11 +1,11 @@
 
-func x (int b) {
-    b = 3 + 5;
+func x (bit b) {
+    int c = true;
 }
 
 
 main ( ) {
     int a = 0;
-    x(2);
+    x(true);
 }
 

@@ -206,7 +206,8 @@ public class AbstractSyntaxTree {
                     if (this.treeExtend.size() == 2 && this.treeExtend.get(0) instanceof TokenDataPair &&
                             ((TokenDataPair) this.treeExtend.get(0)).getToken().equals(Token.ID_FUNC) &&
                             this.treeExtend.get(1) instanceof TokenDataPair && (((TokenDataPair) this.treeExtend.get(1)).getToken().equals(Token.NUMBER))
-                    || ((TokenDataPair) this.treeExtend.get(1)).getToken().equals(Token.ID)) {
+                    || ((TokenDataPair) this.treeExtend.get(1)).getToken().equals(Token.ID) || ((TokenDataPair) this.treeExtend.get(1)).getToken().equals(Token.TRUE)
+                            || ((TokenDataPair) this.treeExtend.get(1)).getToken().equals(Token.FALSE)) {
                         this.operation = new TokenDataPair(Token.CALL_FUNC);
                     } else {
                         // case call 0 parameters

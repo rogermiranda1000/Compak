@@ -1,13 +1,12 @@
 x:
 BeginFunc
 PopParam t0
-t1 := 3 + 5
-t0 := t1
-t2 := t0
+t1 := 1
+t2 := t1
 EndFunc
 
 main:
 t3 := 0
 t4 := t3
-PushParam 2
+PushParam 1
 Call x
