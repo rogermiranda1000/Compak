@@ -42,7 +42,7 @@ public class MipsGenerator implements MipsConverter {
     private void createMIPS(ArrayList<String> lines, FileWriter writer) throws IOException, NoMoreRegistersException {
         ArrayList<String> out = new ArrayList<>();
         out.add(".text\n");
-        out.add("main:");
+        out.add("j $main\n");
 
         TacMipsAdapter.adaptTac(lines); // Adaptem el TAC perquè sigui factible amb MIPS
         String[] newLines = RegisterManager.kColoringGraphRegisterGenerator(lines, 10);
@@ -65,6 +65,8 @@ public class MipsGenerator implements MipsConverter {
         if (!label.isEmpty()) tokens = cutFrom(1, tokens);
 
         if (tokens.length == 0) {
+        } else if (tokens.length == 1) {
+
             // Single label, do nothing
         } else if (tokens.length == 2) {
             expr += mipsGoto(tokens);
@@ -136,7 +138,7 @@ public class MipsGenerator implements MipsConverter {
     }
 
     private String checkLabel(String[] tokens) {
-        return tokens[0].matches("L\\d:")  ? "$"+tokens[0]+"\n" : "";
+        return tokens[0].matches("[\\d\\w]+:")  ? "$"+tokens[0]+"\n" : "";
     }
 
     // No podem rebre operacions entre dos literals
