@@ -1,6 +1,7 @@
 package intermediateCode;
 
 import entities.Tag;
+import entities.Token;
 import entities.TokenDataPair;
 import syntax.AbstractSyntaxTree;
 
@@ -43,19 +44,19 @@ public class ThreeAddressLine {
     }
 
     public String printLine(int idOp, Stack<Tag> tags) {
-        String arg1String;
-        String arg2String;
-
-
+        String arg1String = null;
+        String arg2String = null;
 
         if (arg1 instanceof TokenDataPair) {
             arg1String = ((TokenDataPair) arg1).getData();
-            if (arg1String.equals("true")) {
-                arg1String = "1";
-            }
+            if (arg1String != null) {
+                if (arg1String.equals("true")) {
+                    arg1String = "1";
+                }
 
-            if (arg1String.equals("false")) {
-                arg1String = "0";
+                if (arg1String.equals("false")) {
+                    arg1String = "0";
+                }
             }
         } else {
             arg1String = "t" + String.valueOf(((AbstractSyntaxTree) arg1).getId());
@@ -64,13 +65,14 @@ public class ThreeAddressLine {
         if (arg2 != null) {
             if (arg2 instanceof TokenDataPair) {
                 arg2String = ((TokenDataPair) arg2).getData();
+                if (arg2String != null) {
+                    if (arg2String.equals("true")) {
+                        arg2String = "1";
+                    }
 
-                if (arg2String.equals("true")) {
-                    arg2String = "1";
-                }
-
-                if (arg2String.equals("false")) {
-                    arg2String = "0";
+                    if (arg2String.equals("false")) {
+                        arg2String = "0";
+                    }
                 }
             } else {
                 arg2String = "t" + String.valueOf(((AbstractSyntaxTree) arg2).getId());
@@ -78,8 +80,7 @@ public class ThreeAddressLine {
         } else {
             arg2String = "NULL";
         }
-
-
+        
         if (op == null) {
             if (arg1String == null) {
                 return arg2String;
@@ -88,6 +89,38 @@ public class ThreeAddressLine {
             } else {
                 return null;
             }
+        }
+
+        if (Objects.equals(op.getData(), "func")) {
+            return "";
+        }
+
+        if (Objects.equals(op.getToken(), Token.MAIN)) {
+            return "main:";
+        }
+
+        if (Objects.equals(op.getToken(), Token.CALL_FUNC)) {
+            if (arg2String.equals("NULL")) {
+                return "Call " + arg1String;
+            } else {
+                return "PushParam " + arg2String + "\nCall " + arg1String;
+            }
+        }
+
+        if (Objects.equals(op.getData(), "name_func")) {
+            return arg1String + ":\nBeginFunc";
+        }
+
+        if (Objects.equals(op.getData(), "params")) {
+            if (arg1String == null) {
+                return "";
+            } else {
+                return "PopParam " + arg1String;
+            }
+        }
+
+        if (Objects.equals(op.getData(), "start_func")) {
+            return "EndFunc";
         }
 
         if (Objects.equals(op.getData(), "end_for")) {
@@ -136,6 +169,10 @@ public class ThreeAddressLine {
 
         if (Objects.equals(op.getData(), "=")) {
             return (arg1String + " := " + arg2String  + "\nt" + idOp + " := " + arg1String);
+        }
+
+        if (op.getData() == null) {
+            return "";
         }
 
         return ("t" + idOp + " := " + arg1String + " " + op.getData() + " " + arg2String);

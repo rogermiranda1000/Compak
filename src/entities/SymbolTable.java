@@ -35,18 +35,16 @@ public class SymbolTable {
 
     /**
      * Search in the current scope (and above) and returns the node with the same name (if any)
-     * @param name Variable name
+     * @param token Variable
      * @return Node representing that variable
      */
     @Nullable
-    public SymbolTableEntry searchEntry(String name) {
+    public SymbolTableEntry searchEntry(TokenDataPair token) {
         SymbolTable table = this;
         while (table != null) {
             for (SymbolTableEntry e : table.entries) {
-                if (e.getName().equals(name)) return e;
+                if (e.getName().equals(token.getData()) && ((token.getToken() == Token.ID && e instanceof SymbolTableVariableEntry) || (token.getToken() == Token.ID_FUNC && e instanceof SymbolTableFunctionEntry))) return e;
             }
-
-            // TODO explorar subtaules
 
             table = table.parent; // not found, maybe upper?
         }
