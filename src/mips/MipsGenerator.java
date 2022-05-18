@@ -65,11 +65,19 @@ public class MipsGenerator implements MipsConverter {
         if (!label.isEmpty()) tokens = cutFrom(1, tokens);
 
         if (tokens.length == 0) {
+            // Empty line
         } else if (tokens.length == 1) {
-
-            // Single label, do nothing
+            if (tokens[0].equals("BeginFunc")) {
+                expr += mipsStartFunction(tokens);
+            } else if (tokens[0].equals("EndFunc")) {
+                expr += mipsReturnFunction(tokens);
+            }
         } else if (tokens.length == 2) {
-            expr += mipsGoto(tokens);
+            if (tokens[0].equals("Call")) {
+                expr += mipsCallFunction(tokens);
+            } else {
+                expr += mipsGoto(tokens);
+            }
         } else if (tokens.length == 3) {
             expr += mipsAssign(tokens);
         } else if (tokens.length == 5){
@@ -117,6 +125,18 @@ public class MipsGenerator implements MipsConverter {
 
     private String mipsX(String[] tokens) {
         return "";
+    }
+
+    private String mipsStartFunction(String[] tokens) {
+        return "# function call";
+    }
+
+    private String mipsCallFunction(String[] tokens) {
+        return "jal $" + tokens[1];
+    }
+
+    private String mipsReturnFunction(String[] tokens) {
+        return "jr $ra";
     }
 
     private String mipsGoto(String[] tokens) {
