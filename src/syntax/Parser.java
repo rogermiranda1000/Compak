@@ -1,7 +1,7 @@
 package syntax;
 
 import entities.*;
-import intermediateCode.IntermediateCodeGenerator;
+import entities.ThreeAddressLine;
 import lexic.TokenRequest;
 import org.jetbrains.annotations.Nullable;
 
@@ -49,11 +49,13 @@ public class Parser implements Compiler {
 
         AbstractSyntaxTree abstractSyntaxTree = this.generateAbstractSyntaxTree(parseTree, codes); // TODO send symbolTable
         abstractSyntaxTree.printTree();
-
-        IntermediateCodeGenerator intermediateCodeGenerator = new IntermediateCodeGenerator();
-        intermediateCodeGenerator.process(abstractSyntaxTree, out);
+        abstractSyntaxTree.travelWithPriorityDepth();
 
         return true;
+    }
+
+    public ArrayList<ThreeAddressLine> getThreeAddressLines() {
+        return AbstractSyntaxTree.getTreeInLines();
     }
 
     @Nullable
@@ -127,13 +129,7 @@ public class Parser implements Compiler {
         tree.promoteTokens();
 
         tree.removeRedundantProductions();
-        //tree.removeEpsilons();
         tree.recalculateFathers();
-
-
-
-        // First approach to 3@Code
-        // tree.travelWithPriorityDepth();
 
         return tree;
     }

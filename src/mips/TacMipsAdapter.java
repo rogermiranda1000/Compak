@@ -173,7 +173,7 @@ public class TacMipsAdapter {
     }
 
     private static int[] findHighestRegiter(ArrayList<String> lines) {
-        int highest[] = {0, 0};
+        int[] highest = {0, 0};
         Matcher matcher;
         Pattern registerPattern = Pattern.compile("t(\\d+)");
         Pattern label = Pattern.compile("L(\\d+)");

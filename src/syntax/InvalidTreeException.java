@@ -9,8 +9,7 @@ import java.util.List;
  * InvalidTree Exception. Exception thrown when exists any error at parsing tree.
  */
 public class InvalidTreeException extends RuntimeException {
-    private final int line, column;
-    private final Collection<Token> expected;
+    private final int line;
 
     /**
      * Constructor for InvalidTree exception.
@@ -23,8 +22,6 @@ public class InvalidTreeException extends RuntimeException {
     public InvalidTreeException(Token token, int line, int column, Collection<Token> expected) {
         super("Found '" + token + "' in line " + line + ", column " + column + ". Expected: " + expected.toString());
         this.line = line;
-        this.column = column;
-        this.expected = expected;
     }
 
     /**
@@ -46,23 +43,5 @@ public class InvalidTreeException extends RuntimeException {
      */
     public int getLine() {
         return line;
-    }
-
-    /**
-     * Gets column.
-     *
-     * @return the column
-     */
-    public int getColumn() {
-        return column;
-    }
-
-    /**
-     * Gets expected.
-     *
-     * @return the expected
-     */
-    public Collection<Token> getExpected() {
-        return expected;
     }
 }

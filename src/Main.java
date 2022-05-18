@@ -1,16 +1,20 @@
 import entities.DuplicateVariableException;
 import entities.UnknownVariableException;
+import intermediateCode.IntermediateCodeGenerator;
+import intermediateCode.TacConverter;
 import lexic.TokenBuffer;
+import mips.MipsConverter;
+import mips.MipsGenerator;
+import optimizer.Optimizer;
 import optimizer.OptimizerManager;
 import preprocesser.CodeProcessor;
+import syntax.Compiler;
 import syntax.GrammarAnalyzer;
 import syntax.InvalidTreeException;
 import syntax.Parser;
 
 import java.io.File;
 import java.io.IOException;
-
-import static mips.MipsGenerator.generateMipsFromFile;
 
 /**
  * Class Main.
@@ -31,11 +35,24 @@ public class Main {
      */
     public static void main(String[] args) throws InvalidTreeException, DuplicateVariableException, UnknownVariableException, IOException {
         File tac = new File(PATH_TAC);
-        Parser p = new Parser(new TokenBuffer(new CodeProcessor(PATH_FILE)), new GrammarAnalyzer());
-        p.compile(tac);
-        //TestMaster.testAll(); // TODO Uncomment for final commit
-        OptimizerManager om = new OptimizerManager();
-        om.optimize(tac);
-        generateMipsFromFile(PATH_TAC, PATH_MIPS);
+
+        // Parser phase
+        Compiler compiler = new Parser(new TokenBuffer(new CodeProcessor(PATH_FILE)), new GrammarAnalyzer());
+        compiler.compile(tac);
+
+        // Test phase
+        // TestMaster.testAll(); // TODO Uncomment for final commit
+
+        // AST to TAC code phase
+        TacConverter tacConverter = new IntermediateCodeGenerator();
+        tacConverter.process(compiler.getThreeAddressLines(), tac);
+
+        // Optimizer phase
+        Optimizer opt = new OptimizerManager();
+        opt.optimize(tac);
+
+        // TAC optimized to MIPs phase
+        MipsConverter mipsConverter = new MipsGenerator();
+        mipsConverter.generateMipsFromFile(PATH_TAC, PATH_MIPS);
     }
 }

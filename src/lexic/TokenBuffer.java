@@ -21,7 +21,7 @@ public class TokenBuffer implements TokenRequest {
     private final LineRequest lineRequest;
     private final ArrayList<TokenDataPair> tokens;
 
-    private ArrayList<TokenPosition> tokenPositions;
+    private final ArrayList<TokenPosition> tokenPositions;
 
     /**
      * 1 means the first

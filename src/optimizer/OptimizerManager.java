@@ -8,10 +8,10 @@ import java.util.HashMap;
  * Class OptimizerManager for TAC code. In this version only consists on refactor variables names.
  * @TODO In the future it should be expanded with more functions.
  */
-public class OptimizerManager {
-    private ArrayList<String> lines;
-    private ArrayList<String> data;
-    private HashMap<String, String> map;
+public class OptimizerManager implements Optimizer {
+    private final ArrayList<String> lines;
+    private final ArrayList<String> data;
+    private final HashMap<String, String> map;
 
     /**
      * Constructor for OptimizerManager.
@@ -28,6 +28,7 @@ public class OptimizerManager {
      * @param file tac's file
      * @throws IOException the io exception
      */
+    @Override
     public void optimize(File file) throws IOException {
         getTACLines(file);
         // @TODO In the future it should be expanded with more functions.
