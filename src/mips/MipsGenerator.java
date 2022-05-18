@@ -138,7 +138,8 @@ public class MipsGenerator implements MipsConverter {
     }
 
     private String checkLabel(String[] tokens) {
-        return tokens[0].matches("[\\d\\w]+:")  ? "$"+tokens[0]+"\n" : "";
+        boolean isAlone = tokens.length == 1;
+        return tokens[0].matches("[\\d\\w]+:")  ? "$"+tokens[0]+(isAlone ? "" : "\n") : "";
     }
 
     // No podem rebre operacions entre dos literals
