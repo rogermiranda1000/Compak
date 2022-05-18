@@ -78,42 +78,6 @@ public class ParseTree {
         return r;
     }
 
-    /**
-     * Gets evaluates.
-     *
-     * @return the evaluates
-     */
-    public VariableTypes getEvaluates() {
-        return this.evaluates;
-    }
-
-    /**
-     * Sets evaluates.
-     *
-     * @param evaluates the evaluates
-     */
-    public void setEvaluates(VariableTypes evaluates) {
-        this.evaluates = evaluates;
-    }
-
-    /**
-     * Gets table.
-     *
-     * @return the table
-     */
-    public SymbolTable getTable() {
-        return table;
-    }
-
-    /**
-     * Sets table.
-     *
-     * @param table the table
-     */
-    public void setTable(SymbolTable table) {
-        this.table = table;
-    }
-
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
