@@ -3,6 +3,7 @@ import entities.UnknownVariableException;
 import intermediateCode.IntermediateCodeGenerator;
 import intermediateCode.TacConverter;
 import lexic.TokenBuffer;
+import optimizer.Optimize;
 import optimizer.OptimizerManager;
 import preprocesser.CodeProcessor;
 import syntax.Compiler;
@@ -47,8 +48,8 @@ public class Main {
         tacConverter.process(compiler.getThreeAddressLines(), tac);
 
         // Optimizer phase
-        OptimizerManager om = new OptimizerManager();
-        om.optimize(tac);
+        Optimize opt = new OptimizerManager();
+        opt.optimize(tac);
 
         // TAC optimized to MIPs phase
         generateMipsFromFile(PATH_TAC, PATH_MIPS);
