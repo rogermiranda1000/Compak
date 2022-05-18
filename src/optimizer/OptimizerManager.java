@@ -8,7 +8,7 @@ import java.util.HashMap;
  * Class OptimizerManager for TAC code. In this version only consists on refactor variables names.
  * @TODO In the future it should be expanded with more functions.
  */
-public class OptimizerManager implements Optimize {
+public class OptimizerManager implements Optimizer {
     private final ArrayList<String> lines;
     private final ArrayList<String> data;
     private final HashMap<String, String> map;
