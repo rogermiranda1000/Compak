@@ -4,114 +4,41 @@ import java.io.*;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+/**
+ * Class OptimizerManager for TAC code. In this version only consists on refactor variables names.
+ * @TODO In the future it should be expanded with more functions.
+ */
 public class OptimizerManager {
     private ArrayList<String> lines;
     private ArrayList<String> data;
     private HashMap<String, String> map;
 
+    /**
+     * Constructor for OptimizerManager.
+     */
     public OptimizerManager() {
         this.lines = new ArrayList<>();
         this.data = new ArrayList<>();
         map = new HashMap<>();
     }
 
+    /**
+     * Optimize TAC code.
+     *
+     * @param file tac's file
+     * @throws IOException the io exception
+     */
     public void optimize(File file) throws IOException {
         getTACLines(file);
-        //optimizeRedundantAssigns();
+        // @TODO In the future it should be expanded with more functions.
         refactorVarsNames();
         writeTACtoFile(file);
-    }
-
-    // @TODO finish swap and remove
-    private void optimizeRedundantAssigns() {
-        for (int i = 0; i < lines.size(); i++) {
-            // Search for case t0 := t1
-            String[] parts = lines.get(i).split(" ");
-            if (parts.length == 3 && parts[0].matches("^(\\d*[a-zA-Z_]+\\w*)$") &&
-                    parts[2].matches("^(\\d*[a-zA-Z_]+\\w*)$") && !parts[0].equals("true") && !parts[0].equals("false")
-                        && !parts[2].equals("true") && !parts[2].equals("false")) {
-                // look for t1 and substitute all
-                swapAndRemove(parts[2], parts[0], i);
-            }
-        }
-    }
-
-    // @TODO finish swap and remove
-    private void swapAndRemove(String b, String a, int start) {
-        for (int i = start; i < lines.size(); i++) {
-            String[] parts = lines.get(i).split(" ");
-
-            if (parts.length == 3) {
-                // case t0 := t1
-                if (parts[0].equals(a)) {
-                    parts[0] = b;
-                }
-
-                if (parts[2].equals(a)) {
-                    parts[2] = b;
-                }
-
-                if (parts[0].equals(parts[2])) {
-                    // Case remove
-                    // lines.remove(i);
-                    // i--;
-                } else {
-                    lines.set(i, parts[0] + " " + parts[1] + " " + parts[2]);
-                }
-            } else if (parts.length == 5) {
-                if (lines.get(i).contains("goto")) {
-                    if (lines.get(i).contains("!")) {
-                        // L0: if !t3 goto L1
-                        if (parts[2].equals("!" + a)) {
-                            parts[2] = "!" + b;
-                        }
-                        lines.set(i, parts[0] + " " + parts[1] + " " + parts[2] + " " + parts[3] + " " + parts[4]);
-                    } else {
-                        // L0: if t3 goto L1
-                        if (parts[2].equals(a)) {
-                            parts[2] = b;
-                        }
-                        lines.set(i, parts[0] + " " + parts[1] + " " + parts[2] + " " + parts[3] + " " + parts[4]);
-                    }
-                } else {
-                    // case t0 := t1 + t2
-                    if (parts[0].equals(a)) {
-                        parts[0] = b;
-                    }
-
-                    if (parts[2].equals(a)) {
-                        parts[2] = b;
-                    }
-
-                    if (parts[4].equals(a)) {
-                        parts[4] = b;
-                    }
-                    lines.set(i, parts[0] + " " + parts[1] + " " + parts[2] + " " + parts[3] + " " + parts[4]);
-                }
-            } else if (parts.length == 2) {
-                // case goto L0
-            } else if (parts.length == 1) {
-                // case L0:
-            } else if (parts.length == 7) {
-                if (parts[2].equals(a)) {
-                    parts[2] = b;
-                }
-
-                if (parts[4].equals(a)) {
-                    parts[4] = b;
-                }
-
-                data.add(parts[0] + " " + parts[1] + " " + parts[2] + " " + parts[3] + " " + parts[4] + " " + parts[5] + " " + parts[6]);
-            } else {
-                System.out.println("ERROR_B");
-            }
-        }
     }
 
     private void refactorVarsNames() {
         int index = 0;
         for (int i = 0; i < lines.size(); i++) {
-            String parts[] = lines.get(i).split(" ");
+            String[] parts = lines.get(i).split(" ");
 
             if (parts.length == 3) {
                 // case t0 := t1

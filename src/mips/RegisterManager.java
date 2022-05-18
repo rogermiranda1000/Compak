@@ -6,7 +6,17 @@ import java.util.HashMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+/**
+ * Class RegisterManager. Consists on mange the control and optimizer of registers for mips.
+ */
 public class RegisterManager {
+    /**
+     * Gets usage of registers.
+     *
+     * @param lines                  lines
+     * @param biggestVirtualRegister virtual register
+     * @return the usage of registers
+     */
     public static ArrayList<Integer> getUsageOfRegisters(ArrayList<String> lines, int[] biggestVirtualRegister) {
         HashMap<Integer, ArrayList<Integer>> registersEnding = new HashMap<>();
 
@@ -89,6 +99,14 @@ public class RegisterManager {
         }
     }
 
+    /**
+     * Algorithm K coloring graph register generator array of strings.
+     *
+     * @param lines        lines
+     * @param numRegisters the number of registers
+     * @return array of strings
+     * @throws NoMoreRegistersException the no more registers exception
+     */
     public static String[] kColoringGraphRegisterGenerator(ArrayList<String> lines, int numRegisters) throws NoMoreRegistersException {
         addRegistersToNotFree(lines);
 

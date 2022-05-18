@@ -5,8 +5,17 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+/**
+ * Class TacMipsAdapter.
+ */
 public class TacMipsAdapter {
 
+    /**
+     * We adapt the TAC to make it feasible with MIPS
+     *
+     * @param lines the lines from tac code
+     * @return the array list adapted
+     */
     public static ArrayList<String> adaptTac(ArrayList<String> lines) {
         int[] high = findHighestRegiter(lines);
         int[] highestRegister = {high[0]};

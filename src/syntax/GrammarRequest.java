@@ -5,9 +5,22 @@ import entities.Token;
 import java.lang.reflect.Field;
 import java.util.*;
 
+/**
+ * Class Grammar Request.
+ */
 public abstract class GrammarRequest {
+    /**
+     * Gets entry point of the grammar.
+     *
+     * @return entry point production.
+     */
     public abstract Production getEntryPoint();
 
+    /**
+     * Gets all productions.
+     *
+     * @return the productions
+     */
     public Map<String, Production> getProductions() {
         HashMap<String, Production> r = new HashMap<>();
         try {
@@ -24,7 +37,7 @@ public abstract class GrammarRequest {
     private Set<Token> getFirst(Production p) {
         Set<Token> r = new HashSet<>();
 
-        for (Object[] production : p.getProduccions()) {
+        for (Object[] production : p.getProductions()) {
             /**
              * If x is a terminal, then FIRST(x) = { ‘x’ }
              * If x -> ε, is a production rule, then add ε to FIRST(x).
@@ -82,7 +95,7 @@ public abstract class GrammarRequest {
                  */
 
                 if (production.equals(this.getEntryPoint())) r.get(production).add(Token.EOF); // the starting production contains the EOF
-                for (Object[] p : production.getProduccions()) {
+                for (Object[] p : production.getProductions()) {
                     if (p.length == 0) continue;
 
                     Set<Token> first;
@@ -116,6 +129,11 @@ public abstract class GrammarRequest {
         return r;
     }
 
+    /**
+     * Get all data from first and follow algorithm.
+     *
+     * @return list with first and follow.
+     */
     public List<FirstFollowData> getFirstFollow() {
         List<FirstFollowData> r = new ArrayList<>();
         Map<Production, Set<Token>> follows = this.getFollows();
@@ -126,6 +144,11 @@ public abstract class GrammarRequest {
         return r;
     }
 
+    /**
+     * Get all data from first and follow algorithm.
+     *
+     * @return hashmap with first and follow.
+     */
     public HashMap<Production, FirstFollowData> getFirstFollowHash() {
         HashMap<Production, FirstFollowData> r = new HashMap<>();
         List<FirstFollowData> ff = this.getFirstFollow();
