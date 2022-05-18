@@ -2,9 +2,7 @@ package syntax;
 
 import entities.Token;
 import entities.TokenDataPair;
-import intermediateCode.IntermediateCodeData;
-import intermediateCode.IntermediateCodeGenerator;
-import intermediateCode.ThreeAddressLine;
+import entities.ThreeAddressLine;
 
 import java.util.*;
 
@@ -12,13 +10,14 @@ import java.util.*;
  * Class AbstractSyntaxTree.
  */
 public class AbstractSyntaxTree {
-    private List<Object> treeExtend;
+    private final List<Object> treeExtend;
     private AbstractSyntaxTree father;
-    private static int t;
-    private int level;
     private int height;
     private TokenDataPair operation;
     private int id;
+
+    private static ArrayList<ThreeAddressLine> treeInLines;
+    private static int globalId;
 
     /**
      * Class constructor to instantiates new AST empty.
@@ -28,12 +27,26 @@ public class AbstractSyntaxTree {
     }
 
     /**
+     * Getter of static arraylist treeInLines (TAC lines)
+     * @return arraylist treeInLines
+     */
+    public static ArrayList<ThreeAddressLine> getTreeInLines() {
+        return treeInLines;
+    }
+
+    /**
      * Class constructor to instantiates new AST cloning the parse tree.
      *
      * @param parseTree the parse tree to clone
      */
     public AbstractSyntaxTree(ParseTree parseTree) {
         this.treeExtend = new ArrayList<>();
+
+        if (treeInLines == null) {
+            treeInLines = new ArrayList<>();
+            globalId = 0;
+        }
+
         cloneTree(parseTree);
     }
 
@@ -286,7 +299,6 @@ public class AbstractSyntaxTree {
     }
 
     private void calculateLevels(int level) {
-        this.level = level;
         for (int i = 0; i < treeExtend.size(); i++) {
             Object o = treeExtend.get(i);
             if (o instanceof AbstractSyntaxTree) {
@@ -324,11 +336,10 @@ public class AbstractSyntaxTree {
     }
 
     /**
-     * Function that travel all AST with a priority defined by our language.
-     *
-     * @param intermediateCodeData intermediateCodeData
+     * Function that travel all AST with a priority defined by our language and add to a static array each line
+     * of 3 address code.
      */
-    public void travelWithPriorityDepth(IntermediateCodeData intermediateCodeData) {
+    public void travelWithPriorityDepth() {
         Comparator<AbstractSyntaxTree> comparator = new Comparator<AbstractSyntaxTree>() {
             @Override
             public int compare(AbstractSyntaxTree a, AbstractSyntaxTree b) {
@@ -405,18 +416,29 @@ public class AbstractSyntaxTree {
 
         while (!pq.isEmpty()) {
             AbstractSyntaxTree tree = pq.remove();
-            tree.travelWithPriorityDepth(intermediateCodeData);
+            tree.travelWithPriorityDepth();
 
             if (tree.treeExtend.size() == 2) {
-                tree.id = intermediateCodeData.addLine(tree.operation, tree.treeExtend.get(0), tree.treeExtend.get(1));
+                addLine(tree.operation, tree.treeExtend.get(0), tree.treeExtend.get(1));
             } else {
-                tree.id = intermediateCodeData.addLine(tree.operation, tree.treeExtend.get(0));
+                addLine(tree.operation, tree.treeExtend.get(0));
             }
+
+            tree.id = globalId;
+            globalId++;
 
 
             // debug line for 3@Code
             // System.out.println(tree + "->" + tree.treeExtend + "   op: " + tree.operation);
         }
+    }
+
+    private void addLine(TokenDataPair op, Object arg1, Object arg2) {
+        treeInLines.add(new ThreeAddressLine(op, arg1, arg2));
+    }
+
+    private void addLine(TokenDataPair op, Object arg1) {
+        treeInLines.add(new ThreeAddressLine(op, arg1, null));
     }
 
     /**

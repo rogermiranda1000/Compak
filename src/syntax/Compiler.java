@@ -2,9 +2,11 @@ package syntax;
 
 import entities.DuplicateVariableException;
 import entities.UnknownVariableException;
+import entities.ThreeAddressLine;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 
 /**
  * Interface Compiler.
@@ -21,4 +23,11 @@ public interface Compiler {
      * @throws IOException                the io exception
      */
     public boolean compile(File out) throws InvalidTreeException, DuplicateVariableException, UnknownVariableException, IOException;
+
+    /**
+     * Gets all three address lines generated travelling the abstract syntax tree.
+     *
+     * @return array with three address lines
+     */
+    public ArrayList<ThreeAddressLine> getThreeAddressLines();
 }
