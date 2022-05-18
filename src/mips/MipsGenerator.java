@@ -9,6 +9,7 @@ import java.util.Arrays;
  */
 public class MipsGenerator implements MipsConverter {
     private static final String INDENT = "    ";
+    private int stackPosition = 0;
 
     /**
      * Constructor for MipsGenerator.
@@ -71,10 +72,16 @@ public class MipsGenerator implements MipsConverter {
                 expr += mipsStartFunction(tokens);
             } else if (tokens[0].equals("EndFunc")) {
                 expr += mipsReturnFunction(tokens);
+            } else if (!tokens[0].equals("")){
+                expr += "ERROR";
             }
         } else if (tokens.length == 2) {
             if (tokens[0].equals("Call")) {
                 expr += mipsCallFunction(tokens);
+            } else if (tokens[0].equals("PushParam")) {
+                expr += mipsPushParam(tokens);
+            } else if (tokens[0].equals("PopParam")) {
+                expr += mipsPopParam(tokens);
             } else {
                 expr += mipsGoto(tokens);
             }
@@ -125,6 +132,14 @@ public class MipsGenerator implements MipsConverter {
 
     private String mipsX(String[] tokens) {
         return "";
+    }
+
+    private String mipsPushParam(String[] tokens) {
+        return "# push param";
+    }
+
+    private String mipsPopParam(String[] tokens) {
+        return "# pop param";
     }
 
     private String mipsStartFunction(String[] tokens) {
