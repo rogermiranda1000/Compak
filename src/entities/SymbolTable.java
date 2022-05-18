@@ -7,6 +7,9 @@ import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
 
+/**
+ * Class Symbol Table.
+ */
 public class SymbolTable {
     private final Set<SymbolTableEntry> entries = new TreeSet<>((SymbolTableEntry o1, SymbolTableEntry o2) -> {
         if (o1 == o2) return 0;
@@ -20,21 +23,36 @@ public class SymbolTable {
 
     private final List<SymbolTable> subtables;
 
+    /**
+     * Instantiates a new Symbol table.
+     *
+     * @param parent the parent
+     */
     public SymbolTable(@Nullable SymbolTable parent) {
         this.parent = parent;
         this.subtables = new ArrayList<>();
     }
 
+    /**
+     * Instantiates a new Symbol table without parent.
+     */
     public SymbolTable() {
         this(null);
     }
 
+    /**
+     * Add entry.
+     *
+     * @param entry the entry
+     * @throws DuplicateVariableException the duplicate variable exception
+     */
     public void addEntry(SymbolTableEntry entry) throws DuplicateVariableException {
         if (!this.entries.add(entry)) throw new DuplicateVariableException("The variable '" + entry.getName() + "' already exists in this scope!");
     }
 
     /**
      * Search in the current scope (and above) and returns the node with the same name (if any)
+     *
      * @param token Variable
      * @return Node representing that variable
      */
@@ -46,11 +64,18 @@ public class SymbolTable {
                 if (e.getName().equals(token.getData()) && ((token.getToken() == Token.ID && e instanceof SymbolTableVariableEntry) || (token.getToken() == Token.ID_FUNC && e instanceof SymbolTableFunctionEntry))) return e;
             }
 
+            // TODO explorar subtaules
+
             table = table.parent; // not found, maybe upper?
         }
         return null; // not found
     }
 
+    /**
+     * Optimize the symbol table.
+     *
+     * @return the symbol table optimized
+     */
     public SymbolTable optimize() {
         List<SymbolTable> subtableClone = new ArrayList<>(this.subtables);
         for (SymbolTable table : subtableClone) table.optimize();
@@ -69,15 +94,30 @@ public class SymbolTable {
         return this;
     }
 
+    /**
+     * Add a subtable.
+     *
+     * @param symbolTable the symbol table
+     */
     public void addSubtable(SymbolTable symbolTable) {
         if (symbolTable.isUsed()) this.subtables.add(symbolTable); // first-phase optimization
     }
 
+    /**
+     * Get parent.
+     *
+     * @return the parent
+     */
     @Nullable
     public SymbolTable getParent() {
         return this.parent;
     }
 
+    /**
+     * Is used.
+     *
+     * @return the boolean
+     */
     public boolean isUsed() {
         return this.entries.size() > 0 || this.subtables.size() > 0;
     }

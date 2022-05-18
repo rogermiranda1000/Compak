@@ -4,9 +4,18 @@ import java.io.*;
 import java.util.ArrayList;
 import java.util.Arrays;
 
+/**
+ * Class Mips Generator. Generate each line in mips language processing all tac code given.
+ */
 public class MipsGenerator {
     private static final String INDENT = "    ";
 
+    /**
+     * Create mips file with all data processed.
+     *
+     * @param inputFile  the input file
+     * @param outputFile the output file
+     */
     public static void generateMipsFromFile(String inputFile, String outputFile) {
         ArrayList<String> lines = getTACLines(inputFile);
         try {
@@ -22,22 +31,7 @@ public class MipsGenerator {
         }
     }
 
-    public static ArrayList<String> getTACLines(String file) {
-        ArrayList<String> lines = new ArrayList<>();
-        try (BufferedReader br = new BufferedReader(new FileReader(file))) {
-            for(String line; (line = br.readLine()) != null; ) {
-                lines.add(line);
-            }
-        } catch (FileNotFoundException e) {
-            System.out.println("An error occurred while reading the input file.");
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return lines;
-    }
-
-    public static void createMIPS(ArrayList<String> lines, FileWriter writer) throws IOException, NoMoreRegistersException {
+    private static void createMIPS(ArrayList<String> lines, FileWriter writer) throws IOException, NoMoreRegistersException {
         ArrayList<String> out = new ArrayList<>();
         out.add(".text\n");
         out.add("main:");
@@ -57,7 +51,7 @@ public class MipsGenerator {
         }
     }
 
-    public static String generateMIPSExpression(String[] tokens) {
+    private static String generateMIPSExpression(String[] tokens) {
         String expr = INDENT, label;
         label = checkLabel(tokens); // Check if label was present in line
         if (!label.isEmpty()) tokens = cutFrom(1, tokens);
@@ -95,6 +89,22 @@ public class MipsGenerator {
         }
         return label + expr;
     }
+
+    private static ArrayList<String> getTACLines(String file) {
+        ArrayList<String> lines = new ArrayList<>();
+        try (BufferedReader br = new BufferedReader(new FileReader(file))) {
+            for(String line; (line = br.readLine()) != null; ) {
+                lines.add(line);
+            }
+        } catch (FileNotFoundException e) {
+            System.out.println("An error occurred while reading the input file.");
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return lines;
+    }
+
     private static String mipsX(String[] tokens) {
         return "";
     }
@@ -171,6 +181,7 @@ public class MipsGenerator {
     private static boolean anyNumbers(String token1, String token2) {
         return isNumber(token1) || isNumber(token2);
     }
+
     private static boolean isNumber(String input) {
         return input.matches("\\d+");
     }

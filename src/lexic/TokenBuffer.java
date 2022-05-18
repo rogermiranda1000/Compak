@@ -12,6 +12,9 @@ import java.util.NoSuchElementException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+/**
+ * Class TokenBuffer.
+ */
 public class TokenBuffer implements TokenRequest {
     private static final Pattern tokenSplitter = Pattern.compile("^(\"(?:[^\"]|(?<=\\\\)\")*\"|(?<=\\w|\\.|^)[\\w.]+|==|[;=+\\-*/%^¡!&|<>:{}(),])(\\s*)(.*)$");
 
@@ -25,6 +28,11 @@ public class TokenBuffer implements TokenRequest {
      */
     private int currentLine;
 
+    /**
+     * Constructor TokenBuffer.
+     *
+     * @param lineRequest the line requested
+     */
     public TokenBuffer(LineRequest lineRequest) {
         this.lineRequest = lineRequest;
         this.tokens = new ArrayList<>();

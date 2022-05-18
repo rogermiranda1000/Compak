@@ -2,7 +2,7 @@ package testing;
 
 import lexic.TokenBuffer;
 import preprocesser.CodeProcessor;
-import syntax.GrammarAnalizer;
+import syntax.GrammarAnalyzer;
 import syntax.Parser;
 
 import java.io.File;
@@ -11,8 +11,14 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Objects;
 
+/**
+ * Class TestMaster. This class manages the read of all test file to be tested with a specific function.
+ */
 public class TestMaster {
 
+    /**
+     * Main function to test with all test filnes (fail and pass folders).
+     */
     public static void testAll() {
         // Pass tests
         TestMaster.testFolder(true, "testFiles/pass");
@@ -33,7 +39,7 @@ public class TestMaster {
 
     private static String testFile(boolean shouldPass, String file) {
         try {
-            Parser p = new Parser(new TokenBuffer(new CodeProcessor(file)), new GrammarAnalizer());
+            Parser p = new Parser(new TokenBuffer(new CodeProcessor(file)), new GrammarAnalyzer());
             boolean passed;
             try {
                 passed = p.compile(new File("tac.txt"));
