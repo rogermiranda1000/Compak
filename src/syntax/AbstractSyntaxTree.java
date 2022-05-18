@@ -3,11 +3,10 @@ package syntax;
 import entities.Token;
 import entities.TokenDataPair;
 import intermediateCode.IntermediateCodeData;
+import intermediateCode.IntermediateCodeGenerator;
+import intermediateCode.ThreeAddressLine;
 
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
-import java.util.PriorityQueue;
+import java.util.*;
 
 /**
  * Class AbstractSyntaxTree.
@@ -93,7 +92,7 @@ public class AbstractSyntaxTree {
      * Function that removes meaningless tokens from AST. In parse tree we consider all tokens, but not AST.
      */
     public void removeMeaningLessTokens() {
-        Token[] list = new Token[] {Token.EOL, Token.INT, Token.BIG,Token.FLO,Token.STR,Token.BIT,Token.MAIN,Token.RET_TYPE,Token.IN,
+        Token[] list = new Token[] {Token.EOL, Token.INT, Token.BIG,Token.FLO,Token.STR,Token.BIT,Token.RET_TYPE,Token.IN,
                 Token.RANGE,Token.OPN_CONTEXT,Token.CLS_CONTEXT,Token.OPN_PARENTH,Token.CLS_PARENTH,Token.COMMA,Token.FOR};
 
         for (int i = 0; i < this.treeExtend.size(); i++) {
@@ -122,6 +121,17 @@ public class AbstractSyntaxTree {
 
             if (o instanceof AbstractSyntaxTree) {
                 pq.add(((AbstractSyntaxTree)o));
+            } else {
+                if (!((TokenDataPair)o).isPromoted() && ((TokenDataPair)o).getToken().equals(Token.MAIN)) {
+                    AbstractSyntaxTree newEntry = new AbstractSyntaxTree();
+                    TokenDataPair tokn = new TokenDataPair(Token.MAIN);
+                    tokn.setPromoted();
+                    newEntry.operation = new TokenDataPair(Token.MAIN);
+                    newEntry.treeExtend.add(tokn);
+                    this.treeExtend.add(i, newEntry);
+                    this.treeExtend.remove(o);
+                    pq.add(newEntry);
+                }
             }
         }
 
@@ -199,6 +209,70 @@ public class AbstractSyntaxTree {
                 } else if (tk == Token.NOT) {
                     this.operation = ((TokenDataPair) o);
                     this.treeExtend.remove(o);
+                } else if (tk == Token.FUNC) {
+                    ((TokenDataPair) o).setPromoted();
+                    this.operation = ((TokenDataPair) o);
+                    this.treeExtend.remove(o);
+
+                    // New production to save name
+                    AbstractSyntaxTree newObject =  new AbstractSyntaxTree();
+                    newObject.operation = new TokenDataPair(Token.NAME_FUNC, "name_func");
+                    Object obj = treeExtend.get(0);
+                    newObject.treeExtend.add(obj);
+                    treeExtend.remove(obj);
+                    this.treeExtend.add(0, newObject);
+
+                    // New production to save vars
+                    AbstractSyntaxTree newObject2 =  new AbstractSyntaxTree();
+                    newObject2.operation = new TokenDataPair(Token.PARAMS, "params");
+
+                    if (treeExtend.size() < 3) {
+                        newObject2.treeExtend.add(new TokenDataPair(Token.EPSILON));
+                    }
+
+                    for (int j = 1; j < treeExtend.size(); j++) {
+                        if (treeExtend.get(j) instanceof TokenDataPair) {
+                            // add to params
+                            newObject2.treeExtend.add(treeExtend.get(j));
+                            treeExtend.remove(treeExtend.get(j));
+                            j--;
+                        }
+                    }
+
+                    this.treeExtend.add(1, newObject2);
+
+
+                    // New production to save vars
+                    AbstractSyntaxTree newObject3 =  new AbstractSyntaxTree();
+                    newObject3.operation = new TokenDataPair(Token.START_FUNC, "start_func");
+
+                    if (treeExtend.size() < 3) {
+                        newObject3.treeExtend.add(new TokenDataPair(Token.EPSILON));
+                    } else {
+                        newObject3.treeExtend.add(treeExtend.get(2));
+                        treeExtend.remove(treeExtend.get(2));
+                    }
+
+                    this.treeExtend.add(2, newObject3);
+                } else if (tk == Token.ID_FUNC) {
+                    // case call 1 parameter
+                    if (this.treeExtend.size() == 2 && this.treeExtend.get(0) instanceof TokenDataPair &&
+                            ((TokenDataPair) this.treeExtend.get(0)).getToken().equals(Token.ID_FUNC) &&
+                            this.treeExtend.get(1) instanceof TokenDataPair && (((TokenDataPair) this.treeExtend.get(1)).getToken().equals(Token.NUMBER))
+                    || ((TokenDataPair) this.treeExtend.get(1)).getToken().equals(Token.ID) || ((TokenDataPair) this.treeExtend.get(1)).getToken().equals(Token.TRUE)
+                            || ((TokenDataPair) this.treeExtend.get(1)).getToken().equals(Token.FALSE)) {
+                        this.operation = new TokenDataPair(Token.CALL_FUNC);
+                    } else {
+                        // case call 0 parameters
+                        if (this.father != null && !((TokenDataPair) o).isPromoted()) {
+                            ((TokenDataPair) o).setPromoted();
+                            AbstractSyntaxTree newObj = new AbstractSyntaxTree();
+                            newObj.treeExtend.add(o);
+                            newObj.operation = new TokenDataPair(Token.CALL_FUNC);
+                            this.treeExtend.add(i, newObj);
+                            this.treeExtend.remove(o);
+                        }
+                    }
                 }
             }
         }
@@ -266,6 +340,18 @@ public class AbstractSyntaxTree {
                     return 1;
                 }
 
+                if (b.operation.getToken() == Token.MAIN) {
+                    return 100;
+                }
+
+                if (b.operation.getToken() == Token.NAME_FUNC) {
+                    return 100;
+                }
+
+                if (a.operation.getToken() == Token.START_FUNC) {
+                    return 100;
+                }
+
                 if (a.operation.getToken() == Token.END_LOOP) {
                     return 100;
                 }
@@ -297,6 +383,12 @@ public class AbstractSyntaxTree {
                 if (a.operation.getToken() == Token.ASSIGN && b.operation.getToken() == Token.ASSIGN) {
                     return 0;
                 }
+
+                // Bug dos trees diferent altura
+                if (a.father.operation == null) {
+                    return 100;
+                }
+
                 return b.height - a.height;
             }
         };
