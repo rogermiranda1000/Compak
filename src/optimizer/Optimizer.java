@@ -4,9 +4,9 @@ import java.io.File;
 import java.io.IOException;
 
 /**
- * The interface Optimize.
+ * The interface Optimizer.
  */
-public interface Optimize {
+public interface Optimizer {
     /**
      * Optimize TAC code.
      *
