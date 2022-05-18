@@ -1,3 +1,11 @@
-main ( ) {
-    bit a = ¡(true & false);
+
+func x (bit b) {
+    int c = true;
 }
+
+
+main ( ) {
+    int a = 0;
+    x(true);
+}
+

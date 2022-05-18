@@ -1,4 +1,12 @@
-t0 := 1 & 0
-t1 := !t0
+x:
+BeginFunc
+PopParam t0
+t1 := 1
 t2 := t1
-t3 := t2
+EndFunc
+
+main:
+t3 := 0
+t4 := t3
+PushParam 1
+Call x
