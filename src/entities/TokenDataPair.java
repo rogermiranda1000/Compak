@@ -5,7 +5,7 @@ package entities;
  * Example: ID (a).
  */
 public class TokenDataPair {
-    private final Token token;
+    private Token token;
     private final String data;                  // used for variables, functions, strings and digits
     private SymbolTableEntry variableNode;      // used for variables/functions
     private boolean promoted;
@@ -20,6 +20,10 @@ public class TokenDataPair {
         this.token = token;
         this.data = data;
         this.promoted = false;
+    }
+
+    public void setToken(Token t) {
+        this.token = t;
     }
 
     /**

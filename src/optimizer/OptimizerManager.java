@@ -159,10 +159,34 @@ public class OptimizerManager {
 
                     data.add(t0 + " " + parts[1] + " " + t1 + " " + parts[3] + " " + t2);
                 }
-
             } else if (parts.length == 2) {
-                // case goto L0
-                data.add(lines.get(i));
+                if (lines.get(i).contains("goto")) {
+                    // case goto L0
+                    data.add(lines.get(i));
+                } else if (lines.get(i).contains("PopParam") || lines.get(i).contains("PushParam")) {
+                    // case PopParam t0 OR PushParam t1
+                    String t0;
+                    if (map.containsKey(parts[1])) {
+                        t0 = map.get(parts[1]);
+                    } else {
+                        if (parts[1].matches("^(\\d*[a-zA-Z_]+\\w*)$") && !parts[1].equals("true") && !parts[1].equals("false")) {
+                            // is variable
+                            if (map.containsKey(parts[1])) {
+                                t0 = map.get(parts[1]);
+                            } else {
+                                t0 = "t" + index;
+                                map.put(parts[1], t0);
+                                index++;
+                            }
+                        } else {
+                            // is number
+                            t0 = parts[1];
+                        }
+                    }
+                    data.add(parts[0] + " " + t0);
+                } else {
+                    data.add(lines.get(i));
+                }
             } else if (parts.length == 1) {
                 // case L0:
                 data.add(lines.get(i));

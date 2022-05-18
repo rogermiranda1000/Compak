@@ -115,6 +115,7 @@ public class Parser implements Compiler {
 
     private AbstractSyntaxTree generateAbstractSyntaxTree(ParseTree parseTree, ArrayList<AbstractSyntaxTree> codes) {
         AbstractSyntaxTree tree = new AbstractSyntaxTree(parseTree);
+
         tree.removeEpsilons();
         tree.removeRedundantProductions();
         tree.removeMeaningLessTokens();
@@ -126,7 +127,10 @@ public class Parser implements Compiler {
         tree.promoteTokens();
 
         tree.removeRedundantProductions();
+        //tree.removeEpsilons();
         tree.recalculateFathers();
+
+
 
         // First approach to 3@Code
         // tree.travelWithPriorityDepth();
@@ -192,11 +196,10 @@ public class Parser implements Compiler {
             else {
                 // TokenDataPair
                 TokenDataPair dataPair = (TokenDataPair)node;
-                if (dataPair.getToken() == Token.ID) {
+                if (dataPair.getToken() == Token.ID || dataPair.getToken() == Token.ID_FUNC) {
                     // add relation between variable and scope table (created above)
-                    String varName = dataPair.getData();
-                    SymbolTableEntry idNode = scopes.peek().searchEntry(varName);
-                    if (idNode == null) throw new UnknownVariableException("Unknown variable (" + varName + ")"); // TODO error line?
+                    SymbolTableEntry idNode = scopes.peek().searchEntry(dataPair);
+                    if (idNode == null) throw new UnknownVariableException("Unknown " + (dataPair.getToken() == Token.ID ? "variable" : "function") + " (" + dataPair.getData() + ")"); // TODO error line?
                     dataPair.setVariableNode(idNode);
                 }
                 else if (dataPair.getToken() == Token.OPN_CONTEXT) {
