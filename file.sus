@@ -1,11 +1,5 @@
-
-func x (bit b) {
-    int c = true;
-}
-
-
 main ( ) {
     int a = 0;
-    x(true);
+    a = 2 + 3 + 4 + 5;
 }
 

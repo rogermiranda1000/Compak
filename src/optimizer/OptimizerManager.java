@@ -9,9 +9,9 @@ import java.util.HashMap;
  * @TODO In the future it should be expanded with more functions.
  */
 public class OptimizerManager {
-    private ArrayList<String> lines;
-    private ArrayList<String> data;
-    private HashMap<String, String> map;
+    private final ArrayList<String> lines;
+    private final ArrayList<String> data;
+    private final HashMap<String, String> map;
 
     /**
      * Constructor for OptimizerManager.
