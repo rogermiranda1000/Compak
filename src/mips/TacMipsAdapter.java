@@ -38,13 +38,12 @@ public class TacMipsAdapter {
                 lines.remove(i);
                 int label1 = ++highestLabel[0];
                 int label2 = ++highestLabel[0];
-                String arg1 = "t" + ++highestRegister[0];
                 ArrayList<String> newLines = new ArrayList<>();
 
                 newLines.add(matcher.replaceFirst("if $3 != 0 goto L"+label1));
-                newLines.add(matcher.replaceFirst(arg1+" =: 1"));
+                newLines.add(matcher.replaceFirst("$1 =: 1"));
                 newLines.add(matcher.replaceFirst("goto L"+label2));
-                newLines.add(matcher.replaceFirst("L"+label1+": "+arg1+" =: 0"));
+                newLines.add(matcher.replaceFirst("L"+label1+": $1 =: 0"));
                 newLines.add("L"+label2+":");
                 lines.addAll(i, newLines);
                 line = lines.get(i);
