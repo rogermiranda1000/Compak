@@ -172,9 +172,7 @@ public class IntermediateCodeGenerator implements TacConverter {
         }
 
         if (Objects.equals(op.getData(), "else")) {
-            Tag gotoIfTag = tags.remove(tags.size()-2);
-
-            return gotoIfTag.getName2() + ":";
+            // end_if already creates the label
         }
 
         if (Objects.equals(op.getData(), "¡")) {
