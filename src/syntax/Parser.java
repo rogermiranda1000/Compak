@@ -118,6 +118,8 @@ public class Parser implements Compiler {
         tree.removeRedundantProductions();
         tree.removeMeaningLessTokens();
         tree.removeRedundantProductions();
+        tree.prepareIf();
+        tree.printTree(); // TODO tmp
         tree.calculateLevels();
         tree.calculateHeight();
 
