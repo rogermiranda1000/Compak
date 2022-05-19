@@ -167,19 +167,28 @@ public class AbstractSyntaxTree {
 
                 if (tk == Token.IF) {
                     ((TokenDataPair) o).setPromoted();
-                    this.operation = new TokenDataPair(Token.END_IF, "end_if");
+                    this.operation = new TokenDataPair(Token.END_ELSE, "end_else");
 
-                    //new TokenDataPair(Token.WHILE, "while")
-                    Object obj = this.treeExtend.get(1);
-                    AbstractSyntaxTree newObject =  new AbstractSyntaxTree();
-                    newObject.treeExtend.add(obj);
-                    this.treeExtend.add(0, newObject);
+                    List<Object> sons = new ArrayList<>(this.treeExtend);
+                    this.treeExtend.clear();
 
-                    this.treeExtend.remove(obj);
-                    this.treeExtend.remove(o);
+                    this.treeExtend.add(new AbstractSyntaxTree());
+                    ((AbstractSyntaxTree) this.treeExtend.get(0)).operation = new TokenDataPair(Token.END_IF, "end_if");
+                    ((AbstractSyntaxTree) this.treeExtend.get(0)).treeExtend.add(new AbstractSyntaxTree());
+                    ((AbstractSyntaxTree) ((AbstractSyntaxTree) this.treeExtend.get(0)).treeExtend.get(0)).operation = (TokenDataPair) sons.remove(0); // if it's the operation
+                    ((AbstractSyntaxTree) ((AbstractSyntaxTree) this.treeExtend.get(0)).treeExtend.get(0)).treeExtend.add(sons.remove(0)); // condition
+                    ((AbstractSyntaxTree) this.treeExtend.get(0)).treeExtend.addAll(sons);
+                }
+                else if (tk == Token.ELSE) {
+                    ((TokenDataPair) o).setPromoted();
 
-                    ((AbstractSyntaxTree) this.treeExtend.get(0)).operation = new TokenDataPair(Token.IF, "if");
-                } else if (tk == Token.BUCLE) {
+                    Object check = this.father.treeExtend.get(0);
+                    if (check instanceof TokenDataPair && ((TokenDataPair)check).getToken() == Token.IF) {
+                        this.father.treeExtend.remove(this);
+                        this.father.father.treeExtend.addAll(this.treeExtend); // add as END_ELSE's son
+                    }
+                }
+                else if (tk == Token.BUCLE) {
                     if (this.father != null && !((TokenDataPair) o).isPromoted()) {
                         // Case loop(for i in range (5)) - for
                         if (this.treeExtend.get(1) instanceof AbstractSyntaxTree && ((AbstractSyntaxTree) this.treeExtend.get(1)).operation == null) {
@@ -304,6 +313,54 @@ public class AbstractSyntaxTree {
             if (o instanceof AbstractSyntaxTree) {
                 ((AbstractSyntaxTree)o).calculateLevels(level+1);
             }
+        }
+    }
+
+    /**
+     * If-else structure is different.
+     *
+     * From:
+     * ⬜
+     * ├── IF (if)
+     * ├── TRUE (true)
+     * ├── ⬜
+     * └── ⬜
+     *     ├── ELSE (else)
+     *     └── ⬜
+     *
+     *  To:
+     *  ⬜
+     *  ├── ELSE
+     *  ├── ⬜
+     *  └── ⬜
+     *      ├── IF (if)
+     *      ├── TRUE (true)
+     *      └── ⬜
+     *
+     */
+    public void prepareIf() {
+        // checks if it's an if condition and if it has an else
+        boolean haveElse = (this.treeExtend.size() > 3 && this.treeExtend.get(0) instanceof TokenDataPair
+                                && ((TokenDataPair)this.treeExtend.get(0)).getToken() == Token.IF
+                                && this.treeExtend.get(3) instanceof AbstractSyntaxTree
+                                && ((AbstractSyntaxTree)this.treeExtend.get(3)).treeExtend.size() > 1
+                                && ((AbstractSyntaxTree)this.treeExtend.get(3)).treeExtend.get(0) instanceof TokenDataPair
+                                && ((AbstractSyntaxTree)this.treeExtend.get(3)).treeExtend.get(1) instanceof AbstractSyntaxTree
+                                && ((TokenDataPair)((AbstractSyntaxTree)this.treeExtend.get(3)).treeExtend.get(0)).getToken() == Token.ELSE);
+
+        if (haveElse) {
+            AbstractSyntaxTree ifNode = new AbstractSyntaxTree();
+            List<Object> ifCondition = new ArrayList<>(this.treeExtend);
+            AbstractSyntaxTree elseNode = (AbstractSyntaxTree)ifCondition.remove(3);
+            ifNode.treeExtend.addAll(ifCondition);
+
+            this.treeExtend.clear();
+            this.treeExtend.addAll(elseNode.treeExtend);
+            this.treeExtend.add(ifNode);
+        }
+
+        for (Object son : this.treeExtend) {
+            if (son instanceof AbstractSyntaxTree) ((AbstractSyntaxTree)son).prepareIf();
         }
     }
 
