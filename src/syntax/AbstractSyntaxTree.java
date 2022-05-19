@@ -421,7 +421,7 @@ public class AbstractSyntaxTree {
             if (tree.treeExtend.size() == 2) {
                 addLine(tree.operation, tree.treeExtend.get(0), tree.treeExtend.get(1));
             } else {
-                addLine(tree.operation, tree.treeExtend.get(0));
+                addLine(tree.operation, tree.treeExtend.get(0)); // tree.treeExtend.size() == 1
             }
 
             tree.id = globalId;
