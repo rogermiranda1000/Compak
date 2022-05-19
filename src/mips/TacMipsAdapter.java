@@ -26,10 +26,28 @@ public class TacMipsAdapter {
 
         Pattern not = Pattern.compile("(.*)(!t?-?\\d+)(.*)");
         Pattern boolIf = Pattern.compile("(.*if )(!?t?-?\\d+)( goto.*)");
+        Pattern notEqual = Pattern.compile("(t\\d+)( := )!(t?\\d+)");
         Pattern compareIf = Pattern.compile("(.*if )(t?-?\\d+) (==|!=|<|>|>=|<=) (t?-?\\d+)( goto.*)");
 
         for (int i = 0; i < lines.size(); i++) {
             String line = lines.get(i);
+
+            // Not equal
+            matcher = notEqual.matcher(line);
+            if (matcher.matches()) {
+                lines.remove(i);
+                int label1 = ++highestLabel[0];
+                int label2 = ++highestLabel[0];
+                ArrayList<String> newLines = new ArrayList<>();
+
+                newLines.add(matcher.replaceFirst("if $3 != 0 goto L"+label1));
+                newLines.add(matcher.replaceFirst("$1 =: 1"));
+                newLines.add(matcher.replaceFirst("goto L"+label2));
+                newLines.add(matcher.replaceFirst("L"+label1+": $1 =: 0"));
+                newLines.add("L"+label2+":");
+                lines.addAll(i, newLines);
+                line = lines.get(i);
+            }
 
             // Boolean if
             matcher = boolIf.matcher(line);
