@@ -178,6 +178,10 @@ public class AbstractSyntaxTree {
                 else if (tk == Token.ELSE) {
                     ((TokenDataPair) o).setPromoted();
 
+                    AbstractSyntaxTree elseNode = new AbstractSyntaxTree();
+                    elseNode.operation = (TokenDataPair) o;
+                    elseNode.treeExtend.add(o);
+                    this.treeExtend.set(i, elseNode); // treeExtend[i] is ELSE
                     this.operation = new TokenDataPair(Token.END_ELSE, "end_else");
                 }
                 else if (tk == Token.BUCLE) {
