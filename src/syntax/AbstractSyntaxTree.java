@@ -167,26 +167,18 @@ public class AbstractSyntaxTree {
 
                 if (tk == Token.IF) {
                     ((TokenDataPair) o).setPromoted();
-                    this.operation = new TokenDataPair(Token.END_ELSE, "end_else");
 
-                    List<Object> sons = new ArrayList<>(this.treeExtend);
-                    this.treeExtend.clear();
+                    AbstractSyntaxTree condition = new AbstractSyntaxTree();
+                    condition.operation = (TokenDataPair) this.treeExtend.get(0);
+                    condition.treeExtend.add(this.treeExtend.remove(1));
+                    this.treeExtend.set(0, condition);
 
-                    this.treeExtend.add(new AbstractSyntaxTree());
-                    ((AbstractSyntaxTree) this.treeExtend.get(0)).operation = new TokenDataPair(Token.END_IF, "end_if");
-                    ((AbstractSyntaxTree) this.treeExtend.get(0)).treeExtend.add(new AbstractSyntaxTree());
-                    ((AbstractSyntaxTree) ((AbstractSyntaxTree) this.treeExtend.get(0)).treeExtend.get(0)).operation = (TokenDataPair) sons.remove(0); // if it's the operation
-                    ((AbstractSyntaxTree) ((AbstractSyntaxTree) this.treeExtend.get(0)).treeExtend.get(0)).treeExtend.add(sons.remove(0)); // condition
-                    ((AbstractSyntaxTree) this.treeExtend.get(0)).treeExtend.addAll(sons);
+                    this.operation = new TokenDataPair(Token.END_IF, "end_if");
                 }
                 else if (tk == Token.ELSE) {
                     ((TokenDataPair) o).setPromoted();
 
-                    Object check = this.father.treeExtend.get(0);
-                    if (check instanceof TokenDataPair && ((TokenDataPair)check).getToken() == Token.IF) {
-                        this.father.treeExtend.remove(this);
-                        this.father.father.treeExtend.addAll(this.treeExtend); // add as END_ELSE's son
-                    }
+                    this.operation = new TokenDataPair(Token.END_ELSE, "end_else");
                 }
                 else if (tk == Token.BUCLE) {
                     if (this.father != null && !((TokenDataPair) o).isPromoted()) {
