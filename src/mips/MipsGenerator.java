@@ -9,6 +9,7 @@ import java.util.Arrays;
  */
 public class MipsGenerator implements MipsConverter {
     private static final String INDENT = "    ";
+    private int stackPosition = 0;
 
     /**
      * Constructor for MipsGenerator.
@@ -42,7 +43,7 @@ public class MipsGenerator implements MipsConverter {
     private void createMIPS(ArrayList<String> lines, FileWriter writer) throws IOException, NoMoreRegistersException {
         ArrayList<String> out = new ArrayList<>();
         out.add(".text\n");
-        out.add("main:");
+        out.add("j $main\n");
 
         TacMipsAdapter.adaptTac(lines); // Adaptem el TAC perquè sigui factible amb MIPS
         String[] newLines = RegisterManager.kColoringGraphRegisterGenerator(lines, 10);
@@ -65,9 +66,25 @@ public class MipsGenerator implements MipsConverter {
         if (!label.isEmpty()) tokens = cutFrom(1, tokens);
 
         if (tokens.length == 0) {
-            // Single label, do nothing
+            // Empty line
+        } else if (tokens.length == 1) {
+            if (tokens[0].equals("BeginFunc")) {
+                expr += mipsStartFunction(tokens);
+            } else if (tokens[0].equals("EndFunc")) {
+                expr += mipsReturnFunction(tokens);
+            } else if (!tokens[0].equals("")){
+                expr += "ERROR";
+            }
         } else if (tokens.length == 2) {
-            expr += mipsGoto(tokens);
+            if (tokens[0].equals("Call")) {
+                expr += mipsCallFunction(tokens);
+            } else if (tokens[0].equals("PushParam")) {
+                expr += mipsPushParam(tokens);
+            } else if (tokens[0].equals("PopParam")) {
+                expr += mipsPopParam(tokens);
+            } else {
+                expr += mipsGoto(tokens);
+            }
         } else if (tokens.length == 3) {
             expr += mipsAssign(tokens);
         } else if (tokens.length == 5){
@@ -117,6 +134,26 @@ public class MipsGenerator implements MipsConverter {
         return "";
     }
 
+    private String mipsPushParam(String[] tokens) {
+        return "# push param";
+    }
+
+    private String mipsPopParam(String[] tokens) {
+        return "# pop param";
+    }
+
+    private String mipsStartFunction(String[] tokens) {
+        return "# function call";
+    }
+
+    private String mipsCallFunction(String[] tokens) {
+        return "jal $" + tokens[1];
+    }
+
+    private String mipsReturnFunction(String[] tokens) {
+        return "jr $ra";
+    }
+
     private String mipsGoto(String[] tokens) {
         return "j " + "$" + tokens[1];
     }
@@ -136,7 +173,8 @@ public class MipsGenerator implements MipsConverter {
     }
 
     private String checkLabel(String[] tokens) {
-        return tokens[0].matches("L\\d:")  ? "$"+tokens[0]+"\n" : "";
+        boolean isAlone = tokens.length == 1;
+        return tokens[0].matches("[\\d\\w]+:")  ? "$"+tokens[0]+(isAlone ? "" : "\n") : "";
     }
 
     // No podem rebre operacions entre dos literals
