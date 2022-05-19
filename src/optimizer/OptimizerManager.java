@@ -79,7 +79,8 @@ public class OptimizerManager implements Optimizer {
                     if (lines.get(i).contains("!")) {
                         // L0: if !t3 goto L1
                         String t0;
-                        if (parts[2].matches("^(\\d*[a-zA-Z_]+\\w*)$") && !parts[2].equals("true") && !parts[2].equals("false")) {
+                        if (parts[2].replace("!", "").matches("^(\\d*[a-zA-Z_]+\\w*)$") &&
+                                !parts[2].replace("!", "").equals("true") && !parts[2].replace("!", "").equals("false")) {
                             // is variable
                             if (map.containsKey(parts[2].replace("!", ""))) {
                                 t0 = map.get(parts[2].replace("!", ""));
