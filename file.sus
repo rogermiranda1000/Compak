@@ -1,5 +1,10 @@
 main ( ) {
-    int a = 0;
-    a = 2 + 3 + 4 + 5;
+    int a;
+    if (true) {
+        a = 1;
+    }
+    else {
+        a = 2;
+    }
 }
 

@@ -322,12 +322,12 @@ public class AbstractSyntaxTree {
      *
      *  To:
      *  ⬜
-     *  ├── ELSE
-     *  ├── ⬜
      *  └── ⬜
-     *      ├── IF (if)
-     *      ├── TRUE (true)
-     *      └── ⬜
+     *  |   ├── IF (if)
+     *  |   ├── TRUE (true)
+     *  |   └── ⬜
+     *  ├── ELSE
+     *  └── ⬜
      *
      */
     public void prepareIf() {
@@ -347,8 +347,8 @@ public class AbstractSyntaxTree {
             ifNode.treeExtend.addAll(ifCondition);
 
             this.treeExtend.clear();
-            this.treeExtend.addAll(elseNode.treeExtend);
             this.treeExtend.add(ifNode);
+            this.treeExtend.addAll(elseNode.treeExtend);
         }
 
         for (Object son : this.treeExtend) {
@@ -424,6 +424,10 @@ public class AbstractSyntaxTree {
                     return 100;
                 }
 
+                if (a.operation.getToken() == Token.END_ELSE) {
+                    return 100;
+                }
+
                 if (b.operation.getToken() == Token.WHILE) {
                     return 100;
                 }
@@ -432,11 +436,19 @@ public class AbstractSyntaxTree {
                     return 100;
                 }
 
+                if (b.operation.getToken() == Token.ELSE) {
+                    return 100;
+                }
+
                 if (a.operation.getToken() == Token.BUCLE) {
                     return 1;
                 }
 
                 if (a.operation.getToken() == Token.IF) {
+                    return 1;
+                }
+
+                if (a.operation.getToken() == Token.ELSE) {
                     return 1;
                 }
 
