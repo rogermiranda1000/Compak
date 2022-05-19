@@ -165,7 +165,7 @@ public class IntermediateCodeGenerator implements TacConverter {
 
         if (Objects.equals(op.getData(), "¡")) {
             // CASE ¡(bool)
-            return "t" + idOp + " := " + "!" + arg1String;
+            return "t" + idOp + " := " + "! " + arg1String;
         }
 
         if (Objects.equals(op.getData(), "while")) {
