@@ -155,6 +155,13 @@ public class AbstractSyntaxTree {
         }
     }
 
+    private boolean containsSon(Token token) {
+        for (Object o : this.treeExtend) {
+            if (o instanceof TokenDataPair && ((TokenDataPair)o).getToken().equals(token)) return true;
+        }
+        return false;
+    }
+
     private void promoteTokensToOperation() {
         for (int i = 0; i < this.treeExtend.size(); i++) {
             Object o = this.treeExtend.get(i);
@@ -174,6 +181,17 @@ public class AbstractSyntaxTree {
                     this.treeExtend.set(0, condition);
 
                     this.operation = new TokenDataPair(Token.END_IF, "end_if");
+
+                    if (!this.father.containsSon(Token.ELSE)) {
+                        // create the else node
+                        AbstractSyntaxTree ifNode = new AbstractSyntaxTree();
+                        ifNode.operation = this.operation;
+                        ifNode.treeExtend.addAll(this.treeExtend);
+
+                        this.treeExtend.clear();
+                        this.treeExtend.add(ifNode);
+                        this.operation = new TokenDataPair(Token.END_ELSE, "end_else");
+                    }
                 }
                 else if (tk == Token.ELSE) {
                     ((TokenDataPair) o).setPromoted();
