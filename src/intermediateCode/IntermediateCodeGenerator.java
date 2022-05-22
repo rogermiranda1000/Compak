@@ -151,6 +151,14 @@ public class IntermediateCodeGenerator implements TacConverter {
         }
 
         if (Objects.equals(op.getData(), "end_if")) {
+            Tag tag = tags.peek();
+            Tag elseTag = new Tag("else");
+            tags.push(elseTag);
+            return "goto " + elseTag.getName2() + "\n" // if the 'if' is executed, skip the else
+                        + tag.getName2() + ":";
+        }
+
+        if (Objects.equals(op.getData(), "end_else")) {
             Tag tag = tags.pop();
             return tag.getName2() + ":";
         }
@@ -161,6 +169,11 @@ public class IntermediateCodeGenerator implements TacConverter {
             tags.push(tag);
 
             return tag.getName1() + ": if !" + arg1String + " goto " + tag.getName2();
+        }
+
+        if (Objects.equals(op.getData(), "else")) {
+            // end_if already creates the label
+            return "";
         }
 
         if (Objects.equals(op.getData(), "¡")) {

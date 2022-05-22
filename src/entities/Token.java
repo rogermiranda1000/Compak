@@ -60,7 +60,7 @@ public enum Token {
     EPSILON(""),
 
     END_LOOP("END_LOOP"),
-    END_IF("END_IF"), END_FUNC("end_func"), START_FUNC("start_func"), PARAMS("params"),
+    END_IF("END_IF"), END_ELSE("END_ELSE"), END_FUNC("end_func"), START_FUNC("start_func"), PARAMS("params"),
     CALL_FUNC("call_func"),
     NAME_FUNC("name_func");
 
