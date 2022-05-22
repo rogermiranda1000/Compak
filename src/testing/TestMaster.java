@@ -42,7 +42,8 @@ public class TestMaster {
             Parser p = new Parser(new TokenBuffer(new CodeProcessor(file)), new GrammarAnalyzer());
             boolean passed;
             try {
-                passed = p.compile(new File("tac.txt"));
+                p.compile(new File("tac.txt"));
+                passed = true;
             } catch (Exception e) {
                 passed = false;
             }
