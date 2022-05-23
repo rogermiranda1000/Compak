@@ -1,7 +1,6 @@
 package semantic;
 
-import entities.Token;
-import entities.TokenDataPair;
+import entities.*;
 import syntax.AbstractSyntaxTree;
 
 public class SemanticChecker {
@@ -14,27 +13,24 @@ public class SemanticChecker {
             for(Object node : ((AbstractSyntaxTree) pseudoRoot).getTreeExtend()) recursive(node);
         }
     }
-    public static Token recursiveSemantic(Object pseudoRoot) throws SemanticException {
 
+    public static VariableTypes recursiveSemantic(Object pseudoRoot) throws SemanticException {
         if(pseudoRoot instanceof TokenDataPair) {
-            return (((TokenDataPair) pseudoRoot).getToken());
+            TokenDataPair data = (TokenDataPair) pseudoRoot;
+            if (data.getToken() == Token.ID) return ((SymbolTableVariableEntry)data.getVariableNode()).getType();
+            return data.getToken().getType();
         }
 
-        Token left = recursiveSemantic(((AbstractSyntaxTree) pseudoRoot).getTreeExtend().get(0));
-        Token right = recursiveSemantic(((AbstractSyntaxTree) pseudoRoot).getTreeExtend().get(1));
+        VariableTypes left = recursiveSemantic(((AbstractSyntaxTree) pseudoRoot).getTreeExtend().get(0)),
+                    right = recursiveSemantic(((AbstractSyntaxTree) pseudoRoot).getTreeExtend().get(1));
 
-        //TODO: Delete prints for debugging
-        System.out.println("DEBUG: LEFT(0)" + left);
-        System.out.println("DEBUG: RIGHT(0)" + right);
-
-        if(left.equals(right)) return left;
-
-        throw new SemanticException("ERROR sintaxis");
-
-
+        if (!left.equals(right)) {
+            throw new SemanticException("ERROR sintaxis");
+        }
+        return left;
     }
+
     public static void check(AbstractSyntaxTree abstractSyntaxTree) throws SemanticException {
         recursive(abstractSyntaxTree);
-
     }
 }
