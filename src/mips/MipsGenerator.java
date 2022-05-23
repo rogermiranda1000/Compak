@@ -86,6 +86,8 @@ public class MipsGenerator implements MipsConverter {
             } else if (tokens[0].equals("Return")) {
                 expr += mipsReturn(tokens);
                 expr += "\n" + mipsReturnFunction(tokens);
+            } else if (tokens[0].equals("Print")){
+                expr += mipsPrint(tokens);
             } else {
                 expr += mipsGoto(tokens);
             }
@@ -138,6 +140,16 @@ public class MipsGenerator implements MipsConverter {
 
     private String mipsX(String[] tokens) {
         return "";
+    }
+
+    private String mipsPrint(String[] tokens) {
+        String first;
+        if (tokens[1].contains("t")) {
+            first = "move $a0, $" + tokens[1];
+        } else {
+            first = "li $a0, " + tokens[1];
+        }
+        return "li $v0, 1 \n" + INDENT + first + "\n" + INDENT + "syscall";
     }
 
     private String mipsFunctionAssign(String[] tokens) {
