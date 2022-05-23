@@ -37,26 +37,22 @@ public class Parser implements Compiler {
      * Function that executes the "compile" of the language of this project.
      *
      * @param out file
-     * @return boolean that tells the success of the compile
      * @throws InvalidTreeException       the invalid tree exception
      * @throws DuplicateVariableException the duplicate variable exception
      * @throws UnknownVariableException   the unknown variable exception
      * @throws IOException                the io exception
      */
-    public boolean compile(File out) throws InvalidTreeException, DuplicateVariableException, UnknownVariableException, IOException, SemanticException {
+    public void compile(File out) throws InvalidTreeException, DuplicateVariableException, UnknownVariableException, IOException, SemanticException {
         ParseTree parseTree = generateParseTree();
-        if (parseTree == null) return false;
 
         SymbolTable symbolTable = this.generateSymbolTable(parseTree);
         ArrayList<AbstractSyntaxTree> codes = new ArrayList<>();
 
-        AbstractSyntaxTree abstractSyntaxTree = this.generateAbstractSyntaxTree(parseTree, codes); // TODO send symbolTable
+        AbstractSyntaxTree abstractSyntaxTree = this.generateAbstractSyntaxTree(parseTree, codes);
 
         check(abstractSyntaxTree);
         abstractSyntaxTree.printTree();
         abstractSyntaxTree.travelWithPriorityDepth();
-
-        return true;
     }
 
     public ArrayList<ThreeAddressLine> getThreeAddressLines() {
@@ -127,6 +123,7 @@ public class Parser implements Compiler {
         tree.removeRedundantProductions();
         tree.removeMeaningLessTokens();
         tree.removeRedundantProductions();
+        tree.prepareIf();
         tree.calculateLevels();
         tree.calculateHeight();
 
