@@ -85,6 +85,7 @@ public class MipsGenerator implements MipsConverter {
                 expr += mipsPopParam(tokens);
             } else if (tokens[0].equals("Return")) {
                 expr += mipsReturn(tokens);
+                expr += "\n" + mipsReturnFunction(tokens);
             } else if (tokens[0].equals("Print")){
                 expr += mipsPrint(tokens);
             } else {
@@ -152,7 +153,7 @@ public class MipsGenerator implements MipsConverter {
     }
 
     private String mipsFunctionAssign(String[] tokens) {
-        String callFunction = mipsCallFunction(Arrays.copyOfRange(tokens, 2, tokens.length-1));
+        String callFunction = mipsCallFunction(Arrays.copyOfRange(tokens, 2, tokens.length));
         String assignResult = "move $"+tokens[0]+", $v0";
         return callFunction + "\n" + INDENT + assignResult;
     }
@@ -162,7 +163,13 @@ public class MipsGenerator implements MipsConverter {
     }
 
     private String mipsPushParam(String[] tokens) {
-        return "move $a0, $"+tokens[1];
+        String line;
+        if (tokens[1].contains("t")) {
+            line = "move $a0, $"+tokens[1];
+        } else {
+            line = "li $a0, "+tokens[1];
+        }
+        return line;
     }
 
     private String mipsPopParam(String[] tokens) {

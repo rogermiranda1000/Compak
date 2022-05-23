@@ -1,10 +1,31 @@
-main:
-L0: if !1 goto L1
-t0 := 1
+factorial:
+BeginFunc
+PopParam t0
+t0 := 6
 t1 := t0
-goto L3
-L1:
-t2 := t3 else t4
-t0 := 2
+t2 := 1
+t3 := t2
+t4 := t0 + 1
+t0 := t4
 t5 := t0
+t6 := 0
+L0: if t6 >= t0 goto L1
+t7 := t6 == 0
+L2: if !t7 goto L3
+t6 := 1
+t8 := t6
+goto L5
 L3:
+L5:
+t9 := t2 * t6
+t2 := t9
+t10 := t2
+t7 := t7 + 1
+goto L2
+L3:
+Return t2
+EndFunc
+
+main:
+PushParam 5
+t11 := Call factorial
