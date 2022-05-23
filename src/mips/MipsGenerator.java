@@ -83,6 +83,8 @@ public class MipsGenerator implements MipsConverter {
                 expr += mipsPushParam(tokens);
             } else if (tokens[0].equals("PopParam")) {
                 expr += mipsPopParam(tokens);
+            } else if (tokens[0].equals("Return")) {
+                expr += mipsReturn(tokens);
             } else {
                 expr += mipsGoto(tokens);
             }
@@ -135,6 +137,9 @@ public class MipsGenerator implements MipsConverter {
         return "";
     }
 
+    private String mipsReturn(String[] tokens) {
+        return "move $v0, $"+tokens[1];
+    }
 
     private String mipsPushParam(String[] tokens) {
         return "move $a0, $"+tokens[1];
