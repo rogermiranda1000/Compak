@@ -4,12 +4,15 @@ import entities.*;
 import entities.ThreeAddressLine;
 import lexic.TokenRequest;
 import org.jetbrains.annotations.Nullable;
+import semantic.SemanticException;
 
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Stack;
+
+import static semantic.SemanticChecker.check;
 
 /**
  * Class Parser. This class is the one who managed the generation od the parse tree, abstract syntax tree and
@@ -40,7 +43,7 @@ public class Parser implements Compiler {
      * @throws UnknownVariableException   the unknown variable exception
      * @throws IOException                the io exception
      */
-    public boolean compile(File out) throws InvalidTreeException, DuplicateVariableException, UnknownVariableException, IOException {
+    public boolean compile(File out) throws InvalidTreeException, DuplicateVariableException, UnknownVariableException, IOException, SemanticException {
         ParseTree parseTree = generateParseTree();
         if (parseTree == null) return false;
 
@@ -48,6 +51,8 @@ public class Parser implements Compiler {
         ArrayList<AbstractSyntaxTree> codes = new ArrayList<>();
 
         AbstractSyntaxTree abstractSyntaxTree = this.generateAbstractSyntaxTree(parseTree, codes); // TODO send symbolTable
+
+        check(abstractSyntaxTree);
         abstractSyntaxTree.printTree();
         abstractSyntaxTree.travelWithPriorityDepth();
 

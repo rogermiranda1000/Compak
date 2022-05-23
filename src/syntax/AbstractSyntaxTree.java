@@ -16,6 +16,14 @@ public class AbstractSyntaxTree {
     private TokenDataPair operation;
     private int id;
 
+    public TokenDataPair getOperation() {
+        return operation;
+    }
+
+    public void setOperation(TokenDataPair operation) {
+        this.operation = operation;
+    }
+
     private static ArrayList<ThreeAddressLine> treeInLines;
     private static int globalId;
 
@@ -504,5 +512,9 @@ public class AbstractSyntaxTree {
      */
     public int getId() {
         return id;
+    }
+
+    public List<Object> getTreeExtend() {
+        return this.treeExtend;
     }
 }
