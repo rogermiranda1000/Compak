@@ -153,12 +153,12 @@ public class GrammarAnalyzer extends GrammarRequest {
 
         sentencies.addProduction(possibleSentencies, sentencies)
                 .addProduction(Token.RETURN, id, Token.EOL)
+                .addProduction(print, Token.EOL)
                 .addProduction();
 
         possibleSentencies.addProduction(sentenciaVariable)
                 .addProduction(condicional)
-                .addProduction(declaracioBucle)
-                .addProduction(print);
+                .addProduction(declaracioBucle);
 
         sentenciaVariable.addProduction(declaracioVariable, possibleAssignacio, Token.EOL)
                 .addProduction(Token.ID, Token.ASSIGN, n0, Token.EOL)
