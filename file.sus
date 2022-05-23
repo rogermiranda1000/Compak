@@ -1,10 +1,18 @@
-main ( ) {
-    int a;
-    if (true) {
-        a = 1;
+func factorial (int n): int {
+    int n = 6;
+    int i;
+    int output = 1;
+
+    n = n + 1;
+    loop (for i in range(n)) {
+        if (i == 0) {
+            i = 1;
+        }
+        output = output * i;
     }
-    else {
-        a = 2;
-    }
+    return output;
 }
 
+main ( ) {
+    factorial(5);
+}

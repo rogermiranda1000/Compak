@@ -49,6 +49,7 @@ public class OptimizerManager implements Optimizer {
                     if (map.containsKey(parts[0])) {
                         t0 = map.get(parts[0]);
                     } else {
+
                         t0 = "t" + index;
                         map.put(parts[0], t0);
                         index++;
@@ -121,6 +122,7 @@ public class OptimizerManager implements Optimizer {
                             t0 = map.get(parts[0]);
                         } else {
                             t0 = "t" + index;
+                            //System.out.println("key: " + parts[0] + " - " + t0);
                             map.put(parts[0], t0);
                             index++;
                         }
@@ -157,16 +159,17 @@ public class OptimizerManager implements Optimizer {
                     } else {
                         // is number or bool
                         t2 = parts[4];
+                        //System.out.println("num");
                     }
-
+                    //System.out.println(t0 + " " + parts[1] + " " + t1 + " " + parts[3] + " " + t2);
                     data.add(t0 + " " + parts[1] + " " + t1 + " " + parts[3] + " " + t2);
                 }
             } else if (parts.length == 2) {
                 if (lines.get(i).contains("goto")) {
                     // case goto L0
                     data.add(lines.get(i));
-                } else if (lines.get(i).contains("PopParam") || lines.get(i).contains("PushParam")) {
-                    // case PopParam t0 OR PushParam t1
+                } else if (lines.get(i).contains("PopParam") || lines.get(i).contains("PushParam") || lines.get(i).contains("Return")) {
+                    // case PopParam t0 OR PushParam t1 OR Return t2
                     String t0;
                     if (map.containsKey(parts[1])) {
                         t0 = map.get(parts[1]);
@@ -226,38 +229,58 @@ public class OptimizerManager implements Optimizer {
 
                 data.add(parts[0] + " " + parts[1] + " " + t0 + " " + parts[3] + " " + t1 + " " + parts[5] + " " + parts[6]);
             } else if (parts.length == 4) {
-                // Case t0 := ! t1
-                String t0;
-                if (parts[0].matches("^(\\d*[a-zA-Z_]+\\w*)$") && !parts[0].equals("true") && !parts[0].equals("false")) {
-                    // is variable
-                    if (map.containsKey(parts[0])) {
-                        t0 = map.get(parts[0]);
+                // Case t0 := Call foo
+                if (parts[2].equals("Call")) {
+                    String t0;
+                    if (parts[0].matches("^(\\d*[a-zA-Z_]+\\w*)$") && !parts[0].equals("true") && !parts[0].equals("false")) {
+                        // is variable
+                        if (map.containsKey(parts[0])) {
+                            t0 = map.get(parts[0]);
+                        } else {
+                            t0 = "t" + index;
+                            map.put(parts[0], t0);
+                            index++;
+                        }
                     } else {
-                        t0 = "t" + index;
-                        map.put(parts[0], t0);
-                        index++;
+                        // is number
+                        t0 = parts[0];
                     }
-                } else {
-                    // is number
-                    t0 = parts[0];
-                }
 
-                String t1;
-                if (parts[3].matches("^(\\d*[a-zA-Z_]+\\w*)$") && !parts[3].equals("true") && !parts[3].equals("false")) {
-                    // is variable
-                    if (map.containsKey(parts[3])) {
-                        t1 = map.get(parts[3]);
+                    data.add(t0 + " := Call " + parts[3]);
+                } else {
+                    // Case t0 := ! t1
+                    String t0;
+                    if (parts[0].matches("^(\\d*[a-zA-Z_]+\\w*)$") && !parts[0].equals("true") && !parts[0].equals("false")) {
+                        // is variable
+                        if (map.containsKey(parts[0])) {
+                            t0 = map.get(parts[0]);
+                        } else {
+                            t0 = "t" + index;
+                            map.put(parts[0], t0);
+                            index++;
+                        }
                     } else {
-                        t1 = "t" + index;
-                        map.put(parts[3], t1);
-                        index++;
+                        // is number
+                        t0 = parts[0];
                     }
-                } else {
-                    // is number
-                    t1 = parts[3];
-                }
 
-                data.add(t0 + " := !" + t1);
+                    String t1;
+                    if (parts[3].matches("^(\\d*[a-zA-Z_]+\\w*)$") && !parts[3].equals("true") && !parts[3].equals("false")) {
+                        // is variable
+                        if (map.containsKey(parts[3])) {
+                            t1 = map.get(parts[3]);
+                        } else {
+                            t1 = "t" + index;
+                            map.put(parts[3], t1);
+                            index++;
+                        }
+                    } else {
+                        // is number
+                        t1 = parts[3];
+                    }
+
+                    data.add(t0 + " := !" + t1);
+                }
             } else {
                 data.add("ERROR_A");
             }
