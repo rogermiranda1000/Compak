@@ -31,6 +31,7 @@ public class GrammarAnalyzer extends GrammarRequest {
     protected static final Production possibleAssignacio = new Production();
     protected static final Production call = new Production();
     protected static final Production callSub = new Production();
+    protected static final Production print = new Production();
 
     protected static final Production valueBit = new Production(
         new Object[]{Token.TRUE},
@@ -94,6 +95,8 @@ public class GrammarAnalyzer extends GrammarRequest {
     static {
         declaracioFuncio.addProduction(Token.FUNC, Token.ID_FUNC, Token.OPN_PARENTH, arguments, Token.CLS_PARENTH, declaracioFuncioSub, Token.OPN_CONTEXT, sentencies, Token.CLS_CONTEXT);
 
+        print.addProduction(Token.PRINT, Token.OPN_PARENTH, id, Token.CLS_PARENTH);
+
         call.addProduction(Token.ID_FUNC, Token.OPN_PARENTH, callSub, Token.CLS_PARENTH);
 
         callSub.addProduction(id)
@@ -154,7 +157,8 @@ public class GrammarAnalyzer extends GrammarRequest {
 
         possibleSentencies.addProduction(sentenciaVariable)
                 .addProduction(condicional)
-                .addProduction(declaracioBucle);
+                .addProduction(declaracioBucle)
+                .addProduction(print);
 
         sentenciaVariable.addProduction(declaracioVariable, possibleAssignacio, Token.EOL)
                 .addProduction(Token.ID, Token.ASSIGN, n0, Token.EOL)
