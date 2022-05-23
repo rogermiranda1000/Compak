@@ -3,6 +3,7 @@ package syntax;
 import entities.DuplicateVariableException;
 import entities.UnknownVariableException;
 import entities.ThreeAddressLine;
+import semantic.SemanticException;
 
 import java.io.File;
 import java.io.IOException;
@@ -21,7 +22,7 @@ public interface Compiler {
      * @throws UnknownVariableException   the unknown variable exception
      * @throws IOException                the io exception
      */
-    public void compile(File out) throws InvalidTreeException, DuplicateVariableException, UnknownVariableException, IOException;
+    public void compile(File out) throws InvalidTreeException, DuplicateVariableException, UnknownVariableException, IOException, SemanticException;
 
     /**
      * Gets all three address lines generated travelling the abstract syntax tree.
