@@ -1,9 +1,10 @@
 package syntax;
 
 import entities.*;
-import entities.ThreeAddressLine;
 import lexic.TokenRequest;
 import org.jetbrains.annotations.Nullable;
+import semantic.SemanticChecker;
+import semantic.SemanticException;
 
 import java.io.File;
 import java.io.IOException;
@@ -39,13 +40,15 @@ public class Parser implements Compiler {
      * @throws UnknownVariableException   the unknown variable exception
      * @throws IOException                the io exception
      */
-    public void compile(File out) throws InvalidTreeException, DuplicateVariableException, UnknownVariableException, IOException {
+    public void compile(File out) throws InvalidTreeException, DuplicateVariableException, UnknownVariableException, IOException, SemanticException {
         ParseTree parseTree = generateParseTree();
 
         SymbolTable symbolTable = this.generateSymbolTable(parseTree);
         ArrayList<AbstractSyntaxTree> codes = new ArrayList<>();
 
         AbstractSyntaxTree abstractSyntaxTree = this.generateAbstractSyntaxTree(parseTree, codes);
+
+        SemanticChecker.check(abstractSyntaxTree);
         abstractSyntaxTree.printTree();
         abstractSyntaxTree.travelWithPriorityDepth();
     }

@@ -14,11 +14,11 @@ public enum Token {
     BUCLE("loop"),
     EOL(";"),
     ASSIGN("="),
-    INT("int"),
-    BIG("big"),
-    FLO("lf"),
-    STR("str"),
-    BIT("bit"),
+    INT("int", VariableTypes.INT),
+    BIG("big", VariableTypes.BIG),
+    FLO("lf", VariableTypes.FLO),
+    STR("str", VariableTypes.STR),
+    BIT("bit", VariableTypes.BIT),
     FUNC("func"),
     SUM("+"),
     SUBSTRACT("-"),
@@ -30,8 +30,8 @@ public enum Token {
     FACT("!"),
     AND("&"),
     OR("|"),
-    TRUE("true"),
-    FALSE("false"),
+    TRUE("true", VariableTypes.BIT),
+    FALSE("false", VariableTypes.BIT),
     MAIN("main"),
     LT("<"),
     GT(">"),
@@ -47,9 +47,9 @@ public enum Token {
     FOR("for"),
     RETURN("return"),
     ID(Pattern.compile("^(\\d*[a-zA-Z_]+\\w*)$")),
-    FLOAT(Pattern.compile("^(\\d+\\.\\d+)$")),
-    NUMBER(Pattern.compile("^(\\d+)$")),
-    STRING_VALUE(Pattern.compile("^\"((?:[^\"]|(?<=\\\\)\")*)\"$")),
+    FLOAT(Pattern.compile("^(\\d+\\.\\d+)$"), VariableTypes.FLO),
+    NUMBER(Pattern.compile("^(\\d+)$"), VariableTypes.INT),
+    STRING_VALUE(Pattern.compile("^\"((?:[^\"]|(?<=\\\\)\")*)\"$"), VariableTypes.STR),
     REPEAT("repeat"),
     FOR_IN("for_in"),
     WHILE("while"),
@@ -67,12 +67,24 @@ public enum Token {
     private String match;
     private Pattern reg_match;
 
+    private VariableTypes type;
+
     private Token(String match) {
         this.match = match;
     }
 
+    private Token(String match, VariableTypes type) {
+        this(match);
+        this.type = type;
+    }
+
     private Token(Pattern match) {
         this.reg_match = match;
+    }
+
+    private Token(Pattern match, VariableTypes type) {
+        this(match);
+        this.type = type;
     }
 
     @Nullable
@@ -86,6 +98,10 @@ public enum Token {
 
     public Object getMatch() {
         return (this.match != null) ? this.match : this.reg_match;
+    }
+
+    public VariableTypes getType() {
+        return this.type;
     }
 
     public static TokenDataPair getMatch(String str) {

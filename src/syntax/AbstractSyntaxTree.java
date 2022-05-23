@@ -16,6 +16,14 @@ public class AbstractSyntaxTree {
     private TokenDataPair operation;
     private int id;
 
+    public TokenDataPair getOperation() {
+        return operation;
+    }
+
+    public void setOperation(TokenDataPair operation) {
+        this.operation = operation;
+    }
+
     private static ArrayList<ThreeAddressLine> treeInLines;
     private static int globalId;
 
@@ -24,6 +32,14 @@ public class AbstractSyntaxTree {
      */
     public AbstractSyntaxTree() {
         this.treeExtend = new ArrayList<>();
+    }
+
+    public AbstractSyntaxTree(AbstractSyntaxTree that) {
+        this.treeExtend = new ArrayList<>(that.treeExtend);
+        this.father = that.father;
+        this.height = that.height;
+        this.operation = that.operation;
+        this.id = that.id;
     }
 
     /**
@@ -587,5 +603,13 @@ public class AbstractSyntaxTree {
      */
     public int getId() {
         return id;
+    }
+
+    public List<Object> getTreeExtend() {
+        return this.treeExtend;
+    }
+
+    public void addElementToTreeExtend(Object o) {
+        this.treeExtend.add(o);
     }
 }
