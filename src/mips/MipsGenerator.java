@@ -85,6 +85,7 @@ public class MipsGenerator implements MipsConverter {
                 expr += mipsPopParam(tokens);
             } else if (tokens[0].equals("Return")) {
                 expr += mipsReturn(tokens);
+                expr += mipsReturnFunction(tokens);
             } else {
                 expr += mipsGoto(tokens);
             }
