@@ -1,9 +1,6 @@
-func x(int a): int {
-    int b = 0;
-    return 5;
-}
 
 main ( ) {
-    int b = x(3);
+    int a = 0;
+    int c = a + 5;
+    int b = c;
 }
-

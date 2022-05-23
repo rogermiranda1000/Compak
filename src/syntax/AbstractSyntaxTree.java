@@ -262,34 +262,32 @@ public class AbstractSyntaxTree {
                     AbstractSyntaxTree newObject2 =  new AbstractSyntaxTree();
                     newObject2.operation = new TokenDataPair(Token.PARAMS, "params");
 
-                    if (treeExtend.size() < 3) {
-                        newObject2.treeExtend.add(new TokenDataPair(Token.EPSILON));
+                    //newObject2.treeExtend.add(new TokenDataPair(Token.EPSILON));
+                    int index_start_func = 1;
+                    if (treeExtend.size() > 1 && treeExtend.get(1) instanceof AbstractSyntaxTree && ((AbstractSyntaxTree) treeExtend.get(1)).operation == null) {
+                        // add to params
+                        index_start_func++;
+                        newObject2.treeExtend.add((((AbstractSyntaxTree) treeExtend.get(1)).treeExtend.get(1)));
+                        treeExtend.remove(treeExtend.get(1));
+                        this.treeExtend.add(1, newObject2);
                     }
-
-                    for (int j = 1; j < treeExtend.size(); j++) {
-                        if (treeExtend.get(j) instanceof TokenDataPair) {
-                            // add to params
-                            newObject2.treeExtend.add(treeExtend.get(j));
-                            treeExtend.remove(treeExtend.get(j));
-                            j--;
-                        }
-                    }
-
-                    this.treeExtend.add(1, newObject2);
-
 
                     // New production to save vars
                     AbstractSyntaxTree newObject3 =  new AbstractSyntaxTree();
                     newObject3.operation = new TokenDataPair(Token.START_FUNC, "start_func");
 
-                    if (treeExtend.size() < 3) {
-                        newObject3.treeExtend.add(new TokenDataPair(Token.EPSILON));
-                    } else {
-                        newObject3.treeExtend.add(treeExtend.get(2));
-                        treeExtend.remove(treeExtend.get(2));
+                    boolean flagEmpty = true;
+                    for (int j = index_start_func; j < treeExtend.size(); j++) {
+                        newObject3.treeExtend.add(treeExtend.get(j));
+                        treeExtend.remove(treeExtend.get(j));
+                        flagEmpty = false;
+                        j--;
                     }
 
-                    this.treeExtend.add(2, newObject3);
+                    if (flagEmpty) {
+                        newObject3.treeExtend.add(new TokenDataPair(Token.INT));
+                    }
+                    this.treeExtend.add(newObject3);
                 } else if (tk == Token.ID_FUNC) {
                     // case call 1 parameter
                     if (this.treeExtend.size() == 2 && this.treeExtend.get(0) instanceof TokenDataPair &&
@@ -307,6 +305,10 @@ public class AbstractSyntaxTree {
                             this.treeExtend.remove(o);
                         }
                     }
+                } else if (tk == Token.RETURN) {
+                    ((TokenDataPair) o).setPromoted();
+                    this.operation = ((TokenDataPair) o);
+                    this.treeExtend.remove(o);
                 }
             }
         }

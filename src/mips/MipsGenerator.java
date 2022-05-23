@@ -140,7 +140,7 @@ public class MipsGenerator implements MipsConverter {
     }
 
     private String mipsFunctionAssign(String[] tokens) {
-        String callFunction = mipsCallFunction(Arrays.copyOfRange(tokens, 2, tokens.length-1));
+        String callFunction = mipsCallFunction(Arrays.copyOfRange(tokens, 2, tokens.length));
         String assignResult = "move $"+tokens[0]+", $v0";
         return callFunction + "\n" + INDENT + assignResult;
     }
