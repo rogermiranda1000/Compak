@@ -10,6 +10,7 @@ import java.util.Arrays;
 public class MipsGenerator implements MipsConverter {
     private static final String INDENT = "    ";
     private int stackPosition = 0;
+    private static final int REGISTER_NUM = 10;
 
     /**
      * Constructor for MipsGenerator.
@@ -82,11 +83,15 @@ public class MipsGenerator implements MipsConverter {
                 expr += mipsPushParam(tokens);
             } else if (tokens[0].equals("PopParam")) {
                 expr += mipsPopParam(tokens);
+            } else if (tokens[0].equals("Return")) {
+                expr += mipsReturn(tokens);
             } else {
                 expr += mipsGoto(tokens);
             }
         } else if (tokens.length == 3) {
             expr += mipsAssign(tokens);
+        } else if (tokens.length == 4) {
+            expr += mipsFunctionAssign(tokens);
         } else if (tokens.length == 5){
             switch (tokens[3]) {
                 case "+":
@@ -134,20 +139,57 @@ public class MipsGenerator implements MipsConverter {
         return "";
     }
 
+    private String mipsFunctionAssign(String[] tokens) {
+        String callFunction = mipsCallFunction(Arrays.copyOfRange(tokens, 2, tokens.length-1));
+        String assignResult = "move $"+tokens[0]+", $v0";
+        return callFunction + "\n" + INDENT + assignResult;
+    }
+
+    private String mipsReturn(String[] tokens) {
+        return "move $v0, $"+tokens[1];
+    }
+
     private String mipsPushParam(String[] tokens) {
-        return "# push param";
+        return "move $a0, $"+tokens[1];
     }
 
     private String mipsPopParam(String[] tokens) {
-        return "# pop param";
+        return "move $"+tokens[1]+", $a0";
     }
 
     private String mipsStartFunction(String[] tokens) {
-        return "# function call";
+        return "# Start of function";
     }
 
     private String mipsCallFunction(String[] tokens) {
-        return "jal $" + tokens[1];
+        ArrayList<String> lines = new ArrayList<>();
+
+        // Save context
+        lines.add("\n"+INDENT+"# Save context");
+        int i = 0;
+        while (i < REGISTER_NUM) {
+            lines.add("sw $t"+i+", -"+(i+1)*4+"($sp)");
+            i++;
+        }
+        lines.add("sw $ra, -"+((i++)+1)*4+"($sp)");
+        lines.add("sw $a0, -"+((i++)+1)*4+"($sp)");
+        lines.add("subi $sp, $sp, "+(i)*4);
+
+        // Call function
+        lines.add("\n"+INDENT+"# Call function");
+        lines.add("jal $" + tokens[1]);
+
+        // Retrieve context
+        lines.add("\n"+INDENT+"# Retrieve context");
+        lines.add("addi $sp, $sp, "+(i)*4);
+        i = 0;
+        while (i < REGISTER_NUM) {
+            lines.add("lw $t"+i+", -"+(i+1)*4+"($sp)");
+            i++;
+        }
+        lines.add("lw $ra, -"+((i++)+1)*4+"($sp)");
+        lines.add("lw $a0, -"+((i)+1)*4+"($sp)");
+        return String.join("\n"+INDENT, lines);
     }
 
     private String mipsReturnFunction(String[] tokens) {
