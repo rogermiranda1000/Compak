@@ -168,7 +168,7 @@ public class OptimizerManager implements Optimizer {
                 if (lines.get(i).contains("goto")) {
                     // case goto L0
                     data.add(lines.get(i));
-                } else if (lines.get(i).contains("PopParam") || lines.get(i).contains("PushParam") || lines.get(i).contains("Return")) {
+                } else if (lines.get(i).contains("PopParam") || lines.get(i).contains("PushParam") || lines.get(i).contains("Return") || lines.get(i).contains("Print")) {
                     // case PopParam t0 OR PushParam t1 OR Return t2
                     String t0;
                     if (map.containsKey(parts[1])) {
