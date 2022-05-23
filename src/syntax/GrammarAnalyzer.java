@@ -153,7 +153,6 @@ public class GrammarAnalyzer extends GrammarRequest {
 
         sentencies.addProduction(possibleSentencies, sentencies)
                 .addProduction(Token.RETURN, id, Token.EOL)
-                .addProduction(print, Token.EOL)
                 .addProduction();
 
         possibleSentencies.addProduction(sentenciaVariable)
@@ -162,6 +161,7 @@ public class GrammarAnalyzer extends GrammarRequest {
 
         sentenciaVariable.addProduction(declaracioVariable, possibleAssignacio, Token.EOL)
                 .addProduction(Token.ID, Token.ASSIGN, n0, Token.EOL)
+                .addProduction(print, Token.EOL)
                 .addProduction(call, Token.EOL);
 
         possibleAssignacio.addProduction(Token.ASSIGN, n0)

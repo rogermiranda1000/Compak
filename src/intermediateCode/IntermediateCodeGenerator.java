@@ -140,6 +140,10 @@ public class IntermediateCodeGenerator implements TacConverter {
             return "EndFunc";
         }
 
+        if (Objects.equals(op.getData(), "print")) {
+            return "Print " + arg1String;
+        }
+
         if (Objects.equals(op.getData(), "return")) {
             return "Return " + arg1String;
         }
