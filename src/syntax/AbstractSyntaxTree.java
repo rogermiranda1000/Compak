@@ -105,7 +105,7 @@ public class AbstractSyntaxTree {
      * Function that removes meaningless tokens from AST. In parse tree we consider all tokens, but not AST.
      */
     public void removeMeaningLessTokens() {
-        Token[] list = new Token[] {Token.EOL, Token.RET_TYPE,Token.IN,
+        Token[] list = new Token[] {Token.EOL, Token.RET_TYPE,Token.IN, Token.INT, Token.BIG, Token.BIT, Token.FLO,
                 Token.RANGE,Token.OPN_CONTEXT,Token.CLS_CONTEXT,Token.OPN_PARENTH,Token.CLS_PARENTH,Token.COMMA,Token.FOR};
 
         for (int i = 0; i < this.treeExtend.size(); i++) {
@@ -264,10 +264,10 @@ public class AbstractSyntaxTree {
 
                     //newObject2.treeExtend.add(new TokenDataPair(Token.EPSILON));
                     int index_start_func = 1;
-                    if (treeExtend.size() > 1 && treeExtend.get(1) instanceof AbstractSyntaxTree && ((AbstractSyntaxTree) treeExtend.get(1)).operation == null) {
+                    if (treeExtend.size() > 1 && treeExtend.get(1) instanceof TokenDataPair) {
                         // add to params
                         index_start_func++;
-                        newObject2.treeExtend.add((((AbstractSyntaxTree) treeExtend.get(1)).treeExtend.get(1)));
+                        newObject2.treeExtend.add((treeExtend.get(1)));
                         treeExtend.remove(treeExtend.get(1));
                         this.treeExtend.add(1, newObject2);
                     }

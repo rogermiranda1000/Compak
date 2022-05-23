@@ -49,6 +49,7 @@ public class OptimizerManager implements Optimizer {
                     if (map.containsKey(parts[0])) {
                         t0 = map.get(parts[0]);
                     } else {
+
                         t0 = "t" + index;
                         map.put(parts[0], t0);
                         index++;
