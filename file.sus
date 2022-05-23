@@ -1,10 +1,9 @@
+func x(int a): int {
+    int b = 0;
+    return 5;
+}
+
 main ( ) {
-    int a;
-    if (true) {
-        a = 1;
-    }
-    else {
-        a = 2;
-    }
+    int b = x(3);
 }
 

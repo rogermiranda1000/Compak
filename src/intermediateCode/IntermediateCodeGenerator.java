@@ -118,9 +118,9 @@ public class IntermediateCodeGenerator implements TacConverter {
 
         if (Objects.equals(op.getToken(), Token.CALL_FUNC)) {
             if (arg2String.equals("NULL")) {
-                return "Call " + arg1String;
+                return "t" + idOp + " := " + "Call " + arg1String;
             } else {
-                return "PushParam " + arg2String + "\nCall " + arg1String;
+                return "PushParam " + arg2String + "\nt" + idOp + " := " + "Call " + arg1String;
             }
         }
 
