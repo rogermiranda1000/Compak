@@ -1,6 +1,8 @@
+func x(int a): int {
+	int c = a + 5;
+	return c;
+}
 
 main ( ) {
-    int a = 0;
-    int c = a + 5;
-    int b = c;
+    int c = x(3) + x(5);
 }
