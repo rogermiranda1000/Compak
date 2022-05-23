@@ -43,6 +43,7 @@ public enum Token {
     CLS_CONTEXT("}"),
     OPN_PARENTH("("),
     CLS_PARENTH(")"),
+    PRINT("print"),
     COMMA(","),
     FOR("for"),
     RETURN("return"),
