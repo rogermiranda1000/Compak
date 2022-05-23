@@ -34,6 +34,14 @@ public class AbstractSyntaxTree {
         this.treeExtend = new ArrayList<>();
     }
 
+    public AbstractSyntaxTree(AbstractSyntaxTree that) {
+        this.treeExtend = new ArrayList<>(that.treeExtend);
+        this.father = that.father;
+        this.height = that.height;
+        this.operation = that.operation;
+        this.id = that.id;
+    }
+
     /**
      * Getter of static arraylist treeInLines (TAC lines)
      * @return arraylist treeInLines
@@ -597,5 +605,9 @@ public class AbstractSyntaxTree {
 
     public List<Object> getTreeExtend() {
         return this.treeExtend;
+    }
+
+    public void addElementToTreeExtend(Object o) {
+        this.treeExtend.add(o);
     }
 }
