@@ -1,9 +1,9 @@
 package syntax;
 
 import entities.*;
-import entities.ThreeAddressLine;
 import lexic.TokenRequest;
 import org.jetbrains.annotations.Nullable;
+import semantic.SemanticChecker;
 import semantic.SemanticException;
 
 import java.io.File;
@@ -11,8 +11,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Stack;
-
-import static semantic.SemanticChecker.check;
 
 /**
  * Class Parser. This class is the one who managed the generation od the parse tree, abstract syntax tree and
@@ -50,7 +48,7 @@ public class Parser implements Compiler {
 
         AbstractSyntaxTree abstractSyntaxTree = this.generateAbstractSyntaxTree(parseTree, codes);
 
-        check(abstractSyntaxTree);
+        SemanticChecker.check(abstractSyntaxTree);
         abstractSyntaxTree.printTree();
         abstractSyntaxTree.travelWithPriorityDepth();
     }
