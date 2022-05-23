@@ -90,6 +90,8 @@ public class MipsGenerator implements MipsConverter {
             }
         } else if (tokens.length == 3) {
             expr += mipsAssign(tokens);
+        } else if (tokens.length == 4) {
+            expr += mipsFunctionAssign(tokens);
         } else if (tokens.length == 5){
             switch (tokens[3]) {
                 case "+":
@@ -135,6 +137,12 @@ public class MipsGenerator implements MipsConverter {
 
     private String mipsX(String[] tokens) {
         return "";
+    }
+
+    private String mipsFunctionAssign(String[] tokens) {
+        String callFunction = mipsCallFunction(Arrays.copyOfRange(tokens, 2, tokens.length-1));
+        String assignResult = "move $"+tokens[0]+", $v0";
+        return callFunction + "\n" + INDENT + assignResult;
     }
 
     private String mipsReturn(String[] tokens) {
