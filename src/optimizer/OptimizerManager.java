@@ -121,6 +121,7 @@ public class OptimizerManager implements Optimizer {
                             t0 = map.get(parts[0]);
                         } else {
                             t0 = "t" + index;
+                            //System.out.println("key: " + parts[0] + " - " + t0);
                             map.put(parts[0], t0);
                             index++;
                         }
@@ -157,16 +158,17 @@ public class OptimizerManager implements Optimizer {
                     } else {
                         // is number or bool
                         t2 = parts[4];
+                        //System.out.println("num");
                     }
-
+                    //System.out.println(t0 + " " + parts[1] + " " + t1 + " " + parts[3] + " " + t2);
                     data.add(t0 + " " + parts[1] + " " + t1 + " " + parts[3] + " " + t2);
                 }
             } else if (parts.length == 2) {
                 if (lines.get(i).contains("goto")) {
                     // case goto L0
                     data.add(lines.get(i));
-                } else if (lines.get(i).contains("PopParam") || lines.get(i).contains("PushParam")) {
-                    // case PopParam t0 OR PushParam t1
+                } else if (lines.get(i).contains("PopParam") || lines.get(i).contains("PushParam") || lines.get(i).contains("Return")) {
+                    // case PopParam t0 OR PushParam t1 OR Return t2
                     String t0;
                     if (map.containsKey(parts[1])) {
                         t0 = map.get(parts[1]);

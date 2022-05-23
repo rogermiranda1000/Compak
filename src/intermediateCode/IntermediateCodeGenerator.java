@@ -140,6 +140,10 @@ public class IntermediateCodeGenerator implements TacConverter {
             return "EndFunc";
         }
 
+        if (Objects.equals(op.getData(), "return")) {
+            return "Return " + arg1String;
+        }
+
         if (Objects.equals(op.getData(), "end_for")) {
             Tag tag = tags.pop();
             return tag.getVarIterate() + " := " + tag.getVarIterate() + " + 1" + "\ngoto " + tag.getName1() + "\n" + tag.getName2() + ":";

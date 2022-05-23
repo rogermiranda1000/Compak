@@ -1,12 +1,8 @@
-x:
-BeginFunc
-PopParam t0
-t1 := 0
-t2 := t1
-EndFunc
-
 main:
-PushParam 3
-t3 := Call x
-t4 := t3
+t0 := 0
+t1 := t0
+t2 := t3 + 5
+t4 := t2
 t5 := t4
+t6 := t7
+t8 := t6
