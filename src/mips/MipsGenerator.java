@@ -150,7 +150,13 @@ public class MipsGenerator implements MipsConverter {
     }
 
     private String mipsPushParam(String[] tokens) {
-        return "move $a0, $"+tokens[1];
+        String line;
+        if (tokens[1].contains("t")) {
+            line = "move $a0, $"+tokens[1];
+        } else {
+            line = "li $a0, "+tokens[1];
+        }
+        return line;
     }
 
     private String mipsPopParam(String[] tokens) {
