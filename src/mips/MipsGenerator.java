@@ -150,7 +150,7 @@ public class MipsGenerator implements MipsConverter {
     }
 
     private String mipsStartFunction(String[] tokens) {
-        return "# function call";
+        return "# Start of function";
     }
 
     private String mipsCallFunction(String[] tokens) {
