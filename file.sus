@@ -1,8 +1,18 @@
-func x(int a): int {
-	int c = a + 5;
-	return c;
+func factorial (int n): int {
+    int n = 6;
+    int i;
+    int output = 1;
+
+    n = n + 1;
+    loop (for i in range(n)) {
+        if (i == 0) {
+            i = 1;
+        }
+        output = output * i;
+    }
+    return output;
 }
 
 main ( ) {
-    int c = x(3) + x(5);
+    factorial(5);
 }
