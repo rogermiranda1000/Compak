@@ -11,7 +11,6 @@ import java.util.NoSuchElementException;
 public class CodeProcessor implements LineRequest {
     private static final Pattern comment = Pattern.compile("^([^\"/]|(?<=/)?/(?>/)?)*(?:\"(?:[^\"]|(?:(?<=\\\\)\"))*\"[^\"/]*)*//"); // detect comments outside text
     private final FileManager fm;
-    private final ElseToIf elseToIf;
 
     /**
      * Constructor for CodeProcessor.
@@ -21,7 +20,6 @@ public class CodeProcessor implements LineRequest {
      */
     public CodeProcessor(String path) throws FileNotFoundException {
         this.fm = new FileManager(path);
-        this.elseToIf = new ElseToIf();
     }
 
     /**
@@ -31,7 +29,7 @@ public class CodeProcessor implements LineRequest {
      * @throws NoSuchElementException the no such element exception
      */
     public String getNextLine() throws NoSuchElementException {
-        String next = this.elseToIf.processLine(this.fm.readNextLine());
+        String next = this.fm.readNextLine();
         Matcher match = CodeProcessor.comment.matcher(next);
         if (match.find()) next = next.substring(0, match.end()-2);
         return next;

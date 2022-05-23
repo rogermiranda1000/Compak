@@ -113,7 +113,7 @@ public class AbstractSyntaxTree {
      * Function that removes meaningless tokens from AST. In parse tree we consider all tokens, but not AST.
      */
     public void removeMeaningLessTokens() {
-        Token[] list = new Token[] {Token.EOL, Token.INT, Token.BIG,Token.FLO,Token.STR,Token.BIT,Token.RET_TYPE,Token.IN,
+        Token[] list = new Token[] {Token.EOL, Token.RET_TYPE,Token.IN,
                 Token.RANGE,Token.OPN_CONTEXT,Token.CLS_CONTEXT,Token.OPN_PARENTH,Token.CLS_PARENTH,Token.COMMA,Token.FOR};
 
         for (int i = 0; i < this.treeExtend.size(); i++) {
@@ -163,6 +163,13 @@ public class AbstractSyntaxTree {
         }
     }
 
+    private boolean containsSon(Token token) {
+        for (Object o : this.treeExtend) {
+            if (o instanceof TokenDataPair && ((TokenDataPair)o).getToken().equals(token)) return true;
+        }
+        return false;
+    }
+
     private void promoteTokensToOperation() {
         for (int i = 0; i < this.treeExtend.size(); i++) {
             Object o = this.treeExtend.get(i);
@@ -175,19 +182,35 @@ public class AbstractSyntaxTree {
 
                 if (tk == Token.IF) {
                     ((TokenDataPair) o).setPromoted();
+
+                    AbstractSyntaxTree condition = new AbstractSyntaxTree();
+                    condition.operation = (TokenDataPair) this.treeExtend.get(0);
+                    condition.treeExtend.add(this.treeExtend.remove(1));
+                    this.treeExtend.set(0, condition);
+
                     this.operation = new TokenDataPair(Token.END_IF, "end_if");
 
-                    //new TokenDataPair(Token.WHILE, "while")
-                    Object obj = this.treeExtend.get(1);
-                    AbstractSyntaxTree newObject =  new AbstractSyntaxTree();
-                    newObject.treeExtend.add(obj);
-                    this.treeExtend.add(0, newObject);
+                    if (!this.father.containsSon(Token.ELSE)) {
+                        // create the else node
+                        AbstractSyntaxTree ifNode = new AbstractSyntaxTree();
+                        ifNode.operation = this.operation;
+                        ifNode.treeExtend.addAll(this.treeExtend);
 
-                    this.treeExtend.remove(obj);
-                    this.treeExtend.remove(o);
+                        this.treeExtend.clear();
+                        this.treeExtend.add(ifNode);
+                        this.operation = new TokenDataPair(Token.END_ELSE, "end_else");
+                    }
+                }
+                else if (tk == Token.ELSE) {
+                    ((TokenDataPair) o).setPromoted();
 
-                    ((AbstractSyntaxTree) this.treeExtend.get(0)).operation = new TokenDataPair(Token.IF, "if");
-                } else if (tk == Token.BUCLE) {
+                    AbstractSyntaxTree elseNode = new AbstractSyntaxTree();
+                    elseNode.operation = (TokenDataPair) o;
+                    elseNode.treeExtend.add(o);
+                    this.treeExtend.set(i, elseNode); // treeExtend[i] is ELSE
+                    this.operation = new TokenDataPair(Token.END_ELSE, "end_else");
+                }
+                else if (tk == Token.BUCLE) {
                     if (this.father != null && !((TokenDataPair) o).isPromoted()) {
                         // Case loop(for i in range (5)) - for
                         if (this.treeExtend.get(1) instanceof AbstractSyntaxTree && ((AbstractSyntaxTree) this.treeExtend.get(1)).operation == null) {
@@ -279,9 +302,7 @@ public class AbstractSyntaxTree {
                     // case call 1 parameter
                     if (this.treeExtend.size() == 2 && this.treeExtend.get(0) instanceof TokenDataPair &&
                             ((TokenDataPair) this.treeExtend.get(0)).getToken().equals(Token.ID_FUNC) &&
-                            this.treeExtend.get(1) instanceof TokenDataPair && (((TokenDataPair) this.treeExtend.get(1)).getToken().equals(Token.NUMBER))
-                    || ((TokenDataPair) this.treeExtend.get(1)).getToken().equals(Token.ID) || ((TokenDataPair) this.treeExtend.get(1)).getToken().equals(Token.TRUE)
-                            || ((TokenDataPair) this.treeExtend.get(1)).getToken().equals(Token.FALSE)) {
+                            !(this.treeExtend.get(1) instanceof AbstractSyntaxTree)) {
                         this.operation = new TokenDataPair(Token.CALL_FUNC);
                     } else {
                         // case call 0 parameters
@@ -312,6 +333,54 @@ public class AbstractSyntaxTree {
             if (o instanceof AbstractSyntaxTree) {
                 ((AbstractSyntaxTree)o).calculateLevels(level+1);
             }
+        }
+    }
+
+    /**
+     * If-else structure is different.
+     *
+     * From:
+     * ⬜
+     * ├── IF (if)
+     * ├── TRUE (true)
+     * ├── ⬜
+     * └── ⬜
+     *     ├── ELSE (else)
+     *     └── ⬜
+     *
+     *  To:
+     *  ⬜
+     *  └── ⬜
+     *  |   ├── IF (if)
+     *  |   ├── TRUE (true)
+     *  |   └── ⬜
+     *  ├── ELSE
+     *  └── ⬜
+     *
+     */
+    public void prepareIf() {
+        // checks if it's an if condition and if it has an else
+        boolean haveElse = (this.treeExtend.size() > 3 && this.treeExtend.get(0) instanceof TokenDataPair
+                                && ((TokenDataPair)this.treeExtend.get(0)).getToken() == Token.IF
+                                && this.treeExtend.get(3) instanceof AbstractSyntaxTree
+                                && ((AbstractSyntaxTree)this.treeExtend.get(3)).treeExtend.size() > 1
+                                && ((AbstractSyntaxTree)this.treeExtend.get(3)).treeExtend.get(0) instanceof TokenDataPair
+                                && ((AbstractSyntaxTree)this.treeExtend.get(3)).treeExtend.get(1) instanceof AbstractSyntaxTree
+                                && ((TokenDataPair)((AbstractSyntaxTree)this.treeExtend.get(3)).treeExtend.get(0)).getToken() == Token.ELSE);
+
+        if (haveElse) {
+            AbstractSyntaxTree ifNode = new AbstractSyntaxTree();
+            List<Object> ifCondition = new ArrayList<>(this.treeExtend);
+            AbstractSyntaxTree elseNode = (AbstractSyntaxTree)ifCondition.remove(3);
+            ifNode.treeExtend.addAll(ifCondition);
+
+            this.treeExtend.clear();
+            this.treeExtend.add(ifNode);
+            this.treeExtend.addAll(elseNode.treeExtend);
+        }
+
+        for (Object son : this.treeExtend) {
+            if (son instanceof AbstractSyntaxTree) ((AbstractSyntaxTree)son).prepareIf();
         }
     }
 
@@ -383,6 +452,10 @@ public class AbstractSyntaxTree {
                     return 100;
                 }
 
+                if (a.operation.getToken() == Token.END_ELSE) {
+                    return 100;
+                }
+
                 if (b.operation.getToken() == Token.WHILE) {
                     return 100;
                 }
@@ -391,11 +464,19 @@ public class AbstractSyntaxTree {
                     return 100;
                 }
 
+                if (b.operation.getToken() == Token.ELSE) {
+                    return 100;
+                }
+
                 if (a.operation.getToken() == Token.BUCLE) {
                     return 1;
                 }
 
                 if (a.operation.getToken() == Token.IF) {
+                    return 1;
+                }
+
+                if (a.operation.getToken() == Token.ELSE) {
                     return 1;
                 }
 
@@ -429,7 +510,7 @@ public class AbstractSyntaxTree {
             if (tree.treeExtend.size() == 2) {
                 addLine(tree.operation, tree.treeExtend.get(0), tree.treeExtend.get(1));
             } else {
-                addLine(tree.operation, tree.treeExtend.get(0));
+                addLine(tree.operation, tree.treeExtend.get(0)); // tree.treeExtend.size() == 1
             }
 
             tree.id = globalId;
