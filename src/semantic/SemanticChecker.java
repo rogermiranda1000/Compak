@@ -111,6 +111,7 @@ public class SemanticChecker {
         if(pseudoRoot instanceof TokenDataPair) {
             TokenDataPair data = (TokenDataPair) pseudoRoot;
             if (data.getToken() == Token.ID) return ((SymbolTableVariableEntry)data.getVariableNode()).getType();
+            else if (data.getToken() == Token.ID_FUNC) return ((SymbolTableFunctionEntry)data.getVariableNode()).getReturnType();
             return data.getToken().getType();
         }
 
