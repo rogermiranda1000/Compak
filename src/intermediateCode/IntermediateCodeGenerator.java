@@ -10,6 +10,7 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.Objects;
 import java.util.Stack;
 
@@ -22,7 +23,8 @@ import java.util.Stack;
  * 2:   =      d          t2
  */
 public class IntermediateCodeGenerator implements TacConverter {
-    private ArrayList<ThreeAddressLine> data;
+    private LinkedList<ThreeAddressLine> data;
+    private int idOp;
 
     /**
      * Instantiates a new Intermediate code generator.
@@ -40,29 +42,30 @@ public class IntermediateCodeGenerator implements TacConverter {
      */
     @Override
     public void process(ArrayList<ThreeAddressLine> data, File out) throws IOException {
-        this.data = data;
+        this.data = new LinkedList<>(data);
+        this.idOp = 0;
         generateIntermediateCodeFile(out);
     }
 
     private void generateIntermediateCodeFile(File out) throws IOException {
-        FileWriter myWriter = new FileWriter(out);
         Stack<Tag> stack = new Stack<>();
-        for (int i = 0; i < data.size(); i++) {
-            String lineData = printLine(data.get(i), i, stack);
-            if (lineData != null) {
-                myWriter.write(lineData);
-                myWriter.write("\n");
-            }
+        StringBuilder sb = new StringBuilder();
+        while (!this.data.isEmpty()) {
+            printLine(sb, data.pop(), stack);
         }
+
+        FileWriter myWriter = new FileWriter(out);
+        myWriter.write(sb.toString());
         myWriter.close();
     }
 
-    private String printLine(ThreeAddressLine line, int idOp, Stack<Tag> tags) {
+    private void printLine(StringBuilder r, ThreeAddressLine line, Stack<Tag> tags) {
         TokenDataPair op = line.getOp();
         Object arg1 = line.getArg1();
         Object arg2 = line.getArg2();
         String arg1String = null;
         String arg2String = null;
+        int idOp = this.idOp++;
 
         if (arg1 instanceof TokenDataPair) {
             arg1String = ((TokenDataPair) arg1).getData();
@@ -100,71 +103,89 @@ public class IntermediateCodeGenerator implements TacConverter {
 
         if (op == null) {
             if (arg1String == null) {
-                return arg2String;
+                r.append(arg2String).append('\n');
+                return;
             } else if (arg2String == null) {
-                return arg1String;
+                r.append(arg1String).append('\n');
+                return;
             } else {
-                return null;
+                return;
             }
         }
 
         if (Objects.equals(op.getData(), "func")) {
-            return "";
+            return;
         }
 
         if (Objects.equals(op.getToken(), Token.MAIN)) {
-            return "main:";
+            r.append("main:").append('\n');
+            return;
         }
 
         if (Objects.equals(op.getToken(), Token.CALL_FUNC)) {
             if (arg2String.equals("NULL")) {
-                return "t" + idOp + " := " + "Call " + arg1String;
+                r.append("t").append(idOp).append(" := ").append("Call ").append(arg1String).append('\n');
+                return;
             } else {
-                return "PushParam " + arg2String + "\nt" + idOp + " := " + "Call " + arg1String;
+                r.append("PushParam ").append(arg2String).append("\nt").append(idOp).append(" := ").append("Call ").append(arg1String).append('\n');
+                return;
             }
         }
 
         if (Objects.equals(op.getData(), "name_func")) {
-            return arg1String + ":\nBeginFunc";
+            // must be on top; generate the string and then append it to the top
+            StringBuilder sb = new StringBuilder();
+            sb.append(arg1String).append(":\nBeginFunc").append('\n');
+            while (!this.data.isEmpty() && this.data.element().getOp() == null || !Objects.equals(this.data.element().getOp().getData(), "start_func")) printLine(sb, data.pop(), tags); // generate on the new string builder until the function ends
+            if (!this.data.isEmpty()) printLine(sb, data.pop(), tags); // append the 'end function declaration'
+            r.insert(0, sb);
+            return;
         }
 
         if (Objects.equals(op.getData(), "params")) {
             if (arg1String == null) {
-                return "";
+                return;
             } else {
-                return "PopParam " + arg1String;
+                r.append("PopParam ").append(arg1String).append('\n');
+                return;
             }
         }
 
         if (Objects.equals(op.getData(), "start_func")) {
-            return "EndFunc";
+            r.append("EndFunc").append('\n');
+            return;
         }
 
         if (Objects.equals(op.getData(), "return")) {
-            return "Return " + arg1String;
+            r.append("Return ").append(arg1String).append('\n');
+            return;
         }
 
         if (Objects.equals(op.getData(), "end_for")) {
             Tag tag = tags.pop();
-            return tag.getVarIterate() + " := " + tag.getVarIterate() + " + 1" + "\ngoto " + tag.getName1() + "\n" + tag.getName2() + ":";
+            r.append(tag.getVarIterate()).append(" := ").append(tag.getVarIterate()).append(" + 1").append("\ngoto ").append(tag.getName1()).append("\n").append(tag.getName2()).append(":").append('\n');
+            return;
         }
 
         if (Objects.equals(op.getData(), "end_while")) {
             Tag tag = tags.pop();
-            return "goto " + tag.getName1() + "\n" + tag.getName2() + ":";
+            r.append("goto ").append(tag.getName1()).append("\n").append(tag.getName2()).append(":").append('\n');
+            return;
         }
 
         if (Objects.equals(op.getData(), "end_if")) {
             Tag tag = tags.pop();
             Tag elseTag = new Tag("else");
             tags.push(elseTag);
-            return "goto " + elseTag.getName2() + "\n" // if the 'if' is executed, skip the else
-                        + tag.getName2() + ":";
+            r.append("goto ").append(elseTag.getName2()).append("\n"); // if the 'if' is executed, skip the else
+            r.append(tag.getName2()).append(":").append('\n');
+            return;
         }
 
         if (Objects.equals(op.getData(), "end_else")) {
             Tag tag = tags.pop();
-            return tag.getName2() + ":";
+            r.append(tag.getName2()).append(":").append('\n');
+            return;
         }
 
         if (Objects.equals(op.getData(), "if")) {
@@ -172,17 +193,19 @@ public class IntermediateCodeGenerator implements TacConverter {
             Tag tag = new Tag(arg1String);
             tags.push(tag);
 
-            return tag.getName1() + ": if !" + arg1String + " goto " + tag.getName2();
+            r.append(tag.getName1()).append(": if !").append(arg1String).append(" goto ").append(tag.getName2()).append('\n');
+            return;
         }
 
         if (Objects.equals(op.getData(), "else")) {
             // end_if already creates the label
-            return "";
+            return;
         }
 
         if (Objects.equals(op.getData(), "¡")) {
             // CASE ¡(bool)
-            return "t" + idOp + " := " + "! " + arg1String;
+            r.append("t").append(idOp).append(" := ").append("! ").append(arg1String).append('\n');
+            return;
         }
 
         if (Objects.equals(op.getData(), "while")) {
@@ -190,7 +213,8 @@ public class IntermediateCodeGenerator implements TacConverter {
             Tag tag = new Tag(arg1String);
             tags.push(tag);
 
-            return tag.getName1() + ": if !" + arg1String + " goto " + tag.getName2();
+            r.append(tag.getName1()).append(": if !").append(arg1String).append(" goto ").append(tag.getName2()).append('\n');
+            return;
         }
 
         if (Objects.equals(op.getData(), "range")) {
@@ -198,17 +222,19 @@ public class IntermediateCodeGenerator implements TacConverter {
             Tag tag = new Tag(arg1String);
             tags.push(tag);
 
-            return arg1String + " := " + "0\n" + tag.getName1() + ": if " + arg1String + " >= " + arg2String + " goto " + tag.getName2();
+            r.append(arg1String).append(" := ").append("0\n").append(tag.getName1()).append(": if ").append(arg1String).append(" >= ").append(arg2String).append(" goto ").append(tag.getName2()).append('\n');
+            return;
         }
 
         if (Objects.equals(op.getData(), "=")) {
-            return (arg1String + " := " + arg2String  + "\nt" + idOp + " := " + arg1String);
+            r.append(arg1String).append(" := ").append(arg2String).append("\nt").append(idOp).append(" := ").append(arg1String).append('\n');
+            return;
         }
 
         if (op.getData() == null) {
-            return "";
+            return;
         }
 
-        return ("t" + idOp + " := " + arg1String + " " + op.getData() + " " + arg2String);
+        r.append("t").append(idOp).append(" := ").append(arg1String).append(" ").append(op.getData()).append(" ").append(arg2String).append('\n');
     }
 }
