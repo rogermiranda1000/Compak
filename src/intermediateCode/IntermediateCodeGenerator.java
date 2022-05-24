@@ -155,7 +155,7 @@ public class IntermediateCodeGenerator implements TacConverter {
         }
 
         if (Objects.equals(op.getData(), "end_if")) {
-            Tag tag = tags.peek();
+            Tag tag = tags.pop();
             Tag elseTag = new Tag("else");
             tags.push(elseTag);
             return "goto " + elseTag.getName2() + "\n" // if the 'if' is executed, skip the else
