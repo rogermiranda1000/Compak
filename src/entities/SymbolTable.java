@@ -50,6 +50,10 @@ public class SymbolTable {
         if (!this.entries.add(entry)) throw new DuplicateVariableException("The variable '" + entry.getName() + "' already exists in this scope!");
     }
 
+    public List<SymbolTable> getSubtables() {
+        return this.subtables;
+    }
+
     /**
      * Search in the current scope (and above) and returns the node with the same name (if any)
      *

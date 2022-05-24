@@ -150,8 +150,9 @@ public class Parser implements Compiler {
             // main declaration
             scope.addEntry(new SymbolTableFunctionEntry(VariableTypes.VOID, (String) Token.MAIN.getMatch(), new VariableTypes[]{}, scope));
         }
-        else if (parseTree.getOriginalProduction() == GrammarAnalyzer.declaracioFuncio) {
-            // function declaration: "func " <nom_funcio> "(" <arguments> ")" <declaracio_funcio_sub> "{" <sentencies> "}"
+        else if (parseTree.getOriginalProduction() == GrammarAnalyzer.declaracioFuncio || parseTree.getOriginalProduction() == GrammarAnalyzer.declaracioArrowFunction) {
+            // function declaration: "func " <nom_funcio> "(" <arguments> ")" <declaracio_funcio_sub> ["{" <sentencies> "}"]*
+            // *only on functions or hardcoded lambdas
             String funcName = ((TokenDataPair) nodes.get(1)).getData();
 
             ParseTree funcRet = (ParseTree) nodes.get(5);
@@ -180,7 +181,7 @@ public class Parser implements Compiler {
                 // add the next argument in the next iteration
             }
 
-            scopes.empty(); scopes.add(functionScope); // for the ID substitution from below
+            scopes.clear(); scopes.add(functionScope); // for the ID substitution from below
             scope.addEntry(new SymbolTableFunctionEntry(returnType, funcName, arguments.toArray(new VariableTypes[0]), scope));
             scope.addSubtable(functionScope);
         }
@@ -195,7 +196,9 @@ public class Parser implements Compiler {
                 if (dataPair.getToken() == Token.ID || dataPair.getToken() == Token.ID_FUNC) {
                     // add relation between variable and scope table (created above)
                     SymbolTableEntry idNode = scopes.peek().searchEntry(dataPair);
-                    if (idNode == null) throw new UnknownVariableException("Unknown " + (dataPair.getToken() == Token.ID ? "variable" : "function") + " (" + dataPair.getData() + ")"); // TODO error line?
+                    if (idNode == null) {
+                        throw new UnknownVariableException("Unknown " + (dataPair.getToken() == Token.ID ? "variable" : "function") + " (" + dataPair.getData() + ")"); // TODO error line?
+                    }
                     dataPair.setVariableNode(idNode);
                 }
                 else if (dataPair.getToken() == Token.OPN_CONTEXT) {
