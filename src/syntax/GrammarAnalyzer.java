@@ -34,6 +34,7 @@ public class GrammarAnalyzer extends GrammarRequest {
     protected static final Production assignacioArrowFunction = new Production();
     protected static final Production possibleAssignacioArrowFunction = new Production();
     protected static final Production declaracioArrowFunction = new Production();
+    protected static final Production anonymousArrowFunctionDeclaration = new Production();
 
     protected static final Production valueBit = new Production(
         new Object[]{Token.TRUE},
@@ -149,7 +150,8 @@ public class GrammarAnalyzer extends GrammarRequest {
 
         n5.addProduction(Token.NOT, Token.OPN_PARENTH, n0, Token.CLS_PARENTH)
                 .addProduction(Token.OPN_PARENTH, n0, Token.CLS_PARENTH)
-                .addProduction(id);
+                .addProduction(id)
+                .addProduction(anonymousArrowFunctionDeclaration);
 
         sentencies.addProduction(possibleSentencies, sentencies)
                 .addProduction(Token.RETURN, id, Token.EOL)
@@ -162,13 +164,14 @@ public class GrammarAnalyzer extends GrammarRequest {
         sentenciaVariable.addProduction(declaracioVariable, possibleAssignacio, Token.EOL)
                 .addProduction(declaracioArrowFunction, Token.EOL)
                 .addProduction(Token.ID, Token.ASSIGN, n0, Token.EOL)
-                .addProduction(Token.ID, assignacioArrowFunction, Token.EOL)
                 .addProduction(call, Token.EOL);
 
         assignacioArrowFunction.addProduction(Token.ARROW, Token.OPN_CONTEXT, sentencies, Token.CLS_CONTEXT);
 
         possibleAssignacioArrowFunction.addProduction(assignacioArrowFunction)
                 .addProduction();
+
+        anonymousArrowFunctionDeclaration.addProduction(Token.OPN_PARENTH, arguments, Token.CLS_PARENTH, declaracioFuncioSub, assignacioArrowFunction);
 
         declaracioArrowFunction.addProduction(Token.AF, Token.ID_FUNC, Token.OPN_PARENTH, arguments, Token.CLS_PARENTH, declaracioFuncioSub, possibleAssignacioArrowFunction);
 
