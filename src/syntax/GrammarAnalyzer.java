@@ -31,6 +31,9 @@ public class GrammarAnalyzer extends GrammarRequest {
     protected static final Production possibleAssignacio = new Production();
     protected static final Production call = new Production();
     protected static final Production callSub = new Production();
+    protected static final Production assignacioArrowFunction = new Production();
+    protected static final Production possibleAssignacioArrowFunction = new Production();
+    protected static final Production declaracioArrowFunction = new Production();
 
     protected static final Production valueBit = new Production(
         new Object[]{Token.TRUE},
@@ -157,8 +160,17 @@ public class GrammarAnalyzer extends GrammarRequest {
                 .addProduction(declaracioBucle);
 
         sentenciaVariable.addProduction(declaracioVariable, possibleAssignacio, Token.EOL)
+                .addProduction(declaracioArrowFunction, Token.EOL)
                 .addProduction(Token.ID, Token.ASSIGN, n0, Token.EOL)
+                .addProduction(Token.ID, assignacioArrowFunction, Token.EOL)
                 .addProduction(call, Token.EOL);
+
+        assignacioArrowFunction.addProduction(Token.ARROW, Token.OPN_CONTEXT, sentencies, Token.CLS_CONTEXT);
+
+        possibleAssignacioArrowFunction.addProduction(assignacioArrowFunction)
+                .addProduction();
+
+        declaracioArrowFunction.addProduction(Token.AF, Token.ID_FUNC, Token.OPN_PARENTH, arguments, Token.CLS_PARENTH, declaracioFuncioSub, possibleAssignacioArrowFunction);
 
         possibleAssignacio.addProduction(Token.ASSIGN, n0)
                 .addProduction();
