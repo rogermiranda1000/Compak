@@ -1,14 +1,21 @@
-func factorial(int n): int {
-    if (n < 2) {
-        return 1;
-    }
+func factorial (int n): int {
+    int i;
+    int output = 1;
 
-    int a = n - 1;
-    int b = factorial(a);
-    int c = n * b;
-    return c;
+    n = n + 1;
+    loop (for i in range(n)) {
+        if (i == 0) {
+            i = 1;
+        }
+        output = output * i;
+    }
+    return output;
 }
 
-main ( ) {
-    int c = factorial(5);
+main () {
+    af runFactorial() => {
+        int r = factorial(5);
+        print(r);
+    };
+    runFactorial();
 }
