@@ -245,6 +245,10 @@ public class AbstractSyntaxTree {
                             ((AbstractSyntaxTree) this.treeExtend.get(0)).operation = new TokenDataPair(Token.WHILE, "while");
                         }
                     }
+                } else if (tk == Token.PRINT) {
+                    ((TokenDataPair) o).setPromoted();
+                    this.operation = ((TokenDataPair) o);
+                    this.treeExtend.remove(o);
                 } else if (i == 1 && tk == Token.ASSIGN) {
                     if (this.father != null && !((TokenDataPair) o).isPromoted()) {
                         ((TokenDataPair) o).setPromoted();
