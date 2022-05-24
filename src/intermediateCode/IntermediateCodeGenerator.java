@@ -157,7 +157,8 @@ public class IntermediateCodeGenerator implements TacConverter {
         }
 
         if (Objects.equals(op.getData(), "print")) {
-            return "Print " + arg1String;
+            r.append("Print ").append(arg1String).append('\n');
+            return;
         }
 
         if (Objects.equals(op.getData(), "return")) {
