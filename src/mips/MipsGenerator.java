@@ -148,7 +148,8 @@ public class MipsGenerator implements MipsConverter {
         } else {
             first = "li $a0, " + tokens[1];
         }
-        return "li $v0, 1 \n" + INDENT + first + "\n" + INDENT + "syscall";
+        String newline = "li $v0, 11 \n" + INDENT + "li $a0, 0xA\n" + INDENT + "syscall";
+        return "li $v0, 1 \n" + INDENT + first + "\n" + INDENT + "syscall" + "\n" + INDENT + newline;
     }
 
     private String mipsFunctionAssign(String[] tokens) {
