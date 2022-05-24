@@ -150,12 +150,14 @@ public class Parser implements Compiler {
             // main declaration
             scope.addEntry(new SymbolTableFunctionEntry(VariableTypes.VOID, (String) Token.MAIN.getMatch(), new VariableTypes[]{}, scope));
         }
-        else if (parseTree.getOriginalProduction() == GrammarAnalyzer.declaracioFuncio || parseTree.getOriginalProduction() == GrammarAnalyzer.declaracioArrowFunction) {
-            // function declaration: "func " <nom_funcio> "(" <arguments> ")" <declaracio_funcio_sub> ["{" <sentencies> "}"]*
+        else if (parseTree.getOriginalProduction() == GrammarAnalyzer.declaracioFuncio || parseTree.getOriginalProduction() == GrammarAnalyzer.declaracioArrowFunction || parseTree.getOriginalProduction() == GrammarAnalyzer.anonymousArrowFunctionDeclaration) {
+            // function declaration: ["func " <nom_funcio>]** "(" <arguments> ")" <declaracio_funcio_sub> ["{" <sentencies> "}"]*
             // *only on functions or hardcoded lambdas
-            String funcName = ((TokenDataPair) nodes.get(1)).getData();
+            // **not in anonymous function
+            int offset = (parseTree.getOriginalProduction() == GrammarAnalyzer.anonymousArrowFunctionDeclaration) ? -2 : 0; // to compensate thee 'func' at the beginning
+            String funcName = (offset+1 >= 0) ? ((TokenDataPair) nodes.get(offset+1)).getData() : "";
 
-            ParseTree funcRet = (ParseTree) nodes.get(5);
+            ParseTree funcRet = (ParseTree) nodes.get(offset+5);
             VariableTypes returnType = VariableTypes.VOID;
             if (funcRet.getTreeExtend().size() > 0) { // it may be epsilon
                 //  ":" <tipus>
@@ -165,7 +167,7 @@ public class Parser implements Compiler {
             }
 
             SymbolTable functionScope = new SymbolTable(scope);
-            ParseTree funcAttr = (ParseTree) nodes.get(3);
+            ParseTree funcAttr = (ParseTree) nodes.get(offset+3);
             List<VariableTypes> arguments = new ArrayList<>();
             while (funcAttr.getTreeExtend().size() > 0) { // it may be epsilon
                 // <tipus> <nom_variable> <arguments_sub>
@@ -184,6 +186,19 @@ public class Parser implements Compiler {
             scopes.clear(); scopes.add(functionScope); // for the ID substitution from below
             scope.addEntry(new SymbolTableFunctionEntry(returnType, funcName, arguments.toArray(new VariableTypes[0]), scope));
             scope.addSubtable(functionScope);
+        }
+
+        // lord forgive me for what I'm going to do...
+        List<TokenDataPair> tokens = parseTree.getTokens();
+        if (parseTree.getOriginalProduction() == GrammarAnalyzer.sentenciaVariable && tokens.size() > 2) {
+            // anonymous arrow function declaration? you need to change from ID to ID_FUNC
+            if (tokens.get(0).getToken() == Token.ID) {
+                boolean matches = false;
+                for (int n = 1; n < tokens.size() && !matches; n++) {
+                    if (tokens.get(n).getToken() == Token.ARROW) matches = true;
+                }
+                if (matches) tokens.get(0).setToken(Token.ID_FUNC);
+            }
         }
 
         for (Object node : nodes) {
