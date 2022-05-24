@@ -113,7 +113,7 @@ public class IntermediateCodeGenerator implements TacConverter {
             }
         }
 
-        if (Objects.equals(op.getData(), "func")) {
+        if (Objects.equals(op.getData(), "func") || Objects.equals(op.getData(), "af")) {
             return;
         }
 
