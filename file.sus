@@ -1,18 +1,14 @@
-func factorial (int n): int {
-    int n = 6;
-    int i;
-    int output = 1;
-
-    n = n + 1;
-    loop (for i in range(n)) {
-        if (i == 0) {
-            i = 1;
-        }
-        output = output * i;
+func factorial(int n): int {
+    if (n < 2) {
+        return 1;
     }
-    return output;
+
+    int a = n - 1;
+    int b = factorial(a);
+    int c = n * b;
+    return c;
 }
 
 main ( ) {
-    factorial(5);
+    int c = factorial(5);
 }
