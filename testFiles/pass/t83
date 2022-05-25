@@ -1,4 +1,4 @@
 main() {
-int variable = 3;
+    int variable = 3;
     int a = 1 + 2 - 3 * 4 ^ 5 / 3 % 7 - variable;
 }
