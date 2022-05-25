@@ -122,7 +122,7 @@ public class AbstractSyntaxTree {
      */
     public void removeMeaningLessTokens() {
         Token[] list = new Token[] {Token.EOL, Token.RET_TYPE,Token.IN, Token.INT, Token.BIG, Token.BIT, Token.FLO,
-                Token.RANGE,Token.OPN_CONTEXT,Token.CLS_CONTEXT,Token.OPN_PARENTH,Token.CLS_PARENTH,Token.COMMA,Token.FOR};
+                Token.RANGE,Token.OPN_CONTEXT,Token.CLS_CONTEXT,Token.OPN_PARENTH,Token.CLS_PARENTH,Token.COMMA,Token.FOR,Token.ARROW};
 
         for (int i = 0; i < this.treeExtend.size(); i++) {
             Object o = this.treeExtend.get(i);
@@ -265,7 +265,7 @@ public class AbstractSyntaxTree {
                 } else if (tk == Token.NOT) {
                     this.operation = ((TokenDataPair) o);
                     this.treeExtend.remove(o);
-                } else if (tk == Token.FUNC) {
+                } else if (tk == Token.FUNC || tk == Token.AF) {
                     ((TokenDataPair) o).setPromoted();
                     this.operation = ((TokenDataPair) o);
                     this.treeExtend.remove(o);
