@@ -84,7 +84,7 @@ public class RegisterManager {
             if (matcher.matches()) {
                 int label = Integer.parseInt(matcher.group(1));
                 if (activeLoops.contains(label)) {
-                    activeLoops.remove(label);
+                    activeLoops.remove((Integer) label);
 
                     // Add new line
                     ArrayList<String> registers = new ArrayList<>();
