@@ -86,7 +86,7 @@ public class SemanticChecker {
             return VariableTypes.INT;
         }
 
-        if (operation == Token.ASSIGN || operation == Token.IF /* b is BIT for sure */) {
+        if (operation == Token.ASSIGN || operation == Token.CALL_FUNC || operation == Token.IF /* b is BIT for sure */) {
             if (a == b) return a;
             throw new SemanticException("Assigning " + a.name() + " variable with " + b.name() + " type");
         }

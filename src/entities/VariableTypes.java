@@ -9,6 +9,7 @@ public enum VariableTypes {
     FLO(4),
     STR(1),
     BIT(1),
+    AF(4),
 
     VOID(0), // para funciones
     UNKNOWN(0); // aún no se ha computado

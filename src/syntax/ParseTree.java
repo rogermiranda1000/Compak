@@ -21,7 +21,7 @@ public class ParseTree {
     private VariableTypes evaluates;
 
     /**
-     * Array of AbstractTreeNode or TokenDataPair
+     * Array of ParseTree or TokenDataPair
      */
     private final List<Object> treeExtend;
 

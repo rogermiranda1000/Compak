@@ -16,7 +16,7 @@ import java.util.regex.Pattern;
  * Class TokenBuffer.
  */
 public class TokenBuffer implements TokenRequest {
-    private static final Pattern tokenSplitter = Pattern.compile("^(\"(?:[^\"]|(?<=\\\\)\")*\"|(?<=\\w|\\.|^)[\\w.]+|==|[;=+\\-*/%^¡!&|<>:{}(),])(\\s*)(.*)$");
+    private static final Pattern tokenSplitter = Pattern.compile("^(\"(?:[^\"]|(?<=\\\\)\")*\"|(?<=\\w|\\.|^)[\\w.]+|==|=>|[;=+\\-*/%^¡!&|<>:{}(),])(\\s*)(.*)$");
 
     private final LineRequest lineRequest;
     private final ArrayList<TokenDataPair> tokens;
