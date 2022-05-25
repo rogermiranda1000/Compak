@@ -12,6 +12,7 @@ import syntax.Compiler;
 import syntax.GrammarAnalyzer;
 import syntax.InvalidTreeException;
 import syntax.Parser;
+import testing.TestMaster;
 
 import java.io.File;
 import java.io.IOException;
@@ -41,7 +42,7 @@ public class Main {
         compiler.compile(tac);
 
         // Test phase
-        // TestMaster.testAll(); // TODO Uncomment for final commit
+        TestMaster.testAll();
 
         // AST to TAC code phase
         TacConverter tacConverter = new IntermediateCodeGenerator();

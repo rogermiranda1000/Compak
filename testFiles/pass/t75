@@ -6,18 +6,18 @@ func functionInt(): int {
 func functionBig(): big {
     return 100;
 }
-func functionInt(): lf {
+func functionLf(): lf {
     return 0.5;
 }
-func functionInt(): int {
+func functionInt2(): int {
     return 100;
 }
 
-func functionInt2(): int {
+func functionInt3(): int {
     int a = 0;
     return a;
 }
-func functionInt3(): int {
+func functionInt4(): int {
     if (false) {
         return 4;
     }
