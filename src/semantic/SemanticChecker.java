@@ -116,10 +116,13 @@ public class SemanticChecker {
         }
 
         List<Object> sons = ((AbstractSyntaxTree) pseudoRoot).getTreeExtend();
-        VariableTypes left = recursiveSemantic(sons.get(0)),
-                    right = recursiveSemantic(sons.get(1));
 
-        return evaluate(left, right, ((AbstractSyntaxTree) pseudoRoot).getOperation() != null ? ((AbstractSyntaxTree) pseudoRoot).getOperation().getToken() : null);
+        VariableTypes left = recursiveSemantic(sons.get(0));
+        Token operation = ((AbstractSyntaxTree) pseudoRoot).getOperation() != null ? ((AbstractSyntaxTree) pseudoRoot).getOperation().getToken() : null;
+        if (sons.size() == 1) return evaluate(left, operation);
+
+        VariableTypes right = recursiveSemantic(sons.get(1));
+        return evaluate(left, right, operation);
     }
 
     public static void check(AbstractSyntaxTree abstractSyntaxTree) throws SemanticException {
