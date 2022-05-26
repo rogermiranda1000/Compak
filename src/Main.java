@@ -42,7 +42,7 @@ public class Main {
         compiler.compile(tac);
 
         // Test phase
-        TestMaster.testAll();
+        // TestMaster.testAll();
 
         // AST to TAC code phase
         TacConverter tacConverter = new IntermediateCodeGenerator();
