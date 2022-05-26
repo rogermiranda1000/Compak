@@ -12,7 +12,6 @@ import syntax.Compiler;
 import syntax.GrammarAnalyzer;
 import syntax.InvalidTreeException;
 import syntax.Parser;
-import testing.TestMaster;
 
 import java.io.File;
 import java.io.IOException;
@@ -40,9 +39,6 @@ public class Main {
         // Parser phase
         Compiler compiler = new Parser(new TokenBuffer(new CodeProcessor(PATH_FILE)), new GrammarAnalyzer());
         compiler.compile(tac);
-
-        // Test phase
-        // TestMaster.testAll();
 
         // AST to TAC code phase
         TacConverter tacConverter = new IntermediateCodeGenerator();
