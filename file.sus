@@ -1,21 +1,15 @@
-func factorial (int n): int {
-    int i;
-    int output = 1;
+func suma(int n): int {
+    int acum = 0;
+    int k;
+    n = n + 2;
 
-    n = n + 1;
-    loop (for i in range(n)) {
-        if (i == 0) {
-            i = 1;
-        }
-        output = output * i;
+    loop (for k in range(n)) {
+        acum = acum + k;
     }
-    return output;
+
+    return acum;
 }
 
 main () {
-    af runFactorial() => {
-        int r = factorial(5);
-        print(r);
-    };
-    runFactorial();
+    print(suma(5));
 }
