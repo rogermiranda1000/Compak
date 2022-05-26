@@ -1,0 +1,15 @@
+func suma(int n): int {
+    int acum = 0;
+    int k;
+    n = n + 2;
+
+    loop (for k in range(n)) {
+        acum = acum + k;
+    }
+
+    return acum;
+}
+
+main () {
+    print(suma(5));
+}

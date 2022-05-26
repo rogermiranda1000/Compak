@@ -1,0 +1,5 @@
+bit a = true;
+a = true;
+a = false;
+main() {
+}

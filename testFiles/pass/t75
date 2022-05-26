@@ -1,0 +1,27 @@
+func function() {
+}
+func functionInt(): int {
+    return 100;
+}
+func functionBig(): big {
+    return 100;
+}
+func functionLf(): lf {
+    return 0.5;
+}
+func functionInt2(): int {
+    return 100;
+}
+
+func functionInt3(): int {
+    int a = 0;
+    return a;
+}
+func functionInt4(): int {
+    if (false) {
+        return 4;
+    }
+    return 5;
+}
+main() {
+}

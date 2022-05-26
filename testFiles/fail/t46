@@ -1,0 +1,4 @@
+main() {
+    loop (for "hola" in range 4) {
+    }
+}
