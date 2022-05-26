@@ -49,7 +49,7 @@ public class Parser implements Compiler {
         AbstractSyntaxTree abstractSyntaxTree = this.generateAbstractSyntaxTree(parseTree, codes);
 
         SemanticChecker.check(abstractSyntaxTree);
-        //abstractSyntaxTree.printTree();
+        // abstractSyntaxTree.printTree();
         abstractSyntaxTree.travelWithPriorityDepth();
     }
 
