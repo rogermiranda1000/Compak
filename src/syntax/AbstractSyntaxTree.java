@@ -450,6 +450,10 @@ public class AbstractSyntaxTree {
                     return 100;
                 }
 
+                if (b.operation.getToken() == Token.FOR_IN) {
+                    return 100;
+                }
+
                 if (a.operation.getToken() == Token.START_FUNC) {
                     return 100;
                 }
