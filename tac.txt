@@ -1,0 +1,22 @@
+suma:
+BeginFunc
+PopParam t0
+t1 := 0
+t2 := t1
+t3 := t0 + 2
+t0 := t3
+t4 := t0
+t5 := 0
+L0: if t5 >= t0 goto L1
+t6 := t1 + t5
+t1 := t6
+t7 := t1
+t5 := t5 + 1
+goto L0
+L1:
+Return t1
+EndFunc
+main:
+PushParam 5
+t8 := Call suma
+Print t8

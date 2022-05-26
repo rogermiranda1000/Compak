@@ -1,0 +1,5 @@
+int a = 0;
+main() {
+    loop (a in range 4) {
+    }
+}
