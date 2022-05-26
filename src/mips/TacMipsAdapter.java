@@ -96,7 +96,7 @@ public class TacMipsAdapter {
                 }
 
                 // Format number operations
-                if (!arg1.contains("t")) {
+                if (!arg1.contains("t") || !arg2.contains("t")) {
                     ArrayList<String> newLines;
                     // Two literals
                     if (symbol.equals("*") || symbol.equals("/") || symbol.equals("%") || !arg2.contains("t")) {
