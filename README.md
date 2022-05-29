@@ -2,9 +2,13 @@
 
 # Authors
 This project has been made by:
+
 Roger Miranda Pérez (roger.miranda@salle.url.edu)
+
 Carles Roch Arnau (carles.roch@students.salle.url.edu)
+
 Pol Piñol Castuera (pol.piñol@students.salle.url.edu)
+
 Guillem Serra Cazorla (gserracazorla@gmail.com)
 
 # Development enviroment
